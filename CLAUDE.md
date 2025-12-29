@@ -385,9 +385,17 @@ job = poll_job_status(
 - **Resource Cleanup**: Cancel jobs after use
 - **Error Handling**: Use `strict=true` mode
 
-## Testing Scripts
+## Testing
 
-### Run Unit Tests
+### Test Coverage Summary
+
+| Category | Tests | Status |
+|----------|-------|--------|
+| Unit Tests (shared library) | 73 | ✅ Passing |
+| Live Integration Tests | 175 | 168 passing, 7 xfailed |
+| **Total** | **248** | |
+
+### Unit Tests
 
 ```bash
 # Install dependencies
@@ -398,17 +406,99 @@ pytest .claude/skills/*/tests/ -v --ignore=.claude/skills/*/tests/live_integrati
 
 # Run tests for specific skill
 pytest .claude/skills/splunk-search/tests/ -v
+
+# Run shared library tests only
+pytest .claude/skills/shared/tests/ -v
 ```
 
-### Run Live Integration Tests
+### Live Integration Tests
+
+Live integration tests require a running Splunk instance.
+
+#### Environment Variables
 
 ```bash
-# Requires valid credentials
-pytest .claude/skills/splunk-search/tests/live_integration/ -v --profile production
-
-# Skip destructive tests in CI
-pytest .claude/skills/*/tests/live_integration/ -v -m "not destructive"
+# Required for live tests
+export SPLUNK_TEST_URL="https://localhost:8089"
+export SPLUNK_TEST_USERNAME="admin"
+export SPLUNK_TEST_PASSWORD="your-password"
 ```
+
+#### Running Tests
+
+```bash
+# Run all integration tests for a skill
+pytest .claude/skills/splunk-search/tests/live_integration/ -v
+
+# Run with specific markers
+pytest -m "live" -v                    # All live tests
+pytest -m "not destructive" -v         # Skip tests that modify data
+
+# Run single test class
+pytest .claude/skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
+```
+
+### Docker-Based Testing
+
+Use the Splunk Docker container for local testing:
+
+```bash
+# Start Splunk container
+docker run -d --name splunk-dev \
+  -p 8089:8089 -p 8000:8000 \
+  -e SPLUNK_START_ARGS="--accept-license" \
+  -e SPLUNK_PASSWORD="Admin123!" \
+  splunk/splunk:latest
+
+# Wait for Splunk to be ready (about 2-3 minutes)
+docker logs -f splunk-dev
+
+# Set environment and run tests
+export SPLUNK_TEST_URL="https://localhost:8089"
+export SPLUNK_TEST_USERNAME="admin"
+export SPLUNK_TEST_PASSWORD="Admin123!"
+
+pytest .claude/skills/splunk-metadata/tests/live_integration/ -v
+```
+
+### Test Markers
+
+```python
+import pytest
+
+@pytest.mark.live
+def test_requires_connection():
+    """Requires live Splunk connection."""
+    pass
+
+@pytest.mark.destructive
+def test_modifies_data():
+    """Creates/modifies/deletes Splunk objects."""
+    pass
+
+@pytest.mark.slow
+def test_takes_long():
+    """Long-running test (>30s)."""
+    pass
+```
+
+### CI/CD Integration
+
+The project includes GitHub Actions workflow (`.github/workflows/ci.yml`):
+
+- Runs unit tests on every push/PR
+- Live integration tests require Splunk credentials in GitHub Secrets
+- Use `-m "not destructive"` for CI environments
+
+### Known Test Limitations
+
+Some tests are marked `xfail` due to known limitations:
+
+| Test | Reason |
+|------|--------|
+| `test_export_endpoint_csv` | Export endpoint returns raw CSV, client expects JSON |
+| `test_export_endpoint_json` | Export returns streaming JSON lines, not single object |
+| `test_upload_and_get_lookup` | Lookup upload requires multipart form handling |
 
 ## Adding New Scripts
 
@@ -561,48 +651,6 @@ Types:
 - `refactor`: Code refactoring
 - `perf`: Performance
 - `chore`: Maintenance
-
-## Live Integration Testing
-
-### Prerequisites
-
-1. Access to Splunk instance
-2. Valid credentials configured
-3. Appropriate permissions
-
-### Running Tests
-
-```bash
-# Set profile
-export SPLUNK_PROFILE=development
-
-# Run all integration tests
-pytest .claude/skills/*/tests/live_integration/ -v
-
-# Run with specific profile
-pytest --profile production
-
-# Skip destructive tests
-pytest -m "not destructive"
-```
-
-### Test Markers
-
-```python
-import pytest
-
-@pytest.mark.live
-def test_requires_connection():
-    pass
-
-@pytest.mark.destructive
-def test_modifies_data():
-    pass
-
-@pytest.mark.slow
-def test_takes_long():
-    pass
-```
 
 ## Common Issues
 
