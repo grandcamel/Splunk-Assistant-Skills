@@ -112,20 +112,32 @@ index=main sourcetype=access_combined
 
 ## Quick Start
 
-### 1. Install Dependencies
+### Option A: Install as Claude Code Plugin (Recommended)
+
+```bash
+# Add the marketplace
+/plugin marketplace add grandcamel/Splunk-Assistant-Skills
+
+# Install all skills
+/plugin install splunk-assistant@splunk-assistant-skills
+```
+
+### Option B: Manual Installation
+
+#### 1. Install Dependencies
 
 ```bash
 pip install -r .claude/skills/shared/scripts/lib/requirements.txt
 ```
 
-### 2. Get API Token
+#### 2. Get API Token
 
 1. Log into Splunk Web
 2. Go to **Settings > Tokens**
 3. Click **New Token**, select your user
 4. Copy the generated token
 
-### 3. Configure
+#### 3. Configure
 
 ```bash
 # Set environment variables
@@ -135,7 +147,7 @@ export SPLUNK_SITE_URL="https://splunk.example.com"
 # Or create .claude/settings.local.json for profiles
 ```
 
-### 4. Start Using
+#### 4. Start Using
 
 ```bash
 # Direct script execution
