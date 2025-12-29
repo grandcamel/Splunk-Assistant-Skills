@@ -136,7 +136,8 @@ class TestAlertSuppression:
             content = entry.get("content", {})
             # Check for suppression-related fields if present
             if "alert.suppress" in content:
-                assert isinstance(content["alert.suppress"], (str, bool, int))
+                # Suppression value can be string, bool, int, or None (unset)
+                assert isinstance(content["alert.suppress"], (str, bool, int, type(None)))
 
 
 class TestAlertHistory:

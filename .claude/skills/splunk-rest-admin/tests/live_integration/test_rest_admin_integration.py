@@ -239,7 +239,7 @@ class TestInternalLogs:
         response = splunk_client.post(
             "/search/jobs/oneshot",
             data={
-                "search": "index=_internal | head 5",
+                "search": "search index=_internal | head 5",
                 "output_mode": "json",
                 "earliest_time": "-1h",
             },
@@ -255,7 +255,7 @@ class TestInternalLogs:
         response = splunk_client.post(
             "/search/jobs/oneshot",
             data={
-                "search": "index=_audit | head 5",
+                "search": "search index=_audit | head 5",
                 "output_mode": "json",
                 "earliest_time": "-1h",
             },
