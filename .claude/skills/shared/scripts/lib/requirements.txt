@@ -8,6 +8,10 @@ pytest>=7.0.0
 pytest-asyncio>=0.21.0
 pytest-cov>=4.0.0
 
+# Live Integration Testing
+testcontainers>=3.7.0
+docker>=6.0.0
+
 # Type hints (Python 3.8+ backports)
 typing-extensions>=4.0.0
 
