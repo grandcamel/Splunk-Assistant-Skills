@@ -1,0 +1,61 @@
+{
+  "$comment": "Example Splunk Assistant Skills configuration. Copy to .claude/settings.json and customize.",
+  "splunk": {
+    "default_profile": "production",
+    "profiles": {
+      "production": {
+        "url": "https://splunk.your-company.com",
+        "port": 8089,
+        "auth_method": "bearer",
+        "verify_ssl": true,
+        "default_app": "search",
+        "default_index": "main",
+        "deployment_type": "on-prem",
+        "$comment_token": "Set SPLUNK_TOKEN env var or add token to settings.local.json"
+      },
+      "cloud": {
+        "url": "https://your-deployment.splunkcloud.com",
+        "port": 8089,
+        "auth_method": "bearer",
+        "verify_ssl": true,
+        "default_app": "search",
+        "default_index": "main",
+        "deployment_type": "cloud"
+      },
+      "development": {
+        "url": "https://splunk-dev.your-company.com",
+        "port": 8089,
+        "auth_method": "basic",
+        "verify_ssl": false,
+        "default_app": "search",
+        "default_index": "dev_main",
+        "deployment_type": "on-prem",
+        "$comment_auth": "Set SPLUNK_USERNAME and SPLUNK_PASSWORD env vars"
+      },
+      "local": {
+        "url": "https://localhost",
+        "port": 8089,
+        "auth_method": "basic",
+        "verify_ssl": false,
+        "default_app": "search",
+        "default_index": "main",
+        "deployment_type": "on-prem"
+      }
+    },
+    "api": {
+      "timeout": 30,
+      "search_timeout": 300,
+      "max_retries": 3,
+      "retry_backoff": 2.0,
+      "default_output_mode": "json",
+      "prefer_v2_api": true
+    },
+    "search_defaults": {
+      "earliest_time": "-24h",
+      "latest_time": "now",
+      "max_count": 50000,
+      "status_buckets": 300,
+      "auto_cancel": 300
+    }
+  }
+}

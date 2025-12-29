@@ -1,0 +1,46 @@
+{
+  "splunk": {
+    "default_profile": "production",
+    "profiles": {
+      "production": {
+        "url": "https://splunk.your-company.com",
+        "port": 8089,
+        "auth_method": "bearer",
+        "default_app": "search",
+        "default_index": "main",
+        "deployment_type": "on-prem"
+      },
+      "cloud": {
+        "url": "https://your-deployment.splunkcloud.com",
+        "port": 8089,
+        "auth_method": "bearer",
+        "default_app": "search",
+        "default_index": "main",
+        "deployment_type": "cloud"
+      },
+      "development": {
+        "url": "https://splunk-dev.your-company.com",
+        "port": 8089,
+        "auth_method": "basic",
+        "default_app": "search",
+        "default_index": "dev_main",
+        "deployment_type": "on-prem"
+      }
+    },
+    "api": {
+      "timeout": 30,
+      "search_timeout": 300,
+      "max_retries": 3,
+      "retry_backoff": 2.0,
+      "default_output_mode": "json",
+      "prefer_v2_api": true
+    },
+    "search_defaults": {
+      "earliest_time": "-24h",
+      "latest_time": "now",
+      "max_count": 50000,
+      "status_buckets": 300,
+      "auto_cancel": 300
+    }
+  }
+}

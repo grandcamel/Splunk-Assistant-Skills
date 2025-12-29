@@ -1,0 +1,167 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/anthropics/splunk-assistant-skills/config.schema.json",
+  "title": "Splunk Assistant Skills Configuration",
+  "description": "Configuration schema for Splunk Assistant Skills",
+  "type": "object",
+  "properties": {
+    "splunk": {
+      "type": "object",
+      "description": "Splunk connection and behavior settings",
+      "properties": {
+        "default_profile": {
+          "type": "string",
+          "description": "Default profile to use when none specified",
+          "default": "default"
+        },
+        "profiles": {
+          "type": "object",
+          "description": "Named connection profiles",
+          "additionalProperties": {
+            "$ref": "#/definitions/profile"
+          }
+        },
+        "api": {
+          "$ref": "#/definitions/apiSettings"
+        },
+        "search_defaults": {
+          "$ref": "#/definitions/searchDefaults"
+        }
+      },
+      "required": ["default_profile", "profiles"]
+    }
+  },
+  "definitions": {
+    "profile": {
+      "type": "object",
+      "description": "Connection profile configuration",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Splunk host URL (e.g., https://splunk.example.com)",
+          "format": "uri"
+        },
+        "port": {
+          "type": "integer",
+          "description": "Management port",
+          "default": 8089,
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "auth_method": {
+          "type": "string",
+          "description": "Authentication method",
+          "enum": ["bearer", "basic"],
+          "default": "bearer"
+        },
+        "token": {
+          "type": "string",
+          "description": "JWT Bearer token (use settings.local.json for security)"
+        },
+        "username": {
+          "type": "string",
+          "description": "Username for Basic Auth"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for Basic Auth (use settings.local.json for security)"
+        },
+        "verify_ssl": {
+          "type": "boolean",
+          "description": "Verify SSL certificates",
+          "default": true
+        },
+        "default_app": {
+          "type": "string",
+          "description": "Default app context",
+          "default": "search"
+        },
+        "default_index": {
+          "type": "string",
+          "description": "Default search index",
+          "default": "main"
+        },
+        "deployment_type": {
+          "type": "string",
+          "description": "Deployment type",
+          "enum": ["on-prem", "cloud"],
+          "default": "on-prem"
+        }
+      },
+      "required": ["url"]
+    },
+    "apiSettings": {
+      "type": "object",
+      "description": "API behavior settings",
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "description": "Default request timeout in seconds",
+          "default": 30,
+          "minimum": 1
+        },
+        "search_timeout": {
+          "type": "integer",
+          "description": "Timeout for search operations in seconds",
+          "default": 300,
+          "minimum": 1
+        },
+        "max_retries": {
+          "type": "integer",
+          "description": "Maximum retry attempts for failed requests",
+          "default": 3,
+          "minimum": 0
+        },
+        "retry_backoff": {
+          "type": "number",
+          "description": "Exponential backoff multiplier for retries",
+          "default": 2.0,
+          "minimum": 1.0
+        },
+        "default_output_mode": {
+          "type": "string",
+          "description": "Default output mode for API responses",
+          "enum": ["json", "csv", "xml", "raw"],
+          "default": "json"
+        },
+        "prefer_v2_api": {
+          "type": "boolean",
+          "description": "Prefer v2 API endpoints when available",
+          "default": true
+        }
+      }
+    },
+    "searchDefaults": {
+      "type": "object",
+      "description": "Default search parameters",
+      "properties": {
+        "earliest_time": {
+          "type": "string",
+          "description": "Default earliest time modifier",
+          "default": "-24h"
+        },
+        "latest_time": {
+          "type": "string",
+          "description": "Default latest time modifier",
+          "default": "now"
+        },
+        "max_count": {
+          "type": "integer",
+          "description": "Default maximum result count",
+          "default": 50000,
+          "minimum": 0
+        },
+        "status_buckets": {
+          "type": "integer",
+          "description": "Number of status buckets for job progress",
+          "default": 300
+        },
+        "auto_cancel": {
+          "type": "integer",
+          "description": "Auto-cancel idle jobs after N seconds",
+          "default": 300
+        }
+      }
+    }
+  }
+}
