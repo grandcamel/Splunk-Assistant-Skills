@@ -29,6 +29,7 @@
   <img src="https://img.shields.io/badge/tests-248%20passing-brightgreen?logo=pytest" alt="Tests">
   <img src="https://img.shields.io/badge/python-3.8+-3776AB?logo=python&logoColor=white" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/skills-14-FF6900" alt="Skills">
+  <a href="https://pypi.org/project/splunk-assistant-skills-lib/"><img src="https://img.shields.io/pypi/v/splunk-assistant-skills-lib?color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
   <img src="https://img.shields.io/github/stars/grandcamel/Splunk-Assistant-Skills?style=social" alt="GitHub Stars">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License">
 </p>
@@ -115,19 +116,18 @@ index=main sourcetype=access_combined
 ### Option A: Install as Claude Code Plugin (Recommended)
 
 ```bash
-# Add the marketplace
-/plugin marketplace add grandcamel/Splunk-Assistant-Skills
-
-# Install all skills
-/plugin install splunk-assistant@splunk-assistant-skills
+# Install from GitHub
+claude plugin add github:grandcamel/Splunk-Assistant-Skills
 ```
 
 ### Option B: Manual Installation
 
-#### 1. Install Dependencies
+#### 1. Clone and Install Dependencies
 
 ```bash
-pip install -r .claude/skills/shared/scripts/lib/requirements.txt
+git clone https://github.com/grandcamel/Splunk-Assistant-Skills.git
+cd Splunk-Assistant-Skills
+pip install -r requirements.txt
 ```
 
 #### 2. Get API Token
@@ -151,7 +151,7 @@ export SPLUNK_SITE_URL="https://splunk.example.com"
 
 ```bash
 # Direct script execution
-python .claude/skills/splunk-search/scripts/search_oneshot.py \
+python skills/splunk-search/scripts/search_oneshot.py \
   "index=main | stats count by sourcetype" --earliest -1h
 
 # Or with Claude Code
@@ -448,13 +448,13 @@ Contributions are welcome! See our contributing guidelines.
 ```bash
 # Clone the repository
 git clone https://github.com/grandcamel/Splunk-Assistant-Skills.git
-cd splunk-assistant-skills
+cd Splunk-Assistant-Skills
 
 # Install dependencies
-pip install -r .claude/skills/shared/scripts/lib/requirements.txt
+pip install -r requirements.txt
 
 # Run tests
-pytest .claude/skills/*/tests/ -v --ignore=.claude/skills/*/tests/live_integration
+pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration
 ```
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.

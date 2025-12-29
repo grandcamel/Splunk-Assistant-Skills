@@ -1,5 +1,0 @@
-{
-  "name": "splunk-metrics",
-  "description": "Real-time metrics with mstats and mcatalog",
-  "version": "1.0.0"
-}

@@ -1,5 +1,0 @@
-{
-  "name": "splunk-kvstore",
-  "description": "App Key Value Store CRUD operations and collections",
-  "version": "1.0.0"
-}

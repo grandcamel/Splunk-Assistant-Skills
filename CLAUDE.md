@@ -28,58 +28,62 @@ This project provides 14 specialized skills for interacting with Splunk via natu
 ### Directory Structure
 
 ```
+.claude-plugin/
+└── plugin.json                # Plugin manifest
+
 .claude/
-├── settings.json              # Team defaults (committed)
-├── settings.local.json        # Personal credentials (gitignored)
-└── skills/
-    ├── splunk-assistant/      # Hub router
-    ├── splunk-job/            # Job lifecycle
-    ├── splunk-search/         # SPL execution
-    ├── splunk-export/         # Data extraction
-    ├── splunk-metadata/       # Discovery
-    ├── splunk-lookup/         # Lookups
-    ├── splunk-tag/            # Tags
-    ├── splunk-savedsearch/    # Saved searches
-    ├── splunk-rest-admin/     # REST admin
-    ├── splunk-security/       # Security
-    ├── splunk-metrics/        # Metrics
-    ├── splunk-alert/          # Alerts
-    ├── splunk-app/            # Apps
-    ├── splunk-kvstore/        # KV Store
-    └── shared/                # Shared library
-        ├── scripts/lib/
-        └── config/
+├── settings.example.json      # Example config (copy to settings.local.json)
+└── settings.local.json        # Personal credentials (gitignored)
+
+skills/
+├── splunk-assistant/          # Hub router
+├── splunk-job/                # Job lifecycle
+├── splunk-search/             # SPL execution
+├── splunk-export/             # Data extraction
+├── splunk-metadata/           # Discovery
+├── splunk-lookup/             # Lookups
+├── splunk-tag/                # Tags
+├── splunk-savedsearch/        # Saved searches
+├── splunk-rest-admin/         # REST admin
+├── splunk-security/           # Security
+├── splunk-metrics/            # Metrics
+├── splunk-alert/              # Alerts
+├── splunk-app/                # Apps
+├── splunk-kvstore/            # KV Store
+└── shared/                    # Shared library
+    ├── scripts/lib/
+    └── config/
 ```
 
 ### Shared Library Pattern
 
-All scripts import from the shared library:
+All scripts import from the [splunk-assistant-skills-lib](https://pypi.org/project/splunk-assistant-skills-lib/) PyPI package:
 
 ```python
-import sys
-from pathlib import Path
-
-# Add shared lib to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
-
-from config_manager import get_splunk_client
-from error_handler import handle_errors, print_error
-from validators import validate_spl
-from formatters import print_success, format_search_results
+from splunk_assistant_skills_lib import (
+    get_splunk_client,
+    handle_errors,
+    print_error,
+    validate_spl,
+    print_success,
+    format_search_results,
+)
 ```
 
 ### Shared Library Components
 
+The `splunk-assistant-skills-lib` package provides:
+
 | Module | Purpose |
 |--------|---------|
-| `splunk_client.py` | HTTP client with retry and dual auth |
-| `config_manager.py` | Multi-source configuration |
-| `error_handler.py` | Exception hierarchy |
-| `validators.py` | Input validation |
-| `formatters.py` | Output formatting |
-| `spl_helper.py` | SPL query building/parsing |
-| `job_poller.py` | Async job polling |
-| `time_utils.py` | Time modifier handling |
+| `splunk_client` | HTTP client with retry and dual auth |
+| `config_manager` | Multi-source configuration |
+| `error_handler` | Exception hierarchy |
+| `validators` | Input validation |
+| `formatters` | Output formatting |
+| `spl_helper` | SPL query building/parsing |
+| `job_poller` | Async job polling |
+| `time_utils` | Time modifier handling |
 
 ## Configuration System
 
@@ -87,8 +91,7 @@ from formatters import print_success, format_search_results
 
 1. Environment variables (highest)
 2. `.claude/settings.local.json` (personal, gitignored)
-3. `.claude/settings.json` (team defaults)
-4. Built-in defaults (lowest)
+3. Built-in defaults (lowest)
 
 ### Environment Variables
 
@@ -399,16 +402,16 @@ job = poll_job_status(
 
 ```bash
 # Install dependencies
-pip install -r .claude/skills/shared/scripts/lib/requirements.txt
+pip install -r requirements.txt
 
 # Run all unit tests
-pytest .claude/skills/*/tests/ -v --ignore=.claude/skills/*/tests/live_integration
+pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration
 
 # Run tests for specific skill
-pytest .claude/skills/splunk-search/tests/ -v
+pytest skills/splunk-search/tests/ -v
 
 # Run shared library tests only
-pytest .claude/skills/shared/tests/ -v
+pytest skills/shared/tests/ -v
 ```
 
 ### Live Integration Tests
@@ -428,14 +431,14 @@ export SPLUNK_TEST_PASSWORD="your-password"
 
 ```bash
 # Run all integration tests for a skill
-pytest .claude/skills/splunk-search/tests/live_integration/ -v
+pytest skills/splunk-search/tests/live_integration/ -v
 
 # Run with specific markers
 pytest -m "live" -v                    # All live tests
 pytest -m "not destructive" -v         # Skip tests that modify data
 
 # Run single test class
-pytest .claude/skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
+pytest skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
 ```
 
 ### Docker-Based Testing
@@ -458,7 +461,7 @@ export SPLUNK_TEST_URL="https://localhost:8089"
 export SPLUNK_TEST_USERNAME="admin"
 export SPLUNK_TEST_PASSWORD="Admin123!"
 
-pytest .claude/skills/splunk-metadata/tests/live_integration/ -v
+pytest skills/splunk-metadata/tests/live_integration/ -v
 ```
 
 ### Test Markers
@@ -510,16 +513,14 @@ Some tests are marked `xfail` due to known limitations:
 #!/usr/bin/env python3
 """Brief description."""
 
-import sys
 import argparse
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
-
-from config_manager import get_splunk_client
-from error_handler import handle_errors
-from validators import validate_spl
-from formatters import print_success
+from splunk_assistant_skills_lib import (
+    get_splunk_client,
+    handle_errors,
+    print_success,
+    validate_spl,
+)
 
 @handle_errors
 def main():
@@ -553,7 +554,7 @@ def test_script_function():
 ### Required Files
 
 ```
-.claude/skills/new-skill/
+skills/new-skill/
 ├── SKILL.md           # Skill documentation
 ├── scripts/           # Python scripts
 │   └── ...
