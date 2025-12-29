@@ -232,10 +232,8 @@ class TestRunSavedsearch:
             [
                 "run_savedsearch.py",
                 "Daily Error Report",
-                "--earliest",
-                "-7d",
-                "--latest",
-                "now",
+                "--earliest=-7d",
+                "--latest=now",
             ],
         ):
             main()
