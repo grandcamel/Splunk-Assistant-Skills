@@ -1,0 +1,5 @@
+{
+  "name": "splunk-job",
+  "description": "Search job lifecycle orchestration - create, monitor, cancel, finalize",
+  "version": "1.0.0"
+}

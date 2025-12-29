@@ -1,0 +1,5 @@
+{
+  "name": "splunk-savedsearch",
+  "description": "Reports, scheduled searches, and saved search management",
+  "version": "1.0.0"
+}

@@ -1,0 +1,5 @@
+{
+  "name": "splunk-export",
+  "description": "High-volume streaming data extraction and ETL",
+  "version": "1.0.0"
+}

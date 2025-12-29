@@ -1,0 +1,5 @@
+{
+  "name": "splunk-assistant",
+  "description": "Hub router with 3-level progressive disclosure for Splunk operations",
+  "version": "1.0.0"
+}

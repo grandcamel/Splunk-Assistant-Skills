@@ -1,0 +1,5 @@
+{
+  "name": "splunk-metadata",
+  "description": "Index, source, sourcetype, and host discovery",
+  "version": "1.0.0"
+}

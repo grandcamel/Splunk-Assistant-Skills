@@ -1,0 +1,5 @@
+{
+  "name": "splunk-alert",
+  "description": "Alert triggering, monitoring, and alert actions",
+  "version": "1.0.0"
+}

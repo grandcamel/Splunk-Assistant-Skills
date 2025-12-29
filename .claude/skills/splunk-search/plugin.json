@@ -1,0 +1,5 @@
+{
+  "name": "splunk-search",
+  "description": "SPL query execution with oneshot, normal, and blocking modes",
+  "version": "1.0.0"
+}

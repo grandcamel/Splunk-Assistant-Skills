@@ -1,0 +1,183 @@
+{
+  "name": "splunk-assistant-skills",
+  "owner": {
+    "name": "grandcamel",
+    "email": "jasonkrueger@gmail.com"
+  },
+  "metadata": {
+    "description": "Natural language Splunk automation via Claude Code - search, job management, and administration",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "splunk-assistant",
+      "source": "./.claude/skills/splunk-assistant",
+      "description": "Hub router with 3-level progressive disclosure for Splunk operations",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "homepage": "https://github.com/grandcamel/Splunk-Assistant-Skills",
+      "repository": "https://github.com/grandcamel/Splunk-Assistant-Skills",
+      "license": "MIT",
+      "keywords": ["splunk", "search", "siem", "automation", "natural-language"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-search",
+      "source": "./.claude/skills/splunk-search",
+      "description": "SPL query execution with oneshot, normal, and blocking modes",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "search", "spl", "query"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-job",
+      "source": "./.claude/skills/splunk-job",
+      "description": "Search job lifecycle orchestration - create, monitor, cancel, finalize",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "jobs", "async", "polling"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-export",
+      "source": "./.claude/skills/splunk-export",
+      "description": "High-volume streaming data extraction and ETL",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "export", "etl", "streaming"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-metadata",
+      "source": "./.claude/skills/splunk-metadata",
+      "description": "Index, source, sourcetype, and host discovery",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "metadata", "indexes", "sourcetypes"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-lookup",
+      "source": "./.claude/skills/splunk-lookup",
+      "description": "CSV and lookup file management",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "lookup", "csv", "enrichment"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-tag",
+      "source": "./.claude/skills/splunk-tag",
+      "description": "Knowledge object tagging and field aliases",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "tags", "knowledge-objects"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-savedsearch",
+      "source": "./.claude/skills/splunk-savedsearch",
+      "description": "Reports, scheduled searches, and saved search management",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "saved-searches", "reports", "scheduled"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-rest-admin",
+      "source": "./.claude/skills/splunk-rest-admin",
+      "description": "REST API configuration access and server administration",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "rest", "admin", "configuration"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-security",
+      "source": "./.claude/skills/splunk-security",
+      "description": "Token management, RBAC, users, and roles",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "security", "rbac", "tokens", "users"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-metrics",
+      "source": "./.claude/skills/splunk-metrics",
+      "description": "Real-time metrics with mstats and mcatalog",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "metrics", "mstats", "monitoring"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-alert",
+      "source": "./.claude/skills/splunk-alert",
+      "description": "Alert triggering, monitoring, and alert actions",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "alerts", "monitoring", "notifications"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-app",
+      "source": "./.claude/skills/splunk-app",
+      "description": "Application management, installation, and configuration",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "apps", "management"],
+      "category": "devops"
+    },
+    {
+      "name": "splunk-kvstore",
+      "source": "./.claude/skills/splunk-kvstore",
+      "description": "App Key Value Store CRUD operations and collections",
+      "version": "1.0.0",
+      "author": {
+        "name": "grandcamel"
+      },
+      "license": "MIT",
+      "keywords": ["splunk", "kvstore", "nosql", "collections"],
+      "category": "devops"
+    }
+  ]
+}

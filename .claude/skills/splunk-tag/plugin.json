@@ -1,0 +1,5 @@
+{
+  "name": "splunk-tag",
+  "description": "Knowledge object tagging and field aliases",
+  "version": "1.0.0"
+}
