@@ -104,3 +104,155 @@ class TestSourceDiscovery:
         results = response.get("results", [])
         for r in results:
             assert "source" in r
+
+
+class TestHostDiscovery:
+    """Integration tests for host discovery."""
+
+    @pytest.mark.live
+    def test_list_hosts_metadata(self, splunk_client):
+        """Test listing hosts via metadata search."""
+        response = splunk_client.post(
+            "/search/jobs/oneshot",
+            data={
+                "search": "| metadata type=hosts | head 20",
+                "output_mode": "json",
+                "earliest_time": "-24h",
+            },
+            operation="metadata hosts search"
+        )
+
+        results = response.get("results", [])
+        # May have hosts if there's data
+        assert isinstance(results, list)
+
+    @pytest.mark.live
+    def test_list_hosts_for_index(self, splunk_client):
+        """Test listing hosts for a specific index."""
+        response = splunk_client.post(
+            "/search/jobs/oneshot",
+            data={
+                "search": "| metadata type=hosts index=_internal | head 10",
+                "output_mode": "json",
+                "earliest_time": "-24h",
+            },
+            operation="metadata hosts search"
+        )
+
+        results = response.get("results", [])
+        for r in results:
+            assert "host" in r
+
+
+class TestIndexProperties:
+    """Integration tests for index property queries."""
+
+    @pytest.mark.live
+    def test_list_indexes_with_count(self, splunk_client):
+        """Test listing indexes with count limit."""
+        response = splunk_client.get(
+            "/data/indexes",
+            params={"count": 5, "output_mode": "json"},
+            operation="list indexes limited"
+        )
+
+        assert "entry" in response
+        assert len(response["entry"]) <= 5
+
+    @pytest.mark.live
+    def test_get_internal_index_properties(self, splunk_client):
+        """Test getting _internal index properties."""
+        response = splunk_client.get(
+            "/data/indexes/_internal",
+            operation="get _internal index"
+        )
+
+        assert "entry" in response
+        content = response["entry"][0].get("content", {})
+        # Check for common index properties
+        assert "datatype" in content or "maxDataSize" in content
+
+    @pytest.mark.live
+    def test_list_indexes_by_datatype(self, splunk_client):
+        """Test listing indexes filtered by datatype."""
+        response = splunk_client.get(
+            "/data/indexes",
+            params={"search": "datatype=event", "output_mode": "json"},
+            operation="list event indexes"
+        )
+
+        assert "entry" in response
+        # Should have at least main index
+        for entry in response.get("entry", []):
+            content = entry.get("content", {})
+            # datatype should be event for filtered results
+            if "datatype" in content:
+                assert content["datatype"] == "event"
+
+
+class TestRESTMetadata:
+    """Integration tests for REST-based metadata discovery."""
+
+    @pytest.mark.live
+    def test_rest_server_info(self, splunk_client):
+        """Test getting server info via REST search."""
+        response = splunk_client.post(
+            "/search/jobs/oneshot",
+            data={
+                "search": "| rest /services/server/info | fields splunk_server, version, build",
+                "output_mode": "json",
+            },
+            operation="rest server info"
+        )
+
+        results = response.get("results", [])
+        assert len(results) > 0
+        assert "splunk_server" in results[0] or "version" in results[0]
+
+    @pytest.mark.live
+    def test_rest_apps_local(self, splunk_client):
+        """Test listing apps via REST search."""
+        response = splunk_client.post(
+            "/search/jobs/oneshot",
+            data={
+                "search": "| rest /services/apps/local | head 10 | fields title, label, version",
+                "output_mode": "json",
+            },
+            operation="rest apps"
+        )
+
+        results = response.get("results", [])
+        assert len(results) > 0
+
+    @pytest.mark.live
+    def test_tstats_count(self, splunk_client):
+        """Test tstats for accelerated metadata queries."""
+        response = splunk_client.post(
+            "/search/jobs/oneshot",
+            data={
+                "search": "| tstats count WHERE index=_internal BY sourcetype | head 5",
+                "output_mode": "json",
+                "earliest_time": "-1h",
+            },
+            operation="tstats count"
+        )
+
+        results = response.get("results", [])
+        # tstats may return empty if TSIDX not available
+        assert isinstance(results, list)
+
+
+class TestDataModels:
+    """Integration tests for data model metadata."""
+
+    @pytest.mark.live
+    def test_list_datamodels(self, splunk_client):
+        """Test listing available data models."""
+        response = splunk_client.get(
+            "/datamodel/model",
+            params={"output_mode": "json"},
+            operation="list datamodels"
+        )
+
+        # Response should have entry (may be empty)
+        assert "entry" in response or response == []

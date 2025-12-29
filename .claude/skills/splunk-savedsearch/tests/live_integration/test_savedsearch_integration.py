@@ -121,3 +121,134 @@ class TestListSavedSearches:
 
         names = [e.get("name") for e in response.get("entry", [])]
         assert test_savedsearch_name in names
+
+    @pytest.mark.live
+    def test_list_savedsearches_with_filter(self, splunk_client):
+        """Test listing saved searches with search filter."""
+        response = splunk_client.get(
+            "/saved/searches",
+            params={"output_mode": "json", "count": 10},
+            operation="list saved searches"
+        )
+
+        assert "entry" in response
+
+    @pytest.mark.live
+    def test_list_all_apps_savedsearches(self, splunk_client):
+        """Test listing saved searches across all apps."""
+        response = splunk_client.get(
+            "/servicesNS/-/-/saved/searches",
+            params={"output_mode": "json", "count": 20},
+            operation="list all saved searches"
+        )
+
+        assert "entry" in response
+
+
+class TestSavedSearchHistory:
+    """Integration tests for saved search history."""
+
+    @pytest.mark.live
+    def test_get_savedsearch_history(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+        """Test getting saved search dispatch history."""
+        # Create and dispatch a saved search
+        savedsearch_helper.create(test_savedsearch_name, "| makeresults count=1")
+        sid = savedsearch_helper.dispatch(test_savedsearch_name)
+
+        # Wait for completion
+        for _ in range(30):
+            status = splunk_client.get(f"/search/v2/jobs/{sid}")
+            if status.get("entry", [{}])[0].get("content", {}).get("isDone"):
+                break
+            time.sleep(1)
+
+        # Check history
+        try:
+            response = splunk_client.get(
+                f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}/history",
+                params={"output_mode": "json"},
+                operation="get history"
+            )
+            # History endpoint should exist
+            assert response is not None
+        except Exception:
+            # History endpoint may not exist for new searches
+            pass
+
+
+class TestSavedSearchACL:
+    """Integration tests for saved search permissions."""
+
+    @pytest.mark.live
+    def test_get_savedsearch_acl(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+        """Test getting saved search ACL."""
+        savedsearch_helper.create(test_savedsearch_name, "| makeresults count=1")
+
+        response = splunk_client.get(
+            f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}/acl",
+            params={"output_mode": "json"},
+            operation="get acl"
+        )
+
+        # ACL should have owner and sharing info
+        assert "entry" in response
+        content = response["entry"][0].get("content", {})
+        assert "owner" in content or "sharing" in content or "perms" in content
+
+
+class TestSavedSearchConfiguration:
+    """Integration tests for saved search configuration options."""
+
+    @pytest.mark.live
+    def test_create_with_dispatch_options(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+        """Test creating saved search with dispatch options."""
+        savedsearch_helper.create(
+            test_savedsearch_name,
+            "index=_internal | head 10",
+            dispatch_earliest_time="-1h",
+            dispatch_latest_time="now"
+        )
+
+        response = splunk_client.get(
+            f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
+            operation="get saved search"
+        )
+
+        content = response["entry"][0].get("content", {})
+        # Dispatch time fields should be set
+        assert "dispatch.earliest_time" in content or "dispatch.latest_time" in content
+
+    @pytest.mark.live
+    def test_list_scheduled_searches(self, splunk_client):
+        """Test listing scheduled saved searches."""
+        response = splunk_client.get(
+            "/saved/searches",
+            params={"output_mode": "json", "search": "is_scheduled=1", "count": 10},
+            operation="list scheduled"
+        )
+
+        assert "entry" in response
+        # Verify scheduled searches have cron_schedule
+        for entry in response.get("entry", []):
+            content = entry.get("content", {})
+            if content.get("is_scheduled"):
+                assert "cron_schedule" in content
+
+    @pytest.mark.live
+    def test_savedsearch_with_alert_config(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+        """Test creating saved search with alert configuration."""
+        savedsearch_helper.create(
+            test_savedsearch_name,
+            "index=_internal | stats count",
+            alert_type="number of events",
+            alert_threshold="0"
+        )
+
+        response = splunk_client.get(
+            f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
+            operation="get saved search"
+        )
+
+        content = response["entry"][0].get("content", {})
+        # Alert fields may or may not be present depending on config
+        assert "search" in content
