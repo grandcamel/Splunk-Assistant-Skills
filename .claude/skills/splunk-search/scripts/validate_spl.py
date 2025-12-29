@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Validate SPL syntax before execution."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(
@@ -10,12 +10,12 @@ sys.path.insert(
 )
 
 from error_handler import handle_errors
-from formatters import print_success, print_warning, format_json
+from formatters import format_json, print_success, print_warning
 from spl_helper import (
-    validate_spl_syntax,
-    parse_spl_commands,
     estimate_search_complexity,
     optimize_spl,
+    parse_spl_commands,
+    validate_spl_syntax,
 )
 
 

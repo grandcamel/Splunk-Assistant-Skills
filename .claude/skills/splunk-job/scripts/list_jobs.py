@@ -10,8 +10,8 @@ Examples:
     python list_jobs.py --output json
 """
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 # Add shared lib to path
@@ -21,7 +21,7 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
-from formatters import format_table, format_json
+from formatters import format_json, format_table
 from job_poller import list_jobs
 
 

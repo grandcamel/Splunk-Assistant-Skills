@@ -45,10 +45,16 @@ jobs:
           for skill_dir in .claude/skills/*/tests/; do
             if [ -d "$skill_dir" ]; then
               skill_name=$(basename $(dirname $skill_dir))
-              echo "Testing $skill_name..."
-              python -m pytest "$skill_dir" -v \
-                --ignore="${skill_dir}live_integration" \
-                || exit 1
+              # Check if there are any test files (not just live_integration)
+              test_files=$(find "$skill_dir" -maxdepth 1 -name "test_*.py" -o -name "*_test.py" 2>/dev/null | head -1)
+              if [ -n "$test_files" ]; then
+                echo "Testing $skill_name..."
+                python -m pytest "$skill_dir" -v \
+                  --ignore="${skill_dir}live_integration" \
+                  || exit 1
+              else
+                echo "Skipping $skill_name (no unit tests)"
+              fi
             fi
           done
 
@@ -76,10 +82,16 @@ jobs:
           for skill_dir in .claude/skills/*/tests/; do
             if [ -d "$skill_dir" ]; then
               skill_name=$(basename $(dirname $skill_dir))
-              echo "Testing $skill_name..."
-              python -m pytest "$skill_dir" -v \
-                --ignore="${skill_dir}live_integration" \
-                || exit 1
+              # Check if there are any test files (not just live_integration)
+              test_files=$(find "$skill_dir" -maxdepth 1 -name "test_*.py" -o -name "*_test.py" 2>/dev/null | head -1)
+              if [ -n "$test_files" ]; then
+                echo "Testing $skill_name..."
+                python -m pytest "$skill_dir" -v \
+                  --ignore="${skill_dir}live_integration" \
+                  || exit 1
+              else
+                echo "Skipping $skill_name (no unit tests)"
+              fi
             fi
           done
 

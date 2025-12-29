@@ -9,8 +9,8 @@ Examples:
     python get_job_status.py 1703779200.12345 --output json
 """
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 # Add shared lib to path
@@ -20,9 +20,9 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
-from validators import validate_sid
 from formatters import format_job_status, format_json
 from job_poller import get_dispatch_state
+from validators import validate_sid
 
 
 @handle_errors

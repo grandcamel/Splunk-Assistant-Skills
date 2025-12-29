@@ -10,8 +10,8 @@ Examples:
     python get_results.py 1703779200.12345 --fields host,status
 """
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(
@@ -20,8 +20,8 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
+from formatters import export_csv, format_json, format_search_results, print_success
 from validators import validate_sid
-from formatters import format_search_results, format_json, export_csv, print_success
 
 
 @handle_errors

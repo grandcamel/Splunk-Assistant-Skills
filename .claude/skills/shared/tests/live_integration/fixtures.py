@@ -14,11 +14,12 @@ Usage in tests:
         assert len(results) > 0
 """
 
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
 from typing import Generator, Optional
+
 import pytest
 
 # Add shared lib to path
@@ -26,8 +27,8 @@ lib_path = Path(__file__).parent.parent.parent / "scripts" / "lib"
 sys.path.insert(0, str(lib_path))
 
 from .splunk_container import (
-    SplunkContainer,
     ExternalSplunkConnection,
+    SplunkContainer,
     get_splunk_connection,
 )
 
@@ -211,6 +212,7 @@ def fresh_test_data(splunk_connection, test_index: str) -> dict:
         dict: Information about generated test data
     """
     import uuid
+
     from .test_utils import generate_test_events
 
     test_marker = str(uuid.uuid4())[:8]

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Delete a record from a KV Store collection."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Query records from a KV Store collection."""
 
-import sys
 import argparse
 import json
+import sys
 from pathlib import Path
 
 sys.path.insert(
@@ -12,7 +12,7 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
-from formatters import format_table, format_json, print_success
+from formatters import format_json, format_table, print_success
 
 
 @handle_errors

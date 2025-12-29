@@ -6,9 +6,9 @@ This conftest.py is automatically loaded by pytest for all live_integration test
 It re-exports the fixtures and configures test markers.
 """
 
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
 
 import pytest

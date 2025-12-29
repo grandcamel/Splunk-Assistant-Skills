@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Upload a lookup file to Splunk."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(
@@ -11,7 +11,7 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
-from formatters import print_success, print_error
+from formatters import print_error, print_success
 
 
 @handle_errors

@@ -2,18 +2,19 @@
 """Unit tests for time_utils module."""
 
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "lib"))
 
 from time_utils import (
-    parse_splunk_time,
     format_splunk_time,
-    validate_time_range,
     get_relative_time,
     get_time_range_presets,
+    parse_splunk_time,
+    validate_time_range,
 )
 
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Get current authenticated user context."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(

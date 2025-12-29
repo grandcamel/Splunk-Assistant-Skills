@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Get preview results from a running Splunk search job."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(
@@ -11,8 +11,8 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
+from formatters import format_json, format_search_results
 from validators import validate_sid
-from formatters import format_search_results, format_json
 
 
 @handle_errors

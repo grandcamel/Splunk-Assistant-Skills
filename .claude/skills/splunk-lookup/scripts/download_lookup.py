@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Download a lookup file from Splunk."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(

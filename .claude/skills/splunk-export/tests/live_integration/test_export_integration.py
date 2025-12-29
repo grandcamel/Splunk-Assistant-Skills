@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Live Integration Tests for splunk-export skill."""
 
-import pytest
 import os
+
+import pytest
 
 
 class TestExportEndpoint:

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Install a Splunk app from file or Splunkbase."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Live Integration Tests for splunk-savedsearch skill."""
 
-import pytest
 import time
+
+import pytest
 
 
 class TestSavedSearchCRUD:

@@ -5,9 +5,9 @@ Pytest configuration for splunk-search live integration tests.
 Imports fixtures from the shared live_integration module.
 """
 
+import logging
 import os
 import sys
-import logging
 from pathlib import Path
 from typing import Generator
 
@@ -35,8 +35,8 @@ for p in [str(lib_path), str(tests_path), str(shared_path / "tests")]:
 
 # Now import from the shared modules
 from splunk_container import (
-    SplunkContainer,
     ExternalSplunkConnection,
+    SplunkContainer,
     get_splunk_connection,
 )
 from test_utils import generate_test_events, wait_for_indexing

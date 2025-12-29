@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Get details of a saved search."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(

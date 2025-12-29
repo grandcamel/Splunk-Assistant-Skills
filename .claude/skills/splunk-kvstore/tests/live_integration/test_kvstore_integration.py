@@ -5,8 +5,9 @@ Live Integration Tests for splunk-kvstore skill.
 Tests KV Store collection and record operations against a real Splunk instance.
 """
 
-import pytest
 import uuid
+
+import pytest
 
 
 class TestKVStoreCollections:

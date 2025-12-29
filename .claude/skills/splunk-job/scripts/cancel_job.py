@@ -8,8 +8,8 @@ Examples:
     python cancel_job.py 1703779200.12345
 """
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 # Add shared lib to path
@@ -19,9 +19,9 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
-from validators import validate_sid
 from formatters import print_success
 from job_poller import cancel_job
+from validators import validate_sid
 
 
 @handle_errors

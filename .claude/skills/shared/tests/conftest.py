@@ -6,7 +6,8 @@ Shared pytest fixtures for Splunk Assistant Skills tests.
 import os
 import sys
 from pathlib import Path
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
+
 import pytest
 
 # Add shared lib to path

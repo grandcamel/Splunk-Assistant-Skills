@@ -6,6 +6,7 @@ Tests search job lifecycle operations against a real Splunk instance.
 """
 
 import time
+
 import pytest
 
 # Note: Fixtures (splunk_client, test_index, test_data, job_helper, etc.) are provided by conftest.py

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Create a KV Store collection."""
 
-import sys
 import argparse
 import json
+import sys
 from pathlib import Path
 
 sys.path.insert(

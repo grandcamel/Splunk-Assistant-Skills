@@ -18,21 +18,21 @@ Usage:
     pytest -m "not docker_required"
 """
 
+from .fixtures import (
+    splunk_client,
+    splunk_connection,
+    test_data,
+    test_index,
+)
 from .splunk_container import (
-    SplunkContainer,
     ExternalSplunkConnection,
+    SplunkContainer,
     get_splunk_connection,
 )
-from .fixtures import (
-    splunk_connection,
-    splunk_client,
-    test_index,
-    test_data,
-)
 from .test_utils import (
+    cleanup_test_data,
     generate_test_events,
     wait_for_indexing,
-    cleanup_test_data,
 )
 
 __all__ = [

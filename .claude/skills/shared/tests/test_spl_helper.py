@@ -3,19 +3,20 @@
 
 import sys
 from pathlib import Path
+
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "lib"))
 
 from spl_helper import (
-    build_search,
-    add_time_bounds,
     add_field_extraction,
     add_head_limit,
-    validate_spl_syntax,
-    parse_spl_commands,
+    add_time_bounds,
+    build_search,
     estimate_search_complexity,
     optimize_spl,
+    parse_spl_commands,
+    validate_spl_syntax,
 )
 
 

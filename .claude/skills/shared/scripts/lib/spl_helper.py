@@ -16,7 +16,6 @@ Features:
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
-
 # Common SPL commands by category
 GENERATING_COMMANDS = {
     "search",

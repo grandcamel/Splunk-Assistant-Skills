@@ -3,20 +3,21 @@
 
 import sys
 from pathlib import Path
+
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "lib"))
 
 from validators import (
+    ValidationError,
+    validate_app_name,
+    validate_index_name,
+    validate_output_mode,
+    validate_port,
     validate_sid,
     validate_spl,
     validate_time_modifier,
-    validate_index_name,
-    validate_app_name,
-    validate_port,
     validate_url,
-    validate_output_mode,
-    ValidationError,
 )
 
 

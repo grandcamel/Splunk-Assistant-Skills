@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Pytest configuration for splunk-export live integration tests."""
 
+import logging
 import os
 import sys
-import logging
 import tempfile
 from pathlib import Path
 
@@ -24,8 +24,8 @@ if str(lib_path) not in sys.path:
 # Import splunk_container module directly
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
 from splunk_container import (
-    SplunkContainer,
     ExternalSplunkConnection,
+    SplunkContainer,
     get_splunk_connection,
 )
 from test_utils import generate_test_events, wait_for_indexing

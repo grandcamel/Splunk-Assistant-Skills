@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """List sourcetypes in Splunk."""
 
-import sys
 import argparse
+import sys
 from pathlib import Path
 
 sys.path.insert(

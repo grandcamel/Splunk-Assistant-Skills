@@ -10,14 +10,14 @@ Provides a testcontainers-based Splunk Enterprise container with:
 - Configurable Splunk version
 """
 
+import logging
 import os
 import time
-import logging
 from typing import Optional
 
+import requests
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
-import requests
 
 logger = logging.getLogger(__name__)
 

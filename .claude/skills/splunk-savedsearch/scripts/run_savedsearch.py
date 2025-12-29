@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Run a saved search on-demand (dispatch)."""
 
-import sys
 import argparse
+import sys
 import time
 from pathlib import Path
 
@@ -12,7 +12,7 @@ sys.path.insert(
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
-from formatters import print_success, print_info, format_json
+from formatters import format_json, print_info, print_success
 
 
 @handle_errors
