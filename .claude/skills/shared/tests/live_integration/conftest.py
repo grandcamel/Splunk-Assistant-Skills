@@ -24,34 +24,8 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Import and re-export all fixtures
-from .fixtures import (
-    splunk_connection,
-    splunk_client,
-    splunk_info,
-    test_index_name,
-    test_index,
-    test_data,
-    fresh_test_data,
-    module_splunk_connection,
-    search_helper,
-    job_helper,
-    skip_if_no_docker,
-    skip_if_not_external,
-)
-
-# Make fixtures available to all tests
-__all__ = [
-    "splunk_connection",
-    "splunk_client",
-    "splunk_info",
-    "test_index_name",
-    "test_index",
-    "test_data",
-    "fresh_test_data",
-    "module_splunk_connection",
-    "search_helper",
-    "job_helper",
-]
+# Import fixtures - pytest discovers these automatically via conftest.py
+from .fixtures import *
 
 
 def pytest_configure(config):

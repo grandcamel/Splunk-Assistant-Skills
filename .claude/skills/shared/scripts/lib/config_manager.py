@@ -26,7 +26,10 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from .splunk_client import SplunkClient
+try:
+    from .splunk_client import SplunkClient
+except ImportError:
+    from splunk_client import SplunkClient
 
 
 class ConfigManager:
@@ -304,7 +307,10 @@ def get_splunk_client(profile: Optional[str] = None) -> SplunkClient:
     Raises:
         ValidationError: If configuration is invalid
     """
-    from .error_handler import ValidationError
+    try:
+        from .error_handler import ValidationError
+    except ImportError:
+        from error_handler import ValidationError
 
     manager = get_config_manager()
 

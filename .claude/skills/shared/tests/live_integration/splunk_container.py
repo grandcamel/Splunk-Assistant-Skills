@@ -336,7 +336,7 @@ class ExternalSplunkConnection:
         kwargs = {
             "base_url": f"https://{self.host}",
             "port": self.port,
-            "verify_ssl": True,
+            "verify_ssl": False,  # Default to False for testing with self-signed certs
         }
 
         if self.token:

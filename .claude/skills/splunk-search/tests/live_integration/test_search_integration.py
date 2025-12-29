@@ -12,21 +12,9 @@ Usage:
     SPLUNK_TEST_URL=https://splunk:8089 SPLUNK_TEST_TOKEN=xxx pytest ... -v
 """
 
-import sys
-from pathlib import Path
 import pytest
 
-# Add test infrastructure to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "shared" / "tests"))
-
-from live_integration.fixtures import (
-    splunk_connection,
-    splunk_client,
-    test_index,
-    test_data,
-    search_helper,
-    job_helper,
-)
+# Note: Fixtures (splunk_client, test_index, test_data, etc.) are provided by conftest.py
 
 
 class TestSearchOneshot:
@@ -179,10 +167,17 @@ class TestSearchBlocking:
             operation="blocking search",
         )
 
-        # Response should contain completed job
-        assert "entry" in response, "Expected entry in blocking response"
-        entry = response["entry"][0]
-        content = entry.get("content", {})
+        # v2/jobs with blocking returns {"sid": "..."} - we then fetch the job status
+        sid = response.get("sid")
+        if not sid and "entry" in response:
+            sid = response["entry"][0].get("name")
+
+        assert sid is not None, "Expected SID from blocking search"
+
+        # Verify job is complete
+        status = splunk_client.get(f"/search/v2/jobs/{sid}")
+        assert "entry" in status
+        content = status["entry"][0].get("content", {})
         assert content.get("isDone") is True
 
     @pytest.mark.live
@@ -198,8 +193,9 @@ class TestSearchBlocking:
             operation="blocking search",
         )
 
-        sid = None
-        if "entry" in response:
+        # v2/jobs with blocking mode returns {"sid": "..."} directly
+        sid = response.get("sid")
+        if not sid and "entry" in response:
             sid = response["entry"][0].get("name")
 
         assert sid is not None, "Expected SID from blocking search"

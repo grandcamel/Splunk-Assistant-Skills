@@ -5,20 +5,10 @@ Live Integration Tests for splunk-job skill.
 Tests search job lifecycle operations against a real Splunk instance.
 """
 
-import sys
 import time
-from pathlib import Path
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "shared" / "tests"))
-
-from live_integration.fixtures import (
-    splunk_connection,
-    splunk_client,
-    test_index,
-    test_data,
-    job_helper,
-)
+# Note: Fixtures (splunk_client, test_index, test_data, job_helper, etc.) are provided by conftest.py
 
 
 class TestJobCreation:
@@ -348,7 +338,10 @@ class TestJobDeletion:
             operation="create blocking job",
         )
 
-        sid = response["entry"][0].get("name")
+        # v2/jobs with blocking returns {"sid": "..."} directly
+        sid = response.get("sid")
+        if not sid and "entry" in response:
+            sid = response["entry"][0].get("name")
 
         # Delete it
         splunk_client.delete(

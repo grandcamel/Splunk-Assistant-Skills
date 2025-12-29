@@ -149,7 +149,10 @@ def poll_job_status(
         TimeoutError: If job doesn't complete within timeout
         JobFailedError: If job fails
     """
-    from .error_handler import JobFailedError
+    try:
+        from .error_handler import JobFailedError
+    except ImportError:
+        from error_handler import JobFailedError
 
     start_time = time.time()
     current_interval = poll_interval

@@ -143,7 +143,10 @@ class SplunkClient:
         Raises:
             SplunkError: On API errors after retries exhausted
         """
-        from .error_handler import handle_splunk_error
+        try:
+            from .error_handler import handle_splunk_error
+        except ImportError:
+            from error_handler import handle_splunk_error
 
         url = self._build_url(endpoint)
         request_timeout = timeout or self.timeout
@@ -342,7 +345,10 @@ class SplunkClient:
         Returns:
             Parsed JSON response
         """
-        from .error_handler import handle_splunk_error
+        try:
+            from .error_handler import handle_splunk_error
+        except ImportError:
+            from error_handler import handle_splunk_error
 
         url = self._build_url(endpoint)
         request_timeout = timeout or self.timeout

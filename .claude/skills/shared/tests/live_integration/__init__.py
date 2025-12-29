@@ -18,9 +18,9 @@ Usage:
     pytest -m "not docker_required"
 """
 
-from .splunk_container import SplunkContainer
+from .splunk_container import SplunkContainer, ExternalSplunkConnection, get_splunk_connection
 from .fixtures import (
-    splunk_container,
+    splunk_connection,
     splunk_client,
     test_index,
     test_data,
@@ -33,7 +33,9 @@ from .test_utils import (
 
 __all__ = [
     'SplunkContainer',
-    'splunk_container',
+    'ExternalSplunkConnection',
+    'get_splunk_connection',
+    'splunk_connection',
     'splunk_client',
     'test_index',
     'test_data',
