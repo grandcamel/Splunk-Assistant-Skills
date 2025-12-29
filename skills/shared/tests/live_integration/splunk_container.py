@@ -175,15 +175,7 @@ class SplunkContainer(DockerContainer):
         Returns:
             SplunkClient: Client configured for this container
         """
-        import sys
-        from pathlib import Path
-
-        # Add shared lib to path
-        lib_path = Path(__file__).parent.parent.parent / "scripts" / "lib"
-        if str(lib_path) not in sys.path:
-            sys.path.insert(0, str(lib_path))
-
-        from splunk_client import SplunkClient
+        from splunk_assistant_skills_lib import SplunkClient
 
         # Parse host and port from management URL
         url = self.get_management_url()
@@ -324,14 +316,7 @@ class ExternalSplunkConnection:
 
     def get_client(self):
         """Get a configured SplunkClient instance."""
-        import sys
-        from pathlib import Path
-
-        lib_path = Path(__file__).parent.parent.parent / "scripts" / "lib"
-        if str(lib_path) not in sys.path:
-            sys.path.insert(0, str(lib_path))
-
-        from splunk_client import SplunkClient
+        from splunk_assistant_skills_lib import SplunkClient
 
         kwargs = {
             "base_url": f"https://{self.host}",
