@@ -10,10 +10,7 @@ class TestAppOperations:
     @pytest.mark.live
     def test_list_apps(self, splunk_client):
         """Test listing installed apps."""
-        response = splunk_client.get(
-            "/services/apps/local",
-            operation="list apps"
-        )
+        response = splunk_client.get("/services/apps/local", operation="list apps")
 
         assert "entry" in response
         # Should have at least the search app
@@ -23,10 +20,7 @@ class TestAppOperations:
     @pytest.mark.live
     def test_get_app_details(self, splunk_client):
         """Test getting app details."""
-        response = splunk_client.get(
-            "/services/apps/local/search",
-            operation="get app"
-        )
+        response = splunk_client.get("/services/apps/local/search", operation="get app")
 
         assert "entry" in response
         content = response["entry"][0].get("content", {})
@@ -37,9 +31,7 @@ class TestAppOperations:
     def test_list_apps_with_details(self, splunk_client):
         """Test listing apps with full details."""
         response = splunk_client.get(
-            "/services/apps/local",
-            params={"count": 50},
-            operation="list apps"
+            "/services/apps/local", params={"count": 50}, operation="list apps"
         )
 
         assert "entry" in response
@@ -57,8 +49,7 @@ class TestAppMetadata:
     def test_get_app_templates(self, splunk_client):
         """Test getting app templates."""
         response = splunk_client.get(
-            "/services/apps/apptemplates",
-            operation="list templates"
+            "/services/apps/apptemplates", operation="list templates"
         )
 
         # May or may not have templates
@@ -69,8 +60,7 @@ class TestAppMetadata:
         """Test getting deployment server info."""
         try:
             response = splunk_client.get(
-                "/services/deployment/server",
-                operation="get deployment info"
+                "/services/deployment/server", operation="get deployment info"
             )
             assert "entry" in response or response == {}
         except Exception:
@@ -85,8 +75,7 @@ class TestAppConfiguration:
     def test_list_app_confs(self, splunk_client):
         """Test listing configuration files for an app."""
         response = splunk_client.get(
-            "/servicesNS/nobody/search/configs/conf-props",
-            operation="list props conf"
+            "/servicesNS/nobody/search/configs/conf-props", operation="list props conf"
         )
 
         assert "entry" in response or response == {}
@@ -95,8 +84,7 @@ class TestAppConfiguration:
     def test_list_app_views(self, splunk_client):
         """Test listing views for an app."""
         response = splunk_client.get(
-            "/servicesNS/nobody/search/data/ui/views",
-            operation="list views"
+            "/servicesNS/nobody/search/data/ui/views", operation="list views"
         )
 
         assert "entry" in response
@@ -105,8 +93,7 @@ class TestAppConfiguration:
     def test_list_app_navs(self, splunk_client):
         """Test listing navigation for an app."""
         response = splunk_client.get(
-            "/servicesNS/nobody/search/data/ui/nav",
-            operation="list navs"
+            "/servicesNS/nobody/search/data/ui/nav", operation="list navs"
         )
 
         assert "entry" in response
@@ -116,8 +103,7 @@ class TestAppConfiguration:
         """Test listing panels for an app."""
         try:
             response = splunk_client.get(
-                "/servicesNS/nobody/search/data/ui/panels",
-                operation="list panels"
+                "/servicesNS/nobody/search/data/ui/panels", operation="list panels"
             )
             assert "entry" in response or response is not None
         except Exception:
@@ -132,8 +118,7 @@ class TestAppProperties:
     def test_search_app_visible(self, splunk_client):
         """Test that search app is visible."""
         response = splunk_client.get(
-            "/services/apps/local/search",
-            operation="get search app"
+            "/services/apps/local/search", operation="get search app"
         )
 
         content = response["entry"][0].get("content", {})
@@ -143,8 +128,7 @@ class TestAppProperties:
     def test_search_app_not_disabled(self, splunk_client):
         """Test that search app is not disabled."""
         response = splunk_client.get(
-            "/services/apps/local/search",
-            operation="get search app"
+            "/services/apps/local/search", operation="get search app"
         )
 
         content = response["entry"][0].get("content", {})
@@ -155,8 +139,7 @@ class TestAppProperties:
     def test_app_has_author(self, splunk_client):
         """Test that apps have author information."""
         response = splunk_client.get(
-            "/services/apps/local/search",
-            operation="get search app"
+            "/services/apps/local/search", operation="get search app"
         )
 
         content = response["entry"][0].get("content", {})
@@ -168,7 +151,7 @@ class TestAppProperties:
         response = splunk_client.get(
             "/services/apps/local",
             params={"search": "disabled=false"},
-            operation="list enabled apps"
+            operation="list enabled apps",
         )
 
         assert "entry" in response
@@ -182,8 +165,7 @@ class TestAppSetup:
         """Test checking app setup status."""
         try:
             response = splunk_client.get(
-                "/services/apps/local/search/setup",
-                operation="get app setup"
+                "/services/apps/local/search/setup", operation="get app setup"
             )
             assert response is not None
         except Exception:
@@ -200,7 +182,7 @@ class TestAppCapabilities:
         response = splunk_client.get(
             "/servicesNS/-/-/apps/local",
             params={"count": 20},
-            operation="list all apps"
+            operation="list all apps",
         )
 
         assert "entry" in response
@@ -208,10 +190,7 @@ class TestAppCapabilities:
     @pytest.mark.live
     def test_app_count(self, splunk_client):
         """Test that we can count installed apps."""
-        response = splunk_client.get(
-            "/services/apps/local",
-            operation="list apps"
-        )
+        response = splunk_client.get("/services/apps/local", operation="list apps")
 
         app_count = len(response.get("entry", []))
         assert app_count >= 1  # At least search app
@@ -221,8 +200,7 @@ class TestAppCapabilities:
         """Test getting launcher app info."""
         try:
             response = splunk_client.get(
-                "/services/apps/local/launcher",
-                operation="get launcher"
+                "/services/apps/local/launcher", operation="get launcher"
             )
             assert "entry" in response
         except Exception:
@@ -235,7 +213,7 @@ class TestAppCapabilities:
         try:
             response = splunk_client.get(
                 "/services/apps/local/splunk_instrumentation",
-                operation="get instrumentation"
+                operation="get instrumentation",
             )
             assert response is not None
         except Exception:
@@ -252,7 +230,7 @@ class TestAppUI:
         response = splunk_client.get(
             "/servicesNS/-/-/data/ui/views",
             params={"count": 10},
-            operation="list dashboards"
+            operation="list dashboards",
         )
 
         assert "entry" in response
@@ -263,7 +241,7 @@ class TestAppUI:
         response = splunk_client.get(
             "/servicesNS/-/-/saved/searches",
             params={"count": 10},
-            operation="list reports"
+            operation="list reports",
         )
 
         assert "entry" in response

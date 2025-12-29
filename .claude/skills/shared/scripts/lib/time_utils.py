@@ -19,42 +19,42 @@ from typing import Optional, Tuple, Union
 
 # Time unit multipliers in seconds
 TIME_UNITS = {
-    's': 1,           # second
-    'sec': 1,
-    'second': 1,
-    'seconds': 1,
-    'm': 60,          # minute
-    'min': 60,
-    'minute': 60,
-    'minutes': 60,
-    'h': 3600,        # hour
-    'hr': 3600,
-    'hour': 3600,
-    'hours': 3600,
-    'd': 86400,       # day
-    'day': 86400,
-    'days': 86400,
-    'w': 604800,      # week
-    'week': 604800,
-    'weeks': 604800,
-    'mon': 2592000,   # month (30 days)
-    'month': 2592000,
-    'months': 2592000,
-    'y': 31536000,    # year (365 days)
-    'year': 31536000,
-    'years': 31536000,
+    "s": 1,  # second
+    "sec": 1,
+    "second": 1,
+    "seconds": 1,
+    "m": 60,  # minute
+    "min": 60,
+    "minute": 60,
+    "minutes": 60,
+    "h": 3600,  # hour
+    "hr": 3600,
+    "hour": 3600,
+    "hours": 3600,
+    "d": 86400,  # day
+    "day": 86400,
+    "days": 86400,
+    "w": 604800,  # week
+    "week": 604800,
+    "weeks": 604800,
+    "mon": 2592000,  # month (30 days)
+    "month": 2592000,
+    "months": 2592000,
+    "y": 31536000,  # year (365 days)
+    "year": 31536000,
+    "years": 31536000,
 }
 
 # Snap-to unit mappings
 SNAP_UNITS = {
-    's': 'second',
-    'm': 'minute',
-    'h': 'hour',
-    'd': 'day',
-    'w': 'week',
-    'mon': 'month',
-    'q': 'quarter',
-    'y': 'year',
+    "s": "second",
+    "m": "minute",
+    "h": "hour",
+    "d": "day",
+    "w": "week",
+    "mon": "month",
+    "q": "quarter",
+    "y": "year",
 }
 
 
@@ -78,17 +78,17 @@ def parse_splunk_time(time_str: str, reference: Optional[datetime] = None) -> da
     time_str = time_str.strip().lower()
 
     # Handle special keywords
-    if time_str in ('now', 'now()'):
+    if time_str in ("now", "now()"):
         return reference
 
-    if time_str == 'earliest':
+    if time_str == "earliest":
         # Return epoch 0
         return datetime(1970, 1, 1)
 
-    if time_str == 'latest':
+    if time_str == "latest":
         return reference
 
-    if time_str == '0':
+    if time_str == "0":
         return datetime(1970, 1, 1)
 
     # Handle epoch timestamp
@@ -97,8 +97,7 @@ def parse_splunk_time(time_str: str, reference: Optional[datetime] = None) -> da
 
     # Parse relative time: [+-]N[unit][@snap]
     relative_match = re.match(
-        r'^([+-]?)(\d+)([a-zA-Z]+)(?:@([a-zA-Z0-9]+))?$',
-        time_str
+        r"^([+-]?)(\d+)([a-zA-Z]+)(?:@([a-zA-Z0-9]+))?$", time_str
     )
     if relative_match:
         sign = relative_match.group(1)
@@ -110,7 +109,7 @@ def parse_splunk_time(time_str: str, reference: Optional[datetime] = None) -> da
             raise ValueError(f"Unknown time unit: {unit}")
 
         seconds = amount * TIME_UNITS[unit]
-        if sign == '-':
+        if sign == "-":
             result = reference - timedelta(seconds=seconds)
         else:
             result = reference + timedelta(seconds=seconds)
@@ -121,15 +120,15 @@ def parse_splunk_time(time_str: str, reference: Optional[datetime] = None) -> da
         return result
 
     # Parse snap-to only: @[unit][N]
-    snap_match = re.match(r'^@([a-zA-Z]+)(\d*)$', time_str)
+    snap_match = re.match(r"^@([a-zA-Z]+)(\d*)$", time_str)
     if snap_match:
         unit = snap_match.group(1)
         day_num = snap_match.group(2)
 
         # Handle week day snap @w0-@w6
-        if unit.startswith('w') and day_num:
+        if unit.startswith("w") and day_num:
             return snap_to_weekday(reference, int(day_num))
-        elif unit == 'w':
+        elif unit == "w":
             return snap_to_weekday(reference, 0)
         else:
             return snap_to_unit(reference, unit)
@@ -150,30 +149,32 @@ def snap_to_unit(dt: datetime, unit: str) -> datetime:
     """
     unit = unit.lower()
 
-    if unit in ('s', 'sec', 'second'):
+    if unit in ("s", "sec", "second"):
         return dt.replace(microsecond=0)
 
-    if unit in ('m', 'min', 'minute'):
+    if unit in ("m", "min", "minute"):
         return dt.replace(second=0, microsecond=0)
 
-    if unit in ('h', 'hr', 'hour'):
+    if unit in ("h", "hr", "hour"):
         return dt.replace(minute=0, second=0, microsecond=0)
 
-    if unit in ('d', 'day'):
+    if unit in ("d", "day"):
         return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    if unit in ('w', 'week'):
+    if unit in ("w", "week"):
         # Snap to week start (Sunday = 0)
         return snap_to_weekday(dt, 0)
 
-    if unit in ('mon', 'month'):
+    if unit in ("mon", "month"):
         return dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-    if unit in ('q', 'quarter'):
+    if unit in ("q", "quarter"):
         quarter_start = ((dt.month - 1) // 3) * 3 + 1
-        return dt.replace(month=quarter_start, day=1, hour=0, minute=0, second=0, microsecond=0)
+        return dt.replace(
+            month=quarter_start, day=1, hour=0, minute=0, second=0, microsecond=0
+        )
 
-    if unit in ('y', 'year'):
+    if unit in ("y", "year"):
         return dt.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
 
     raise ValueError(f"Unknown snap unit: {unit}")
@@ -201,7 +202,7 @@ def snap_to_weekday(dt: datetime, day: int) -> datetime:
 
 def format_splunk_time(
     dt: Union[datetime, int, float],
-    format_type: str = 'relative',
+    format_type: str = "relative",
 ) -> str:
     """
     Format datetime as Splunk time modifier.
@@ -216,22 +217,22 @@ def format_splunk_time(
     if isinstance(dt, (int, float)):
         dt = datetime.fromtimestamp(dt)
 
-    if format_type == 'epoch':
+    if format_type == "epoch":
         return str(int(dt.timestamp()))
 
-    if format_type == 'iso':
+    if format_type == "iso":
         return dt.isoformat()
 
-    if format_type == 'relative':
+    if format_type == "relative":
         now = datetime.now()
         diff = now - dt
 
         if diff.total_seconds() < 0:
             # Future time
             diff = dt - now
-            sign = '+'
+            sign = "+"
         else:
-            sign = '-'
+            sign = "-"
 
         seconds = abs(diff.total_seconds())
 
@@ -281,7 +282,7 @@ def validate_time_range(
 
 def get_relative_time(
     offset: int,
-    unit: str = 'h',
+    unit: str = "h",
     snap_to: Optional[str] = None,
 ) -> str:
     """
@@ -298,7 +299,7 @@ def get_relative_time(
     if unit not in TIME_UNITS:
         raise ValueError(f"Unknown time unit: {unit}")
 
-    sign = '-' if offset < 0 else ''
+    sign = "-" if offset < 0 else ""
     time_str = f"{sign}{abs(offset)}{unit}"
 
     if snap_to:
@@ -315,19 +316,19 @@ def get_time_range_presets() -> dict:
         Dictionary of preset names to (earliest, latest) tuples
     """
     return {
-        'last_15_minutes': ('-15m', 'now'),
-        'last_hour': ('-1h', 'now'),
-        'last_4_hours': ('-4h', 'now'),
-        'last_24_hours': ('-24h', 'now'),
-        'last_7_days': ('-7d', 'now'),
-        'last_30_days': ('-30d', 'now'),
-        'today': ('@d', 'now'),
-        'yesterday': ('-1d@d', '@d'),
-        'this_week': ('@w0', 'now'),
-        'last_week': ('-1w@w0', '@w0'),
-        'this_month': ('@mon', 'now'),
-        'last_month': ('-1mon@mon', '@mon'),
-        'all_time': ('0', 'now'),
+        "last_15_minutes": ("-15m", "now"),
+        "last_hour": ("-1h", "now"),
+        "last_4_hours": ("-4h", "now"),
+        "last_24_hours": ("-24h", "now"),
+        "last_7_days": ("-7d", "now"),
+        "last_30_days": ("-30d", "now"),
+        "today": ("@d", "now"),
+        "yesterday": ("-1d@d", "@d"),
+        "this_week": ("@w0", "now"),
+        "last_week": ("-1w@w0", "@w0"),
+        "this_month": ("@mon", "now"),
+        "last_month": ("-1mon@mon", "@mon"),
+        "all_time": ("0", "now"),
     }
 
 
@@ -362,8 +363,8 @@ def epoch_to_iso(epoch: int) -> str:
 def get_search_time_bounds(
     earliest: Optional[str] = None,
     latest: Optional[str] = None,
-    default_earliest: str = '-24h',
-    default_latest: str = 'now',
+    default_earliest: str = "-24h",
+    default_latest: str = "now",
 ) -> Tuple[str, str]:
     """
     Get time bounds for search with defaults.

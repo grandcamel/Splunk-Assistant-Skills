@@ -21,6 +21,7 @@ logging.basicConfig(
 
 # Suppress urllib3 warnings about self-signed certs
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Import and re-export all fixtures
@@ -39,9 +40,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "external_splunk: marks tests for external Splunk only"
     )
-    config.addinivalue_line(
-        "markers", "slow_integration: marks slow integration tests"
-    )
+    config.addinivalue_line("markers", "slow_integration: marks slow integration tests")
     config.addinivalue_line(
         "markers", "destructive: marks tests that modify Splunk configuration"
     )
@@ -66,9 +65,11 @@ def pytest_collection_modifyitems(config, items):
         # Skip docker-required tests if no Docker
         if "docker_required" in item.keywords:
             if has_external:
-                item.add_marker(pytest.mark.skip(
-                    reason="Using external Splunk, skipping Docker test"
-                ))
+                item.add_marker(
+                    pytest.mark.skip(
+                        reason="Using external Splunk, skipping Docker test"
+                    )
+                )
             elif not has_docker:
                 item.add_marker(skip_no_docker)
 
@@ -82,6 +83,7 @@ def _check_docker_available() -> bool:
     """Check if Docker is available."""
     try:
         import docker
+
         client = docker.from_env()
         client.ping()
         return True

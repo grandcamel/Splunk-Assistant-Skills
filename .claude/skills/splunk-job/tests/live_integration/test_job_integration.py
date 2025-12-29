@@ -74,11 +74,18 @@ class TestJobStatus:
         assert "dispatchState" in content
         assert "doneProgress" in content
         assert content["dispatchState"] in [
-            "QUEUED", "PARSING", "RUNNING", "FINALIZING", "DONE", "FAILED"
+            "QUEUED",
+            "PARSING",
+            "RUNNING",
+            "FINALIZING",
+            "DONE",
+            "FAILED",
         ]
 
     @pytest.mark.live
-    def test_job_progress_updates(self, splunk_client, job_helper, test_index, test_data):
+    def test_job_progress_updates(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test that job progress updates as search runs."""
         # Create a search that takes some time
         sid = job_helper.create(
@@ -244,7 +251,9 @@ class TestJobResults:
     """Integration tests for job result retrieval."""
 
     @pytest.mark.live
-    def test_get_results_from_completed_job(self, splunk_client, job_helper, test_index, test_data):
+    def test_get_results_from_completed_job(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test getting results from completed job."""
         sid = job_helper.create(f"search index={test_index} | head 10")
         job_helper.wait_for_done(sid)
@@ -260,7 +269,9 @@ class TestJobResults:
         assert len(results) > 0
 
     @pytest.mark.live
-    def test_get_results_with_pagination(self, splunk_client, job_helper, test_index, test_data):
+    def test_get_results_with_pagination(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test getting results with pagination."""
         sid = job_helper.create(f"search index={test_index} | head 20")
         job_helper.wait_for_done(sid)
@@ -299,7 +310,9 @@ class TestJobResults:
             assert response is not None
         except Exception as e:
             # JSONDecodeError is acceptable - some searches have no summary
-            if "JSONDecodeError" in str(type(e).__name__) or "Expecting value" in str(e):
+            if "JSONDecodeError" in str(type(e).__name__) or "Expecting value" in str(
+                e
+            ):
                 pass  # Empty summary is valid
             else:
                 raise
@@ -321,7 +334,9 @@ class TestJobList:
         # May have 0 or more jobs
 
     @pytest.mark.live
-    def test_list_jobs_includes_created_job(self, splunk_client, job_helper, test_index):
+    def test_list_jobs_includes_created_job(
+        self, splunk_client, job_helper, test_index
+    ):
         """Test that created job appears in list."""
         sid = job_helper.create(f"search index={test_index} | head 1")
 
@@ -332,7 +347,9 @@ class TestJobList:
         )
 
         # In job list, SID is in content.sid, not in name (which is the search query)
-        sids = [entry.get("content", {}).get("sid") for entry in response.get("entry", [])]
+        sids = [
+            entry.get("content", {}).get("sid") for entry in response.get("entry", [])
+        ]
         assert sid in sids, f"Created job {sid} not found in job list"
 
 

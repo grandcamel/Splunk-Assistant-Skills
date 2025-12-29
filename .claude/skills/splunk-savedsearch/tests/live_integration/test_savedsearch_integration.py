@@ -9,14 +9,16 @@ class TestSavedSearchCRUD:
     """Integration tests for saved search CRUD operations."""
 
     @pytest.mark.live
-    def test_create_and_get_savedsearch(self, savedsearch_helper, test_savedsearch_name):
+    def test_create_and_get_savedsearch(
+        self, savedsearch_helper, test_savedsearch_name
+    ):
         """Test creating and retrieving a saved search."""
         search = "index=_internal | head 10"
         assert savedsearch_helper.create(test_savedsearch_name, search)
 
         response = savedsearch_helper.client.get(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
-            operation="get saved search"
+            operation="get saved search",
         )
 
         assert "entry" in response
@@ -24,18 +26,20 @@ class TestSavedSearchCRUD:
         assert content.get("search") == search
 
     @pytest.mark.live
-    def test_create_scheduled_savedsearch(self, savedsearch_helper, test_savedsearch_name):
+    def test_create_scheduled_savedsearch(
+        self, savedsearch_helper, test_savedsearch_name
+    ):
         """Test creating a scheduled saved search."""
         assert savedsearch_helper.create(
             test_savedsearch_name,
             "index=_internal | stats count",
             cron_schedule="0 6 * * *",
-            is_scheduled="1"
+            is_scheduled="1",
         )
 
         response = savedsearch_helper.client.get(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
-            operation="get saved search"
+            operation="get saved search",
         )
 
         content = response["entry"][0].get("content", {})
@@ -50,12 +54,12 @@ class TestSavedSearchCRUD:
         savedsearch_helper.client.post(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
             data={"search": "index=_internal | head 20"},
-            operation="update saved search"
+            operation="update saved search",
         )
 
         response = savedsearch_helper.client.get(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
-            operation="get saved search"
+            operation="get saved search",
         )
 
         content = response["entry"][0].get("content", {})
@@ -71,7 +75,7 @@ class TestSavedSearchCRUD:
         with pytest.raises(Exception):
             savedsearch_helper.client.get(
                 f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
-                operation="get deleted saved search"
+                operation="get deleted saved search",
             )
 
 
@@ -89,8 +93,7 @@ class TestSavedSearchDispatch:
         # Wait for completion
         for _ in range(30):
             status = savedsearch_helper.client.get(
-                f"/search/v2/jobs/{sid}",
-                operation="get job status"
+                f"/search/v2/jobs/{sid}", operation="get job status"
             )
             if status.get("entry", [{}])[0].get("content", {}).get("isDone"):
                 break
@@ -100,7 +103,7 @@ class TestSavedSearchDispatch:
         results = savedsearch_helper.client.get(
             f"/search/v2/jobs/{sid}/results",
             params={"output_mode": "json"},
-            operation="get results"
+            operation="get results",
         )
         assert len(results.get("results", [])) == 5
 
@@ -116,7 +119,7 @@ class TestListSavedSearches:
         response = savedsearch_helper.client.get(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches",
             params={"count": 100},
-            operation="list saved searches"
+            operation="list saved searches",
         )
 
         names = [e.get("name") for e in response.get("entry", [])]
@@ -128,7 +131,7 @@ class TestListSavedSearches:
         response = splunk_client.get(
             "/saved/searches",
             params={"output_mode": "json", "count": 10},
-            operation="list saved searches"
+            operation="list saved searches",
         )
 
         assert "entry" in response
@@ -139,7 +142,7 @@ class TestListSavedSearches:
         response = splunk_client.get(
             "/servicesNS/-/-/saved/searches",
             params={"output_mode": "json", "count": 20},
-            operation="list all saved searches"
+            operation="list all saved searches",
         )
 
         assert "entry" in response
@@ -149,7 +152,9 @@ class TestSavedSearchHistory:
     """Integration tests for saved search history."""
 
     @pytest.mark.live
-    def test_get_savedsearch_history(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+    def test_get_savedsearch_history(
+        self, savedsearch_helper, splunk_client, test_savedsearch_name
+    ):
         """Test getting saved search dispatch history."""
         # Create and dispatch a saved search
         savedsearch_helper.create(test_savedsearch_name, "| makeresults count=1")
@@ -167,7 +172,7 @@ class TestSavedSearchHistory:
             response = splunk_client.get(
                 f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}/history",
                 params={"output_mode": "json"},
-                operation="get history"
+                operation="get history",
             )
             # History endpoint should exist
             assert response is not None
@@ -180,14 +185,16 @@ class TestSavedSearchACL:
     """Integration tests for saved search permissions."""
 
     @pytest.mark.live
-    def test_get_savedsearch_acl(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+    def test_get_savedsearch_acl(
+        self, savedsearch_helper, splunk_client, test_savedsearch_name
+    ):
         """Test getting saved search ACL."""
         savedsearch_helper.create(test_savedsearch_name, "| makeresults count=1")
 
         response = splunk_client.get(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
             params={"output_mode": "json"},
-            operation="get saved search"
+            operation="get saved search",
         )
 
         # ACL info is in the entry structure
@@ -195,9 +202,7 @@ class TestSavedSearchACL:
         entry = response["entry"][0]
         # Check for ACL-related fields in entry or content
         has_acl = (
-            "acl" in entry
-            or "eai:acl" in entry.get("content", {})
-            or "author" in entry
+            "acl" in entry or "eai:acl" in entry.get("content", {}) or "author" in entry
         )
         assert has_acl or "name" in entry  # At minimum, entry should have name
 
@@ -206,23 +211,22 @@ class TestSavedSearchConfiguration:
     """Integration tests for saved search configuration options."""
 
     @pytest.mark.live
-    def test_create_with_dispatch_options(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+    def test_create_with_dispatch_options(
+        self, savedsearch_helper, splunk_client, test_savedsearch_name
+    ):
         """Test creating saved search with dispatch options."""
         # Use Splunk API field names with dots
         created = savedsearch_helper.create(
             test_savedsearch_name,
             "search index=_internal | head 10",
-            **{
-                "dispatch.earliest_time": "-1h",
-                "dispatch.latest_time": "now"
-            }
+            **{"dispatch.earliest_time": "-1h", "dispatch.latest_time": "now"},
         )
 
         assert created, "Failed to create saved search"
 
         response = splunk_client.get(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
-            operation="get saved search"
+            operation="get saved search",
         )
 
         content = response["entry"][0].get("content", {})
@@ -235,7 +239,7 @@ class TestSavedSearchConfiguration:
         response = splunk_client.get(
             "/saved/searches",
             params={"output_mode": "json", "search": "is_scheduled=1", "count": 10},
-            operation="list scheduled"
+            operation="list scheduled",
         )
 
         assert "entry" in response
@@ -246,18 +250,20 @@ class TestSavedSearchConfiguration:
                 assert "cron_schedule" in content
 
     @pytest.mark.live
-    def test_savedsearch_with_alert_config(self, savedsearch_helper, splunk_client, test_savedsearch_name):
+    def test_savedsearch_with_alert_config(
+        self, savedsearch_helper, splunk_client, test_savedsearch_name
+    ):
         """Test creating saved search with alert configuration."""
         savedsearch_helper.create(
             test_savedsearch_name,
             "index=_internal | stats count",
             alert_type="number of events",
-            alert_threshold="0"
+            alert_threshold="0",
         )
 
         response = splunk_client.get(
             f"/servicesNS/nobody/{savedsearch_helper.app}/saved/searches/{test_savedsearch_name}",
-            operation="get saved search"
+            operation="get saved search",
         )
 
         content = response["entry"][0].get("content", {})

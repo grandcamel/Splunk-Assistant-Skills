@@ -11,6 +11,7 @@ import pytest
 
 logging.basicConfig(level=logging.INFO)
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add shared lib to path
@@ -22,12 +23,20 @@ if str(lib_path) not in sys.path:
 
 # Import splunk_container module directly
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
-from splunk_container import SplunkContainer, ExternalSplunkConnection, get_splunk_connection
+from splunk_container import (
+    SplunkContainer,
+    ExternalSplunkConnection,
+    get_splunk_connection,
+)
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "live: marks tests as requiring live Splunk connection")
-    config.addinivalue_line("markers", "destructive: marks tests that modify Splunk configuration")
+    config.addinivalue_line(
+        "markers", "live: marks tests as requiring live Splunk connection"
+    )
+    config.addinivalue_line(
+        "markers", "destructive: marks tests that modify Splunk configuration"
+    )
 
 
 @pytest.fixture(scope="session")

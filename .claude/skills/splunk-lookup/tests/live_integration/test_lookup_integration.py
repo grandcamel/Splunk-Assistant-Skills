@@ -12,22 +12,26 @@ class TestLookupOperations:
         """Test listing lookup files."""
         response = splunk_client.get(
             "/servicesNS/nobody/search/data/lookup-table-files",
-            operation="list lookups"
+            operation="list lookups",
         )
 
         assert "entry" in response
 
     @pytest.mark.live
-    @pytest.mark.xfail(reason="Lookup file upload requires complex multipart form handling")
+    @pytest.mark.xfail(
+        reason="Lookup file upload requires complex multipart form handling"
+    )
     def test_upload_and_get_lookup(self, lookup_helper, test_lookup_name):
         """Test uploading and retrieving a lookup file."""
-        csv_content = "username,email,role\nadmin,admin@test.com,admin\nuser,user@test.com,user"
+        csv_content = (
+            "username,email,role\nadmin,admin@test.com,admin\nuser,user@test.com,user"
+        )
 
         assert lookup_helper.upload(test_lookup_name, csv_content)
 
         response = lookup_helper.client.get(
             f"/servicesNS/nobody/{lookup_helper.app}/data/lookup-table-files/{test_lookup_name}",
-            operation="get lookup"
+            operation="get lookup",
         )
 
         assert "entry" in response
@@ -45,7 +49,7 @@ class TestLookupOperations:
         with pytest.raises(Exception):
             lookup_helper.client.get(
                 f"/servicesNS/nobody/{lookup_helper.app}/data/lookup-table-files/{test_lookup_name}",
-                operation="get deleted lookup"
+                operation="get deleted lookup",
             )
 
 
@@ -53,7 +57,9 @@ class TestLookupSearch:
     """Integration tests for using lookups in searches."""
 
     @pytest.mark.live
-    @pytest.mark.xfail(reason="Depends on lookup upload which requires complex multipart form handling")
+    @pytest.mark.xfail(
+        reason="Depends on lookup upload which requires complex multipart form handling"
+    )
     def test_lookup_in_search(self, lookup_helper, splunk_client, test_lookup_name):
         """Test using a lookup in a search."""
         csv_content = "code,description\n200,OK\n404,Not Found\n500,Server Error"
@@ -66,7 +72,7 @@ class TestLookupSearch:
                 "search": f"| inputlookup {test_lookup_name}",
                 "output_mode": "json",
             },
-            operation="lookup search"
+            operation="lookup search",
         )
 
         results = response.get("results", [])
@@ -83,7 +89,7 @@ class TestLookupDefinitions:
         response = splunk_client.get(
             "/services/data/transforms/lookups",
             params={"output_mode": "json", "count": 10},
-            operation="list lookup definitions"
+            operation="list lookup definitions",
         )
 
         assert "entry" in response
@@ -94,7 +100,7 @@ class TestLookupDefinitions:
         response = splunk_client.get(
             "/servicesNS/nobody/search/data/lookup-table-files",
             params={"output_mode": "json", "count": 10},
-            operation="list search app lookups"
+            operation="list search app lookups",
         )
 
         assert "entry" in response
@@ -106,7 +112,7 @@ class TestLookupDefinitions:
             response = splunk_client.get(
                 "/services/data/props/lookups",
                 params={"output_mode": "json", "count": 10},
-                operation="list auto lookups"
+                operation="list auto lookups",
             )
             assert response is not None
         except Exception:
@@ -123,7 +129,7 @@ class TestLookupFiles:
         response = splunk_client.get(
             "/servicesNS/-/-/data/lookup-table-files",
             params={"output_mode": "json", "count": 20},
-            operation="list all lookup files"
+            operation="list all lookup files",
         )
 
         assert "entry" in response
@@ -134,7 +140,7 @@ class TestLookupFiles:
         response = splunk_client.get(
             "/servicesNS/nobody/search/data/lookup-table-files",
             params={"output_mode": "json"},
-            operation="list lookups"
+            operation="list lookups",
         )
 
         # If there are lookups, check structure
@@ -158,7 +164,7 @@ class TestLookupInputSearch:
                     "search": "| inputlookup nonexistent_lookup_12345.csv",
                     "output_mode": "json",
                 },
-                operation="inputlookup nonexistent"
+                operation="inputlookup nonexistent",
             )
             # Should return empty results or error
             results = response.get("results", [])
@@ -176,7 +182,7 @@ class TestLookupInputSearch:
                 "search": "| makeresults count=1 | eval test=1",
                 "output_mode": "json",
             },
-            operation="makeresults for lookup test"
+            operation="makeresults for lookup test",
         )
 
         results = response.get("results", [])
@@ -192,7 +198,7 @@ class TestLookupTransforms:
         response = splunk_client.get(
             "/services/data/transforms/lookups",
             params={"output_mode": "json", "count": 10},
-            operation="list transforms lookups"
+            operation="list transforms lookups",
         )
 
         assert "entry" in response
@@ -203,7 +209,7 @@ class TestLookupTransforms:
         response = splunk_client.get(
             "/services/data/transforms/lookups",
             params={"output_mode": "json"},
-            operation="list transforms"
+            operation="list transforms",
         )
 
         for entry in response.get("entry", []):

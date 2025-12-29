@@ -13,7 +13,7 @@ class TestAlertOperations:
         response = splunk_client.get(
             "/services/alerts/fired_alerts",
             params={"output_mode": "json"},
-            operation="list fired alerts"
+            operation="list fired alerts",
         )
 
         # Response should have entry key (may be empty list)
@@ -25,7 +25,7 @@ class TestAlertOperations:
         response = splunk_client.get(
             "/services/alerts/fired_alerts",
             params={"output_mode": "json", "count": 10},
-            operation="list fired alerts"
+            operation="list fired alerts",
         )
 
         assert "entry" in response
@@ -44,7 +44,7 @@ class TestAlertActions:
         response = splunk_client.get(
             "/services/alerts/alert_actions",
             params={"output_mode": "json"},
-            operation="list alert actions"
+            operation="list alert actions",
         )
 
         assert "entry" in response
@@ -60,7 +60,7 @@ class TestAlertActions:
             response = splunk_client.get(
                 "/services/alerts/alert_actions/email",
                 params={"output_mode": "json"},
-                operation="get email action"
+                operation="get email action",
             )
 
             assert "entry" in response
@@ -77,7 +77,7 @@ class TestAlertActions:
         response = splunk_client.get(
             "/services/alerts/alert_actions",
             params={"output_mode": "json", "count": 5},
-            operation="list alert actions limited"
+            operation="list alert actions limited",
         )
 
         assert "entry" in response
@@ -92,7 +92,7 @@ class TestSavedSearchAlerts:
         response = splunk_client.get(
             "/saved/searches",
             params={"output_mode": "json", "search": "is_scheduled=1"},
-            operation="list scheduled searches"
+            operation="list scheduled searches",
         )
 
         assert "entry" in response
@@ -108,7 +108,7 @@ class TestSavedSearchAlerts:
         response = splunk_client.get(
             "/saved/searches",
             params={"output_mode": "json", "count": 20},
-            operation="list saved searches"
+            operation="list saved searches",
         )
 
         assert "entry" in response
@@ -128,7 +128,7 @@ class TestAlertSuppression:
         response = splunk_client.get(
             "/saved/searches",
             params={"output_mode": "json", "count": 5},
-            operation="list for suppression check"
+            operation="list for suppression check",
         )
 
         assert "entry" in response
@@ -137,7 +137,9 @@ class TestAlertSuppression:
             # Check for suppression-related fields if present
             if "alert.suppress" in content:
                 # Suppression value can be string, bool, int, or None (unset)
-                assert isinstance(content["alert.suppress"], (str, bool, int, type(None)))
+                assert isinstance(
+                    content["alert.suppress"], (str, bool, int, type(None))
+                )
 
 
 class TestAlertHistory:
@@ -149,7 +151,7 @@ class TestAlertHistory:
         response = splunk_client.get(
             "/services/alerts/fired_alerts",
             params={"output_mode": "json", "count": 10},
-            operation="list fired alerts"
+            operation="list fired alerts",
         )
 
         assert "entry" in response
@@ -166,7 +168,7 @@ class TestAlertHistory:
         response = splunk_client.get(
             "/services/alerts/fired_alerts",
             params={"output_mode": "json"},
-            operation="list alerts for severity"
+            operation="list alerts for severity",
         )
 
         assert "entry" in response

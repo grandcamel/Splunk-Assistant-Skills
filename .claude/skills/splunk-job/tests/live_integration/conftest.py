@@ -21,6 +21,7 @@ logging.basicConfig(
 
 # Suppress urllib3 warnings about self-signed certs
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add paths to sys.path for imports
@@ -33,7 +34,11 @@ for p in [str(lib_path), str(tests_path), str(shared_path / "tests")]:
         sys.path.insert(0, p)
 
 # Now import from the shared modules
-from splunk_container import SplunkContainer, ExternalSplunkConnection, get_splunk_connection
+from splunk_container import (
+    SplunkContainer,
+    ExternalSplunkConnection,
+    get_splunk_connection,
+)
 from test_utils import generate_test_events, wait_for_indexing
 
 
@@ -48,9 +53,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "external_splunk: marks tests for external Splunk only"
     )
-    config.addinivalue_line(
-        "markers", "slow_integration: marks slow integration tests"
-    )
+    config.addinivalue_line("markers", "slow_integration: marks slow integration tests")
     config.addinivalue_line(
         "markers", "destructive: marks tests that modify Splunk configuration"
     )
@@ -59,6 +62,7 @@ def pytest_configure(config):
 # =============================================================================
 # Session-Scoped Fixtures
 # =============================================================================
+
 
 @pytest.fixture(scope="session")
 def splunk_connection():
@@ -97,7 +101,9 @@ def test_index(splunk_connection, test_index_name: str) -> Generator[str, None, 
     """Session-scoped test index."""
     created = splunk_connection.create_test_index(test_index_name)
     if not created:
-        logging.warning(f"Could not create test index {test_index_name}, may already exist")
+        logging.warning(
+            f"Could not create test index {test_index_name}, may already exist"
+        )
 
     yield test_index_name
 
@@ -163,6 +169,7 @@ def test_data(splunk_connection, test_index: str) -> dict:
 # =============================================================================
 # Helper Fixtures
 # =============================================================================
+
 
 @pytest.fixture
 def search_helper(splunk_client):

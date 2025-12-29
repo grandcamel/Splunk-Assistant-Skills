@@ -14,7 +14,9 @@ import sys
 import argparse
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
+sys.path.insert(
+    0, str(Path(__file__).parent.parent.parent / "shared" / "scripts" / "lib")
+)
 
 from config_manager import get_splunk_client, get_search_defaults, get_api_settings
 from error_handler import handle_errors
@@ -27,22 +29,24 @@ from job_poller import wait_for_job
 @handle_errors
 def main():
     parser = argparse.ArgumentParser(
-        description='Execute a Splunk normal (async) search',
+        description="Execute a Splunk normal (async) search",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument('spl', help='SPL query to execute')
-    parser.add_argument('--profile', '-p', help='Splunk profile to use')
-    parser.add_argument('--earliest', '-e', help='Earliest time')
-    parser.add_argument('--latest', '-l', help='Latest time')
-    parser.add_argument('--wait', '-w', action='store_true', help='Wait for completion')
-    parser.add_argument('--timeout', '-t', type=int, default=300, help='Wait timeout (seconds)')
-    parser.add_argument('--output', '-o', choices=['text', 'json'], default='text')
+    parser.add_argument("spl", help="SPL query to execute")
+    parser.add_argument("--profile", "-p", help="Splunk profile to use")
+    parser.add_argument("--earliest", "-e", help="Earliest time")
+    parser.add_argument("--latest", "-l", help="Latest time")
+    parser.add_argument("--wait", "-w", action="store_true", help="Wait for completion")
+    parser.add_argument(
+        "--timeout", "-t", type=int, default=300, help="Wait timeout (seconds)"
+    )
+    parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
     args = parser.parse_args()
 
     # Get defaults
     defaults = get_search_defaults(args.profile)
-    earliest = args.earliest or defaults.get('earliest_time', '-24h')
-    latest = args.latest or defaults.get('latest_time', 'now')
+    earliest = args.earliest or defaults.get("earliest_time", "-24h")
+    latest = args.latest or defaults.get("latest_time", "now")
 
     # Validate
     spl = validate_spl(args.spl)
@@ -55,19 +59,19 @@ def main():
     client = get_splunk_client(profile=args.profile)
 
     response = client.post(
-        '/search/v2/jobs',
+        "/search/v2/jobs",
         data={
-            'search': search_spl,
-            'exec_mode': 'normal',
-            'earliest_time': earliest,
-            'latest_time': latest,
+            "search": search_spl,
+            "exec_mode": "normal",
+            "earliest_time": earliest,
+            "latest_time": latest,
         },
-        operation='create search job',
+        operation="create search job",
     )
 
-    sid = response.get('sid')
-    if not sid and 'entry' in response:
-        sid = response['entry'][0].get('name')
+    sid = response.get("sid")
+    if not sid and "entry" in response:
+        sid = response["entry"][0].get("name")
 
     if args.wait:
         # Wait for completion
@@ -75,25 +79,25 @@ def main():
 
         # Get results
         results_response = client.get(
-            f'/search/v2/jobs/{sid}/results',
-            params={'output_mode': 'json', 'count': 0},
-            operation='get results',
+            f"/search/v2/jobs/{sid}/results",
+            params={"output_mode": "json", "count": 0},
+            operation="get results",
         )
 
-        results = results_response.get('results', [])
+        results = results_response.get("results", [])
 
-        if args.output == 'json':
-            print(format_json({'sid': sid, 'results': results}))
+        if args.output == "json":
+            print(format_json({"sid": sid, "results": results}))
         else:
             print(format_search_results(results))
             print_success(f"Completed: {len(results)} results")
     else:
-        if args.output == 'json':
-            print(format_json({'sid': sid, 'status': 'created'}))
+        if args.output == "json":
+            print(format_json({"sid": sid, "status": "created"}))
         else:
             print_success(f"Job created: {sid}")
             print(f"Use: python poll_job.py {sid}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

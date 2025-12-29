@@ -64,9 +64,9 @@ class SplunkClient:
             ValueError: If neither token nor username+password provided
         """
         # Normalize base URL
-        base_url = base_url.rstrip('/')
-        if not base_url.startswith(('http://', 'https://')):
-            base_url = f'https://{base_url}'
+        base_url = base_url.rstrip("/")
+        if not base_url.startswith(("http://", "https://")):
+            base_url = f"https://{base_url}"
 
         self.base_url = f"{base_url}:{port}/services"
         self.port = port
@@ -85,32 +85,34 @@ class SplunkClient:
             status_forcelist=self.RETRY_STATUS_CODES,
         )
         adapter = HTTPAdapter(max_retries=retry_strategy)
-        self.session.mount('https://', adapter)
-        self.session.mount('http://', adapter)
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
 
         # Set default headers
-        self.session.headers.update({
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json',
-        })
+        self.session.headers.update(
+            {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
+            }
+        )
 
         # Configure authentication
         if token:
-            self.session.headers['Authorization'] = f'Bearer {token}'
-            self.auth_method = 'bearer'
+            self.session.headers["Authorization"] = f"Bearer {token}"
+            self.auth_method = "bearer"
         elif username and password:
             self.session.auth = (username, password)
-            self.auth_method = 'basic'
+            self.auth_method = "basic"
         else:
             raise ValueError("Must provide either token or username+password")
 
     def _build_url(self, endpoint: str) -> str:
         """Build full URL from endpoint path."""
-        endpoint = endpoint.lstrip('/')
-        if not endpoint.startswith('services'):
+        endpoint = endpoint.lstrip("/")
+        if not endpoint.startswith("services"):
             return f"{self.base_url}/{endpoint}"
         # Handle full path starting with services
-        base = self.base_url.rsplit('/services', 1)[0]
+        base = self.base_url.rsplit("/services", 1)[0]
         return f"{base}/{endpoint}"
 
     def _request(
@@ -154,8 +156,8 @@ class SplunkClient:
         # Ensure output_mode=json if not specified
         if params is None:
             params = {}
-        if 'output_mode' not in params:
-            params['output_mode'] = 'json'
+        if "output_mode" not in params:
+            params["output_mode"] = "json"
 
         last_exception = None
         for attempt in range(self.max_retries + 1):
@@ -176,7 +178,7 @@ class SplunkClient:
                     # Retry on specific status codes
                     if response.status_code in self.RETRY_STATUS_CODES:
                         if attempt < self.max_retries:
-                            wait_time = self.retry_backoff ** attempt
+                            wait_time = self.retry_backoff**attempt
                             time.sleep(wait_time)
                             continue
                     # Handle error
@@ -187,7 +189,7 @@ class SplunkClient:
             except requests.exceptions.Timeout as e:
                 last_exception = e
                 if attempt < self.max_retries:
-                    wait_time = self.retry_backoff ** attempt
+                    wait_time = self.retry_backoff**attempt
                     time.sleep(wait_time)
                     continue
                 raise
@@ -195,7 +197,7 @@ class SplunkClient:
             except requests.exceptions.ConnectionError as e:
                 last_exception = e
                 if attempt < self.max_retries:
-                    wait_time = self.retry_backoff ** attempt
+                    wait_time = self.retry_backoff**attempt
                     time.sleep(wait_time)
                     continue
                 raise
@@ -224,7 +226,7 @@ class SplunkClient:
             Parsed JSON response
         """
         response = self._request(
-            method='GET',
+            method="GET",
             endpoint=endpoint,
             params=params,
             timeout=timeout,
@@ -254,7 +256,7 @@ class SplunkClient:
             Parsed JSON response
         """
         response = self._request(
-            method='POST',
+            method="POST",
             endpoint=endpoint,
             data=data,
             params=params,
@@ -285,7 +287,7 @@ class SplunkClient:
             Parsed JSON response
         """
         response = self._request(
-            method='PUT',
+            method="PUT",
             endpoint=endpoint,
             data=data,
             params=params,
@@ -314,7 +316,7 @@ class SplunkClient:
             Parsed JSON response
         """
         response = self._request(
-            method='DELETE',
+            method="DELETE",
             endpoint=endpoint,
             params=params,
             timeout=timeout,
@@ -326,7 +328,7 @@ class SplunkClient:
         self,
         endpoint: str,
         file_path: str,
-        file_field: str = 'datafile',
+        file_field: str = "datafile",
         data: Optional[Dict[str, Any]] = None,
         timeout: Optional[int] = None,
         operation: str = "file upload",
@@ -355,15 +357,15 @@ class SplunkClient:
 
         # Remove Content-Type header for multipart
         headers = dict(self.session.headers)
-        headers.pop('Content-Type', None)
+        headers.pop("Content-Type", None)
 
-        with open(file_path, 'rb') as f:
+        with open(file_path, "rb") as f:
             files = {file_field: f}
             response = self.session.post(
                 url=url,
                 files=files,
                 data=data or {},
-                params={'output_mode': 'json'},
+                params={"output_mode": "json"},
                 timeout=request_timeout,
                 verify=self.verify_ssl,
                 headers=headers,
@@ -396,7 +398,7 @@ class SplunkClient:
             Chunks of response data
         """
         response = self._request(
-            method='GET',
+            method="GET",
             endpoint=endpoint,
             params=params,
             timeout=timeout or self.DEFAULT_SEARCH_TIMEOUT,
@@ -428,7 +430,7 @@ class SplunkClient:
             Lines of response data
         """
         response = self._request(
-            method='GET',
+            method="GET",
             endpoint=endpoint,
             params=params,
             timeout=timeout or self.DEFAULT_SEARCH_TIMEOUT,
@@ -442,16 +444,16 @@ class SplunkClient:
 
     def get_server_info(self) -> Dict[str, Any]:
         """Get Splunk server information."""
-        response = self.get('/server/info', operation='get server info')
-        if 'entry' in response and response['entry']:
-            return response['entry'][0].get('content', {})
+        response = self.get("/server/info", operation="get server info")
+        if "entry" in response and response["entry"]:
+            return response["entry"][0].get("content", {})
         return response
 
     def whoami(self) -> Dict[str, Any]:
         """Get current user information."""
-        response = self.get('/authentication/current-context', operation='whoami')
-        if 'entry' in response and response['entry']:
-            return response['entry'][0].get('content', {})
+        response = self.get("/authentication/current-context", operation="whoami")
+        if "entry" in response and response["entry"]:
+            return response["entry"][0].get("content", {})
         return response
 
     def test_connection(self) -> bool:
@@ -470,7 +472,7 @@ class SplunkClient:
     @property
     def is_cloud(self) -> bool:
         """Check if connected to Splunk Cloud."""
-        return '.splunkcloud.com' in self.base_url
+        return ".splunkcloud.com" in self.base_url
 
     def __repr__(self) -> str:
         return f"SplunkClient(base_url={self.base_url!r}, auth_method={self.auth_method!r})"

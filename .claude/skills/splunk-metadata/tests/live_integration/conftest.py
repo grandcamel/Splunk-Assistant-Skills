@@ -11,6 +11,7 @@ import pytest
 
 logging.basicConfig(level=logging.INFO)
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add shared lib to path
@@ -22,12 +23,20 @@ if str(lib_path) not in sys.path:
 
 # Import splunk_container module directly
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
-from splunk_container import SplunkContainer, ExternalSplunkConnection, get_splunk_connection
+from splunk_container import (
+    SplunkContainer,
+    ExternalSplunkConnection,
+    get_splunk_connection,
+)
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "live: marks tests as requiring live Splunk connection")
-    config.addinivalue_line("markers", "destructive: marks tests that modify Splunk configuration")
+    config.addinivalue_line(
+        "markers", "live: marks tests as requiring live Splunk connection"
+    )
+    config.addinivalue_line(
+        "markers", "destructive: marks tests that modify Splunk configuration"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -57,9 +66,7 @@ class IndexHelper:
         """Create an index."""
         try:
             self.client.post(
-                "/data/indexes",
-                data={"name": name},
-                operation="create index"
+                "/data/indexes", data={"name": name}, operation="create index"
             )
             self._created_indexes.append(name)
             return True
@@ -69,10 +76,7 @@ class IndexHelper:
     def delete(self, name):
         """Delete an index."""
         try:
-            self.client.delete(
-                f"/data/indexes/{name}",
-                operation="delete index"
-            )
+            self.client.delete(f"/data/indexes/{name}", operation="delete index")
             if name in self._created_indexes:
                 self._created_indexes.remove(name)
             return True

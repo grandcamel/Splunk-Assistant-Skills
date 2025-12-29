@@ -14,7 +14,9 @@ import argparse
 from pathlib import Path
 
 # Add shared lib to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
+sys.path.insert(
+    0, str(Path(__file__).parent.parent.parent / "shared" / "scripts" / "lib")
+)
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
@@ -26,18 +28,19 @@ from job_poller import get_dispatch_state
 @handle_errors
 def main():
     parser = argparse.ArgumentParser(
-        description='Get Splunk search job status',
+        description="Get Splunk search job status",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
+        epilog="""
 Examples:
   python get_job_status.py 1703779200.12345
   python get_job_status.py 1703779200.12345 --output json
-        '''
+        """,
     )
-    parser.add_argument('sid', help='Search job ID')
-    parser.add_argument('--profile', '-p', help='Splunk profile to use')
-    parser.add_argument('--output', '-o', choices=['text', 'json'], default='text',
-                       help='Output format')
+    parser.add_argument("sid", help="Search job ID")
+    parser.add_argument("--profile", "-p", help="Splunk profile to use")
+    parser.add_argument(
+        "--output", "-o", choices=["text", "json"], default="text", help="Output format"
+    )
     args = parser.parse_args()
 
     # Validate SID
@@ -49,22 +52,26 @@ Examples:
     # Get job status
     progress = get_dispatch_state(client, sid)
 
-    if args.output == 'json':
-        print(format_json({
-            'sid': progress.sid,
-            'state': progress.state.value,
-            'progress': progress.progress_percent,
-            'event_count': progress.event_count,
-            'result_count': progress.result_count,
-            'scan_count': progress.scan_count,
-            'run_duration': progress.run_duration,
-            'is_done': progress.is_done,
-            'is_failed': progress.is_failed,
-            'is_paused': progress.is_paused,
-        }))
+    if args.output == "json":
+        print(
+            format_json(
+                {
+                    "sid": progress.sid,
+                    "state": progress.state.value,
+                    "progress": progress.progress_percent,
+                    "event_count": progress.event_count,
+                    "result_count": progress.result_count,
+                    "scan_count": progress.scan_count,
+                    "run_duration": progress.run_duration,
+                    "is_done": progress.is_done,
+                    "is_failed": progress.is_failed,
+                    "is_paused": progress.is_paused,
+                }
+            )
+        )
     else:
-        print(format_job_status({'content': progress.data}))
+        print(format_job_status({"content": progress.data}))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -78,12 +78,12 @@ def generate_test_events(
     spl_parts.append("| eval event_id=md5(_time.random())")
 
     # Add raw event content
-    spl_parts.append(
-        '| eval _raw=_time." ".host." ".sourcetype." event_id=".event_id'
-    )
+    spl_parts.append('| eval _raw=_time." ".host." ".sourcetype." event_id=".event_id')
 
     # Collect to the target index
-    spl_parts.append(f'| collect index="{index}" sourcetype="{fields.get("sourcetype", "test_events")}"')
+    spl_parts.append(
+        f'| collect index="{index}" sourcetype="{fields.get("sourcetype", "test_events")}"'
+    )
 
     spl = " ".join(spl_parts)
 
@@ -318,9 +318,7 @@ class EventBuilder:
         self.fields["sourcetype"] = sourcetype
         return self
 
-    def with_field(
-        self, name: str, value: Union[str, int, List]
-    ) -> "EventBuilder":
+    def with_field(self, name: str, value: Union[str, int, List]) -> "EventBuilder":
         """Add a field with static value or list for random selection."""
         self.fields[name] = value
         return self
@@ -355,12 +353,10 @@ class EventBuilder:
 
         if self.include_raw:
             field_names = list(self.fields.keys())
-            raw_expr = '" ".'.join([f'{f}' for f in field_names[:5]])
+            raw_expr = '" ".'.join([f"{f}" for f in field_names[:5]])
             parts.append(f'| eval _raw=_time." ".{raw_expr}')
 
-        parts.append(
-            f'| collect index="{self.index}" sourcetype="{self.sourcetype}"'
-        )
+        parts.append(f'| collect index="{self.index}" sourcetype="{self.sourcetype}"')
 
         return " ".join(parts)
 

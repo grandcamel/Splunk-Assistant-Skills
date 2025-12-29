@@ -11,6 +11,7 @@ import pytest
 
 logging.basicConfig(level=logging.INFO)
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add shared lib to path
@@ -22,13 +23,21 @@ if str(lib_path) not in sys.path:
 
 # Import splunk_container module directly
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
-from splunk_container import SplunkContainer, ExternalSplunkConnection, get_splunk_connection
+from splunk_container import (
+    SplunkContainer,
+    ExternalSplunkConnection,
+    get_splunk_connection,
+)
 from test_utils import generate_test_events, wait_for_indexing
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "live: marks tests as requiring live Splunk connection")
-    config.addinivalue_line("markers", "destructive: marks tests that modify Splunk configuration")
+    config.addinivalue_line(
+        "markers", "live: marks tests as requiring live Splunk connection"
+    )
+    config.addinivalue_line(
+        "markers", "destructive: marks tests that modify Splunk configuration"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -56,7 +65,9 @@ def test_index_name() -> str:
 def test_index(splunk_connection, test_index_name):
     created = splunk_connection.create_test_index(test_index_name)
     if not created:
-        logging.warning(f"Could not create test index {test_index_name}, may already exist")
+        logging.warning(
+            f"Could not create test index {test_index_name}, may already exist"
+        )
     yield test_index_name
 
 
@@ -137,7 +148,9 @@ def job_helper(splunk_client):
         def cleanup(self):
             for sid in self.created_jobs:
                 try:
-                    self.client.post(f"/search/v2/jobs/{sid}/control", data={"action": "cancel"})
+                    self.client.post(
+                        f"/search/v2/jobs/{sid}/control", data={"action": "cancel"}
+                    )
                 except Exception:
                     pass
             self.created_jobs.clear()
@@ -150,7 +163,7 @@ def job_helper(splunk_client):
 @pytest.fixture
 def temp_output_file():
     """Provide a temporary file for export tests."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
         temp_path = f.name
     yield temp_path
     # Cleanup

@@ -17,7 +17,9 @@ class ValidationError(Exception):
     def __init__(self, message: str, field: Optional[str] = None):
         self.message = message
         self.field = field
-        super().__init__(f"Validation error{f' for {field}' if field else ''}: {message}")
+        super().__init__(
+            f"Validation error{f' for {field}' if field else ''}: {message}"
+        )
 
 
 def validate_sid(sid: str) -> str:
@@ -43,7 +45,7 @@ def validate_sid(sid: str) -> str:
 
     # SID pattern: digits.digits optionally followed by _username
     # Also allow scheduled search SIDs: scheduler__{app}__{user}__search__{name}__{timestamp}
-    sid_pattern = r'^(\d+\.\d+(_\w+)?|scheduler__\w+__\w+__\w+__\w+__\w+)$'
+    sid_pattern = r"^(\d+\.\d+(_\w+)?|scheduler__\w+__\w+__\w+__\w+__\w+)$"
     if not re.match(sid_pattern, sid):
         raise ValidationError(f"Invalid SID format: {sid}", field="sid")
 
@@ -81,22 +83,24 @@ def validate_spl(spl: str) -> str:
     string_char = None
 
     for i, char in enumerate(spl):
-        if char in '"\'':
+        if char in "\"'":
             if not in_string:
                 in_string = True
                 string_char = char
             elif char == string_char:
                 in_string = False
         elif not in_string:
-            if char == '(':
+            if char == "(":
                 paren_count += 1
-            elif char == ')':
+            elif char == ")":
                 paren_count -= 1
                 if paren_count < 0:
-                    raise ValidationError("Unbalanced parentheses: extra ')'", field="spl")
-            elif char == '[':
+                    raise ValidationError(
+                        "Unbalanced parentheses: extra ')'", field="spl"
+                    )
+            elif char == "[":
                 bracket_count += 1
-            elif char == ']':
+            elif char == "]":
                 bracket_count -= 1
                 if bracket_count < 0:
                     raise ValidationError("Unbalanced brackets: extra ']'", field="spl")
@@ -109,11 +113,11 @@ def validate_spl(spl: str) -> str:
         raise ValidationError("Unterminated string literal", field="spl")
 
     # Check for empty pipes
-    if '||' in spl.replace(' ', ''):
+    if "||" in spl.replace(" ", ""):
         raise ValidationError("Empty pipe segment (||)", field="spl")
 
     # Check for trailing pipe
-    if spl.rstrip().endswith('|'):
+    if spl.rstrip().endswith("|"):
         raise ValidationError("SPL cannot end with a pipe", field="spl")
 
     return spl
@@ -145,7 +149,7 @@ def validate_time_modifier(time_str: str) -> str:
     time_str = time_str.strip().lower()
 
     # Special keywords
-    if time_str in ('now', 'now()', 'earliest', 'latest', '0'):
+    if time_str in ("now", "now()", "earliest", "latest", "0"):
         return time_str
 
     # Epoch timestamp (all digits)
@@ -153,34 +157,34 @@ def validate_time_modifier(time_str: str) -> str:
         return time_str
 
     # Relative time pattern: [+-]N[smhdwMy][@snap]
-    relative_pattern = r'^[+-]?\d+[smhdwMy](@[smhdwMy]?\d*)?$'
+    relative_pattern = r"^[+-]?\d+[smhdwMy](@[smhdwMy]?\d*)?$"
     if re.match(relative_pattern, time_str, re.IGNORECASE):
         return time_str
 
     # Snap-to pattern: @[smhdwMy]N?
-    snap_pattern = r'^@[smhdwMy]\d*$'
+    snap_pattern = r"^@[smhdwMy]\d*$"
     if re.match(snap_pattern, time_str, re.IGNORECASE):
         return time_str
 
     # Week day snap: @w[0-6]
-    weekday_pattern = r'^@w[0-6]$'
+    weekday_pattern = r"^@w[0-6]$"
     if re.match(weekday_pattern, time_str, re.IGNORECASE):
         return time_str
 
     # Month snap: @mon, @q (quarter), @y (year)
-    month_pattern = r'^@(mon|q\d?|y)$'
+    month_pattern = r"^@(mon|q\d?|y)$"
     if re.match(month_pattern, time_str, re.IGNORECASE):
         return time_str
 
     # Combined relative + snap
-    combined_pattern = r'^[+-]?\d+[smhdwMy]@[smhdwMy0-6]?\d*$'
+    combined_pattern = r"^[+-]?\d+[smhdwMy]@[smhdwMy0-6]?\d*$"
     if re.match(combined_pattern, time_str, re.IGNORECASE):
         return time_str
 
     raise ValidationError(
         f"Invalid time modifier format: {time_str}. "
         "Valid formats: -1h, -7d@d, @h, now, epoch timestamp",
-        field="time"
+        field="time",
     )
 
 
@@ -212,19 +216,25 @@ def validate_index_name(index: str) -> str:
         raise ValidationError("Index name cannot exceed 80 characters", field="index")
 
     # Pattern: starts with letter/underscore, contains alphanumeric/underscore/hyphen
-    pattern = r'^[a-zA-Z_][a-zA-Z0-9_-]*$'
+    pattern = r"^[a-zA-Z_][a-zA-Z0-9_-]*$"
     if not re.match(pattern, index):
         raise ValidationError(
             f"Invalid index name: {index}. "
             "Must start with letter/underscore, contain only alphanumeric/underscore/hyphen",
-            field="index"
+            field="index",
         )
 
     # Reserved internal indexes start with _
     # Allow wildcards for search
-    if index.startswith('_') and index not in ('_internal', '_audit', '_introspection', '_telemetry', '*'):
+    if index.startswith("_") and index not in (
+        "_internal",
+        "_audit",
+        "_introspection",
+        "_telemetry",
+        "*",
+    ):
         # Allow _* for searching all internal indexes
-        if index != '_*':
+        if index != "_*":
             pass  # Allow internal indexes to be specified
 
     return index
@@ -258,12 +268,12 @@ def validate_app_name(app: str) -> str:
         raise ValidationError("App name cannot exceed 80 characters", field="app")
 
     # Pattern: starts with letter, contains alphanumeric/underscore
-    pattern = r'^[a-zA-Z][a-zA-Z0-9_]*$'
+    pattern = r"^[a-zA-Z][a-zA-Z0-9_]*$"
     if not re.match(pattern, app):
         raise ValidationError(
             f"Invalid app name: {app}. "
             "Must start with letter, contain only alphanumeric/underscore",
-            field="app"
+            field="app",
         )
 
     return app
@@ -288,7 +298,9 @@ def validate_port(port: Union[int, str]) -> int:
         raise ValidationError(f"Port must be a number: {port}", field="port")
 
     if port_int < 1 or port_int > 65535:
-        raise ValidationError(f"Port must be between 1 and 65535: {port_int}", field="port")
+        raise ValidationError(
+            f"Port must be between 1 and 65535: {port_int}", field="port"
+        )
 
     return port_int
 
@@ -313,7 +325,7 @@ def validate_url(url: str, require_https: bool = False) -> str:
     url = url.strip()
 
     # Add scheme if missing
-    if not url.startswith(('http://', 'https://')):
+    if not url.startswith(("http://", "https://")):
         url = f"https://{url}"
 
     try:
@@ -327,7 +339,7 @@ def validate_url(url: str, require_https: bool = False) -> str:
     if not parsed.netloc:
         raise ValidationError("URL must have a host", field="url")
 
-    if require_https and parsed.scheme != 'https':
+    if require_https and parsed.scheme != "https":
         raise ValidationError("URL must use HTTPS for security", field="url")
 
     return url
@@ -348,12 +360,11 @@ def validate_output_mode(mode: str) -> str:
     Raises:
         ValidationError: If mode is invalid
     """
-    valid_modes = ('json', 'csv', 'xml', 'raw')
+    valid_modes = ("json", "csv", "xml", "raw")
 
     if not mode or not isinstance(mode, str):
         raise ValidationError(
-            f"Output mode must be one of: {', '.join(valid_modes)}",
-            field="output_mode"
+            f"Output mode must be one of: {', '.join(valid_modes)}", field="output_mode"
         )
 
     mode = mode.strip().lower()
@@ -361,7 +372,7 @@ def validate_output_mode(mode: str) -> str:
     if mode not in valid_modes:
         raise ValidationError(
             f"Invalid output mode: {mode}. Must be one of: {', '.join(valid_modes)}",
-            field="output_mode"
+            field="output_mode",
         )
 
     return mode
@@ -429,7 +440,7 @@ def validate_field_list(fields: Union[str, List[str]]) -> List[str]:
         ValidationError: If fields are invalid
     """
     if isinstance(fields, str):
-        fields = [f.strip() for f in fields.split(',') if f.strip()]
+        fields = [f.strip() for f in fields.split(",") if f.strip()]
     elif not isinstance(fields, list):
         raise ValidationError("Fields must be a string or list", field="fields")
 
@@ -439,7 +450,7 @@ def validate_field_list(fields: Union[str, List[str]]) -> List[str]:
             continue
         # Field names can contain alphanumeric, underscore, period, colon
         field = field.strip()
-        if not re.match(r'^[\w.:]+$', field):
+        if not re.match(r"^[\w.:]+$", field):
             raise ValidationError(f"Invalid field name: {field}", field="fields")
         validated.append(field)
 
@@ -464,12 +475,11 @@ def validate_search_mode(mode: str) -> str:
     Raises:
         ValidationError: If mode is invalid
     """
-    valid_modes = ('normal', 'blocking', 'oneshot')
+    valid_modes = ("normal", "blocking", "oneshot")
 
     if not mode or not isinstance(mode, str):
         raise ValidationError(
-            f"Search mode must be one of: {', '.join(valid_modes)}",
-            field="exec_mode"
+            f"Search mode must be one of: {', '.join(valid_modes)}", field="exec_mode"
         )
 
     mode = mode.strip().lower()
@@ -477,7 +487,7 @@ def validate_search_mode(mode: str) -> str:
     if mode not in valid_modes:
         raise ValidationError(
             f"Invalid search mode: {mode}. Must be one of: {', '.join(valid_modes)}",
-            field="exec_mode"
+            field="exec_mode",
         )
 
     return mode

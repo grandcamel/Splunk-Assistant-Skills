@@ -20,8 +20,7 @@ class TestServerInfo:
     def test_get_server_info_via_rest(self, splunk_client):
         """Test getting server info via REST endpoint."""
         response = splunk_client.get(
-            "/services/server/info",
-            operation="get server info"
+            "/services/server/info", operation="get server info"
         )
 
         assert "entry" in response
@@ -36,8 +35,7 @@ class TestServerStatus:
     def test_get_server_status(self, splunk_client):
         """Test getting server status."""
         response = splunk_client.get(
-            "/services/server/status",
-            operation="get server status"
+            "/services/server/status", operation="get server status"
         )
 
         assert "entry" in response
@@ -46,8 +44,7 @@ class TestServerStatus:
     def test_get_server_settings(self, splunk_client):
         """Test getting server settings."""
         response = splunk_client.get(
-            "/services/server/settings",
-            operation="get server settings"
+            "/services/server/settings", operation="get server settings"
         )
 
         assert "entry" in response
@@ -61,8 +58,7 @@ class TestServerHealth:
         """Test getting server health status."""
         try:
             response = splunk_client.get(
-                "/services/server/health/splunkd",
-                operation="get server health"
+                "/services/server/health/splunkd", operation="get server health"
             )
 
             assert "entry" in response
@@ -80,10 +76,7 @@ class TestServerMessages:
     @pytest.mark.live
     def test_get_server_messages(self, splunk_client):
         """Test getting server messages."""
-        response = splunk_client.get(
-            "/services/messages",
-            operation="get messages"
-        )
+        response = splunk_client.get("/services/messages", operation="get messages")
 
         assert "entry" in response or response == {}
 
@@ -95,8 +88,7 @@ class TestLicenseInfo:
     def test_get_license_info(self, splunk_client):
         """Test getting license information."""
         response = splunk_client.get(
-            "/services/licenser/licenses",
-            operation="get licenses"
+            "/services/licenser/licenses", operation="get licenses"
         )
 
         assert "entry" in response
@@ -105,8 +97,7 @@ class TestLicenseInfo:
     def test_get_license_groups(self, splunk_client):
         """Test getting license groups."""
         response = splunk_client.get(
-            "/services/licenser/groups",
-            operation="get license groups"
+            "/services/licenser/groups", operation="get license groups"
         )
 
         assert "entry" in response
@@ -116,8 +107,7 @@ class TestLicenseInfo:
         """Test getting license usage."""
         try:
             response = splunk_client.get(
-                "/services/licenser/usage",
-                operation="get license usage"
+                "/services/licenser/usage", operation="get license usage"
             )
             assert "entry" in response or response is not None
         except Exception:
@@ -132,8 +122,7 @@ class TestServerConfiguration:
     def test_get_server_settings_general(self, splunk_client):
         """Test getting general server settings."""
         response = splunk_client.get(
-            "/services/server/settings/settings",
-            operation="get settings"
+            "/services/server/settings/settings", operation="get settings"
         )
 
         assert "entry" in response
@@ -145,8 +134,7 @@ class TestServerConfiguration:
         """Test getting deployment information."""
         try:
             response = splunk_client.get(
-                "/services/deployment/server",
-                operation="get deployment"
+                "/services/deployment/server", operation="get deployment"
             )
             assert response is not None
         except Exception:
@@ -158,8 +146,7 @@ class TestServerConfiguration:
         """Test getting cluster configuration."""
         try:
             response = splunk_client.get(
-                "/services/cluster/config",
-                operation="get cluster config"
+                "/services/cluster/config", operation="get cluster config"
             )
             assert response is not None
         except Exception:
@@ -174,8 +161,7 @@ class TestIntrospection:
     def test_get_capabilities(self, splunk_client):
         """Test getting server capabilities."""
         response = splunk_client.get(
-            "/services/authorization/capabilities",
-            operation="get capabilities"
+            "/services/authorization/capabilities", operation="get capabilities"
         )
 
         assert "entry" in response
@@ -184,8 +170,7 @@ class TestIntrospection:
     def test_get_configs(self, splunk_client):
         """Test getting configuration files."""
         response = splunk_client.get(
-            "/services/configs/conf-web",
-            operation="get web config"
+            "/services/configs/conf-web", operation="get web config"
         )
 
         assert "entry" in response
@@ -196,7 +181,7 @@ class TestIntrospection:
         response = splunk_client.get(
             "/services/configs/conf-props",
             params={"count": 10},
-            operation="get props config"
+            operation="get props config",
         )
 
         assert "entry" in response
@@ -207,7 +192,7 @@ class TestIntrospection:
         response = splunk_client.get(
             "/services/configs/conf-transforms",
             params={"count": 10},
-            operation="get transforms config"
+            operation="get transforms config",
         )
 
         assert "entry" in response
@@ -221,8 +206,7 @@ class TestScheduler:
         """Test getting scheduler status."""
         try:
             response = splunk_client.get(
-                "/services/scheduler",
-                operation="get scheduler"
+                "/services/scheduler", operation="get scheduler"
             )
             assert response is not None
         except Exception:
@@ -243,7 +227,7 @@ class TestInternalLogs:
                 "output_mode": "json",
                 "earliest_time": "-1h",
             },
-            operation="search internal"
+            operation="search internal",
         )
 
         results = response.get("results", [])
@@ -259,7 +243,7 @@ class TestInternalLogs:
                 "output_mode": "json",
                 "earliest_time": "-1h",
             },
-            operation="search audit"
+            operation="search audit",
         )
 
         results = response.get("results", [])

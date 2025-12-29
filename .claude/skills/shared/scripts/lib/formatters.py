@@ -17,20 +17,21 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 # ANSI color codes
 class Colors:
     """ANSI color codes for terminal output."""
-    RESET = '\033[0m'
-    RED = '\033[91m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    BLUE = '\033[94m'
-    MAGENTA = '\033[95m'
-    CYAN = '\033[96m'
-    BOLD = '\033[1m'
-    DIM = '\033[2m'
+
+    RESET = "\033[0m"
+    RED = "\033[91m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    BLUE = "\033[94m"
+    MAGENTA = "\033[95m"
+    CYAN = "\033[96m"
+    BOLD = "\033[1m"
+    DIM = "\033[2m"
 
 
 def supports_color() -> bool:
     """Check if terminal supports color output."""
-    if not hasattr(sys.stdout, 'isatty'):
+    if not hasattr(sys.stdout, "isatty"):
         return False
     if not sys.stdout.isatty():
         return False
@@ -116,7 +117,7 @@ def format_table(
     widths = []
     for i, col in enumerate(columns):
         header_width = len(str(headers[i]))
-        data_width = max(len(str(row.get(col, ''))) for row in data)
+        data_width = max(len(str(row.get(col, ""))) for row in data)
         width = min(max(header_width, data_width), max_width)
         widths.append(width)
 
@@ -124,36 +125,36 @@ def format_table(
         """Truncate value to width with ellipsis."""
         value = str(value)
         if truncate and len(value) > width:
-            return value[:width - 3] + '...'
+            return value[: width - 3] + "..."
         return value
 
     # Build table
     lines = []
 
     # Header row
-    header_row = ' | '.join(
-        str(h).ljust(w) for h, w in zip(headers, widths)
-    )
+    header_row = " | ".join(str(h).ljust(w) for h, w in zip(headers, widths))
     lines.append(header_row)
 
     # Separator
-    separator = '-+-'.join('-' * w for w in widths)
+    separator = "-+-".join("-" * w for w in widths)
     lines.append(separator)
 
     # Data rows
     for row in data:
-        values = [truncate_value(row.get(col, ''), w) for col, w in zip(columns, widths)]
-        row_str = ' | '.join(v.ljust(w) for v, w in zip(values, widths))
+        values = [
+            truncate_value(row.get(col, ""), w) for col, w in zip(columns, widths)
+        ]
+        row_str = " | ".join(v.ljust(w) for v, w in zip(values, widths))
         lines.append(row_str)
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def format_search_results(
     results: Union[Dict[str, Any], List[Dict[str, Any]]],
     fields: Optional[List[str]] = None,
     max_results: int = 50,
-    output_format: str = 'table',
+    output_format: str = "table",
 ) -> str:
     """
     Format search results for display.
@@ -169,9 +170,9 @@ def format_search_results(
     """
     # Extract results from Splunk response format
     if isinstance(results, dict):
-        result_list = results.get('results', results.get('rows', []))
-        if not result_list and 'entry' in results:
-            result_list = [e.get('content', {}) for e in results['entry']]
+        result_list = results.get("results", results.get("rows", []))
+        if not result_list and "entry" in results:
+            result_list = [e.get("content", {}) for e in results["entry"]]
     else:
         result_list = results
 
@@ -188,12 +189,12 @@ def format_search_results(
     # Auto-detect fields
     if fields is None and result_list:
         # Use first result's keys, excluding internal fields
-        fields = [k for k in result_list[0].keys() if not k.startswith('_')][:10]
+        fields = [k for k in result_list[0].keys() if not k.startswith("_")][:10]
 
     # Format based on output format
-    if output_format == 'json':
+    if output_format == "json":
         output = format_json(result_list)
-    elif output_format == 'csv':
+    elif output_format == "csv":
         output = export_csv_string(result_list, fields)
     else:  # table
         output = format_table(result_list, columns=fields)
@@ -214,25 +215,25 @@ def format_job_status(job: Dict[str, Any]) -> str:
     Returns:
         Formatted status string
     """
-    content = job.get('content', job)
+    content = job.get("content", job)
 
-    sid = content.get('sid', 'Unknown')
-    state = content.get('dispatchState', 'Unknown')
-    done_progress = content.get('doneProgress', 0)
-    event_count = content.get('eventCount', 0)
-    result_count = content.get('resultCount', 0)
-    scan_count = content.get('scanCount', 0)
-    run_duration = content.get('runDuration', 0)
+    sid = content.get("sid", "Unknown")
+    state = content.get("dispatchState", "Unknown")
+    done_progress = content.get("doneProgress", 0)
+    event_count = content.get("eventCount", 0)
+    result_count = content.get("resultCount", 0)
+    scan_count = content.get("scanCount", 0)
+    run_duration = content.get("runDuration", 0)
 
     # State color
     state_colors = {
-        'QUEUED': Colors.YELLOW,
-        'PARSING': Colors.YELLOW,
-        'RUNNING': Colors.BLUE,
-        'FINALIZING': Colors.CYAN,
-        'DONE': Colors.GREEN,
-        'FAILED': Colors.RED,
-        'PAUSED': Colors.MAGENTA,
+        "QUEUED": Colors.YELLOW,
+        "PARSING": Colors.YELLOW,
+        "RUNNING": Colors.BLUE,
+        "FINALIZING": Colors.CYAN,
+        "DONE": Colors.GREEN,
+        "FAILED": Colors.RED,
+        "PAUSED": Colors.MAGENTA,
     }
     state_color = state_colors.get(state, Colors.RESET)
 
@@ -247,12 +248,12 @@ def format_job_status(job: Dict[str, Any]) -> str:
     ]
 
     # Add error message if failed
-    if state == 'FAILED':
-        messages = content.get('messages', [])
+    if state == "FAILED":
+        messages = content.get("messages", [])
         if messages:
             lines.append(f"Error:      {messages[0].get('text', 'Unknown error')}")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def format_metadata(meta: Dict[str, Any]) -> str:
@@ -268,27 +269,29 @@ def format_metadata(meta: Dict[str, Any]) -> str:
     lines = []
 
     # Index metadata
-    if 'totalEventCount' in meta:
-        lines.extend([
-            f"Index:           {meta.get('title', meta.get('name', 'Unknown'))}",
-            f"Total Events:    {meta.get('totalEventCount', 0):,}",
-            f"Total Size:      {format_bytes(meta.get('currentDBSizeMB', 0) * 1024 * 1024)}",
-            f"Earliest Event:  {format_splunk_time(meta.get('minTime', ''))}",
-            f"Latest Event:    {format_splunk_time(meta.get('maxTime', ''))}",
-        ])
+    if "totalEventCount" in meta:
+        lines.extend(
+            [
+                f"Index:           {meta.get('title', meta.get('name', 'Unknown'))}",
+                f"Total Events:    {meta.get('totalEventCount', 0):,}",
+                f"Total Size:      {format_bytes(meta.get('currentDBSizeMB', 0) * 1024 * 1024)}",
+                f"Earliest Event:  {format_splunk_time(meta.get('minTime', ''))}",
+                f"Latest Event:    {format_splunk_time(meta.get('maxTime', ''))}",
+            ]
+        )
     # Sourcetype metadata
-    elif 'values' in meta:
+    elif "values" in meta:
         lines.append(f"Field:    {meta.get('field', 'Unknown')}")
         lines.append(f"Values:   {len(meta.get('values', []))}")
-        for v in meta.get('values', [])[:10]:
+        for v in meta.get("values", [])[:10]:
             lines.append(f"  - {v.get('value', v)}: {v.get('count', 0):,}")
     else:
         # Generic metadata
         for key, value in meta.items():
-            if not key.startswith('_'):
+            if not key.startswith("_"):
                 lines.append(f"{key}: {value}")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def format_saved_search(search: Dict[str, Any]) -> str:
@@ -301,7 +304,7 @@ def format_saved_search(search: Dict[str, Any]) -> str:
     Returns:
         Formatted saved search string
     """
-    content = search.get('content', search)
+    content = search.get("content", search)
 
     lines = [
         f"Name:           {search.get('name', content.get('name', 'Unknown'))}",
@@ -312,13 +315,15 @@ def format_saved_search(search: Dict[str, Any]) -> str:
         f"Scheduled:      {content.get('is_scheduled', False)}",
     ]
 
-    if content.get('is_scheduled'):
-        lines.extend([
-            f"Cron:           {content.get('cron_schedule', 'N/A')}",
-            f"Next Run:       {content.get('next_scheduled_time', 'N/A')}",
-        ])
+    if content.get("is_scheduled"):
+        lines.extend(
+            [
+                f"Cron:           {content.get('cron_schedule', 'N/A')}",
+                f"Next Run:       {content.get('next_scheduled_time', 'N/A')}",
+            ]
+        )
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def format_bytes(size: Union[int, float]) -> str:
@@ -331,7 +336,7 @@ def format_bytes(size: Union[int, float]) -> str:
     Returns:
         Human-readable size string
     """
-    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+    for unit in ["B", "KB", "MB", "GB", "TB"]:
         if abs(size) < 1024:
             return f"{size:.1f} {unit}"
         size /= 1024
@@ -349,12 +354,12 @@ def format_splunk_time(time_str: str) -> str:
         Human-readable timestamp
     """
     if not time_str:
-        return 'N/A'
+        return "N/A"
 
     try:
         # Try parsing ISO format
-        dt = datetime.fromisoformat(time_str.replace('Z', '+00:00'))
-        return dt.strftime('%Y-%m-%d %H:%M:%S')
+        dt = datetime.fromisoformat(time_str.replace("Z", "+00:00"))
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
     except (ValueError, AttributeError):
         return str(time_str)
 
@@ -381,8 +386,8 @@ def export_csv(
     if columns is None:
         columns = list(data[0].keys())
 
-    with open(file_path, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=columns, extrasaction='ignore')
+    with open(file_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=columns, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(data)
 
@@ -410,7 +415,7 @@ def export_csv_string(
         columns = list(data[0].keys())
 
     output = StringIO()
-    writer = csv.DictWriter(output, fieldnames=columns, extrasaction='ignore')
+    writer = csv.DictWriter(output, fieldnames=columns, extrasaction="ignore")
     writer.writeheader()
     writer.writerows(data)
 
@@ -420,7 +425,7 @@ def export_csv_string(
 def format_list(
     items: Sequence[Any],
     numbered: bool = False,
-    bullet: str = '•',
+    bullet: str = "•",
     max_items: int = 50,
 ) -> str:
     """
@@ -448,7 +453,7 @@ def format_list(
     if truncated:
         lines.append(f" ... and {len(items) - max_items} more")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 def format_duration(seconds: float) -> str:

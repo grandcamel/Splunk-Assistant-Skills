@@ -21,7 +21,7 @@ class TestKVStoreCollections:
         # List collections and verify it exists
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/config",
-            operation="list collections"
+            operation="list collections",
         )
 
         collection_names = [e.get("name") for e in response.get("entry", [])]
@@ -30,18 +30,14 @@ class TestKVStoreCollections:
     @pytest.mark.live
     def test_create_collection_with_fields(self, kvstore_helper, test_collection_name):
         """Test creating a collection with field definitions."""
-        fields = {
-            "username": "string",
-            "count": "number",
-            "active": "bool"
-        }
+        fields = {"username": "string", "count": "number", "active": "bool"}
 
         assert kvstore_helper.create_collection(test_collection_name, fields)
 
         # Verify collection exists
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/config/{test_collection_name}",
-            operation="get collection"
+            operation="get collection",
         )
 
         assert "entry" in response
@@ -60,7 +56,7 @@ class TestKVStoreCollections:
         with pytest.raises(Exception):
             kvstore_helper.client.get(
                 f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/config/{test_collection_name}",
-                operation="get deleted collection"
+                operation="get deleted collection",
             )
 
 
@@ -81,7 +77,7 @@ class TestKVStoreRecords:
         # Get the record
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}/{key}",
-            operation="get record"
+            operation="get record",
         )
 
         assert response.get("username") == "testuser"
@@ -94,10 +90,9 @@ class TestKVStoreRecords:
 
         # Insert multiple records
         for i in range(5):
-            kvstore_helper.insert_record(test_collection_name, {
-                "index": i,
-                "name": f"record_{i}"
-            })
+            kvstore_helper.insert_record(
+                test_collection_name, {"index": i, "name": f"record_{i}"}
+            )
 
         # Query all records
         records = kvstore_helper.get_records(test_collection_name)
@@ -107,6 +102,7 @@ class TestKVStoreRecords:
     def test_update_record(self, kvstore_helper, test_collection_name):
         """Test updating a record."""
         import json as json_lib
+
         kvstore_helper.create_collection(test_collection_name)
 
         # Insert record
@@ -118,13 +114,13 @@ class TestKVStoreRecords:
             url,
             data=json_lib.dumps({"value": "updated"}),
             headers={"Content-Type": "application/json"},
-            verify=kvstore_helper.client.verify_ssl
+            verify=kvstore_helper.client.verify_ssl,
         )
 
         # Verify update
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}/{key}",
-            operation="get record"
+            operation="get record",
         )
         assert response.get("value") == "updated"
 
@@ -140,8 +136,7 @@ class TestKVStoreRecords:
         # Use session directly as KV store delete returns empty response
         url = f"{kvstore_helper.client.base_url.replace('/services', '')}/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}/{key}"
         response = kvstore_helper.client.session.delete(
-            url,
-            verify=kvstore_helper.client.verify_ssl
+            url, verify=kvstore_helper.client.verify_ssl
         )
         response.raise_for_status()
 
@@ -166,7 +161,7 @@ class TestKVStoreQueryFilters:
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}",
             params={"query": '{"status": "active"}'},
-            operation="filtered query"
+            operation="filtered query",
         )
 
         records = response if isinstance(response, list) else []
@@ -185,7 +180,7 @@ class TestKVStoreQueryFilters:
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}",
             params={"limit": 5},
-            operation="limited query"
+            operation="limited query",
         )
 
         records = response if isinstance(response, list) else []
@@ -204,7 +199,7 @@ class TestKVStoreQueryFilters:
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}",
             params={"skip": 5},
-            operation="skip query"
+            operation="skip query",
         )
 
         records = response if isinstance(response, list) else []
@@ -223,7 +218,7 @@ class TestKVStoreQueryFilters:
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}",
             params={"sort": "value:1"},
-            operation="sorted query"
+            operation="sorted query",
         )
 
         records = response if isinstance(response, list) else []
@@ -238,7 +233,7 @@ class TestKVStoreCollectionConfig:
         """Test listing all collections."""
         response = splunk_client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/config",
-            operation="list collections"
+            operation="list collections",
         )
 
         assert "entry" in response
@@ -250,14 +245,16 @@ class TestKVStoreCollectionConfig:
 
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/config/{test_collection_name}",
-            operation="get collection config"
+            operation="get collection config",
         )
 
         assert "entry" in response
         assert response["entry"][0].get("name") == test_collection_name
 
     @pytest.mark.live
-    def test_create_collection_with_accelerated_fields(self, kvstore_helper, test_collection_name):
+    def test_create_collection_with_accelerated_fields(
+        self, kvstore_helper, test_collection_name
+    ):
         """Test creating collection with accelerated fields."""
         fields = {"username": "string"}
         accelerated_fields = {"username_idx": '{"username": 1}'}
@@ -268,7 +265,7 @@ class TestKVStoreCollectionConfig:
         # Verify collection exists
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/config/{test_collection_name}",
-            operation="get collection"
+            operation="get collection",
         )
 
         assert "entry" in response
@@ -282,17 +279,20 @@ class TestKVStoreDataTypes:
         """Test inserting string data."""
         kvstore_helper.create_collection(test_collection_name)
 
-        key = kvstore_helper.insert_record(test_collection_name, {
-            "name": "Test User",
-            "description": "A test description with special chars: !@#$%"
-        })
+        key = kvstore_helper.insert_record(
+            test_collection_name,
+            {
+                "name": "Test User",
+                "description": "A test description with special chars: !@#$%",
+            },
+        )
 
         assert key is not None
 
         # Verify data
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}/{key}",
-            operation="get record"
+            operation="get record",
         )
         assert response.get("name") == "Test User"
 
@@ -301,17 +301,15 @@ class TestKVStoreDataTypes:
         """Test inserting numeric data."""
         kvstore_helper.create_collection(test_collection_name)
 
-        key = kvstore_helper.insert_record(test_collection_name, {
-            "count": 42,
-            "price": 19.99,
-            "negative": -100
-        })
+        key = kvstore_helper.insert_record(
+            test_collection_name, {"count": 42, "price": 19.99, "negative": -100}
+        )
 
         assert key is not None
 
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}/{key}",
-            operation="get record"
+            operation="get record",
         )
         assert response.get("count") == 42
 
@@ -320,10 +318,9 @@ class TestKVStoreDataTypes:
         """Test inserting boolean data."""
         kvstore_helper.create_collection(test_collection_name)
 
-        key = kvstore_helper.insert_record(test_collection_name, {
-            "active": True,
-            "deleted": False
-        })
+        key = kvstore_helper.insert_record(
+            test_collection_name, {"active": True, "deleted": False}
+        )
 
         assert key is not None
 
@@ -332,16 +329,16 @@ class TestKVStoreDataTypes:
         """Test inserting array data."""
         kvstore_helper.create_collection(test_collection_name)
 
-        key = kvstore_helper.insert_record(test_collection_name, {
-            "tags": ["tag1", "tag2", "tag3"],
-            "scores": [85, 90, 78]
-        })
+        key = kvstore_helper.insert_record(
+            test_collection_name,
+            {"tags": ["tag1", "tag2", "tag3"], "scores": [85, 90, 78]},
+        )
 
         assert key is not None
 
         response = kvstore_helper.client.get(
             f"/servicesNS/nobody/{kvstore_helper.app}/storage/collections/data/{test_collection_name}/{key}",
-            operation="get record"
+            operation="get record",
         )
         assert "tags" in response
 
@@ -350,16 +347,13 @@ class TestKVStoreDataTypes:
         """Test inserting nested object data."""
         kvstore_helper.create_collection(test_collection_name)
 
-        key = kvstore_helper.insert_record(test_collection_name, {
-            "user": {
-                "name": "Test",
-                "email": "test@example.com"
+        key = kvstore_helper.insert_record(
+            test_collection_name,
+            {
+                "user": {"name": "Test", "email": "test@example.com"},
+                "metadata": {"created": "2024-01-01", "version": 1},
             },
-            "metadata": {
-                "created": "2024-01-01",
-                "version": 1
-            }
-        })
+        )
 
         assert key is not None
 

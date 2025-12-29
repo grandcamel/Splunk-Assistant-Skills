@@ -5,7 +5,9 @@ import sys
 import argparse
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
+sys.path.insert(
+    0, str(Path(__file__).parent.parent.parent / "shared" / "scripts" / "lib")
+)
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
@@ -14,11 +16,15 @@ from formatters import print_success
 
 @handle_errors
 def main():
-    parser = argparse.ArgumentParser(description='Download lookup file')
-    parser.add_argument('name', help='Lookup filename in Splunk')
-    parser.add_argument('--output', '-o', help='Output file path (defaults to lookup name)')
-    parser.add_argument('--app', '-a', default='search', help='App namespace (default: search)')
-    parser.add_argument('--profile', '-p', help='Splunk profile')
+    parser = argparse.ArgumentParser(description="Download lookup file")
+    parser.add_argument("name", help="Lookup filename in Splunk")
+    parser.add_argument(
+        "--output", "-o", help="Output file path (defaults to lookup name)"
+    )
+    parser.add_argument(
+        "--app", "-a", default="search", help="App namespace (default: search)"
+    )
+    parser.add_argument("--profile", "-p", help="Splunk profile")
     args = parser.parse_args()
 
     client = get_splunk_client(profile=args.profile)
@@ -26,17 +32,17 @@ def main():
     # Get lookup content - need to use raw response
     response = client.session.get(
         f"{client.base_url}/servicesNS/nobody/{args.app}/data/lookup-table-files/{args.name}",
-        params={'output_mode': 'csv'},
+        params={"output_mode": "csv"},
         verify=client.verify_ssl,
     )
     response.raise_for_status()
 
     output_path = args.output or args.name
-    with open(output_path, 'w') as f:
+    with open(output_path, "w") as f:
         f.write(response.text)
 
     print_success(f"Lookup file '{args.name}' downloaded to '{output_path}'")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

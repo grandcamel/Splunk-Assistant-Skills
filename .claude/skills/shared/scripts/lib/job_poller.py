@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 class JobState(Enum):
     """Splunk search job states."""
+
     QUEUED = "QUEUED"
     PARSING = "PARSING"
     RUNNING = "RUNNING"
@@ -61,17 +62,17 @@ class JobProgress:
             data: Job status content dictionary
         """
         self.data = data
-        self.sid = data.get('sid', '')
-        self.state = JobState(data.get('dispatchState', 'QUEUED'))
-        self.done_progress = float(data.get('doneProgress', 0))
-        self.event_count = int(data.get('eventCount', 0))
-        self.result_count = int(data.get('resultCount', 0))
-        self.scan_count = int(data.get('scanCount', 0))
-        self.run_duration = float(data.get('runDuration', 0))
-        self.is_done = data.get('isDone', False)
-        self.is_failed = data.get('isFailed', False)
-        self.is_paused = data.get('isPaused', False)
-        self.messages = data.get('messages', [])
+        self.sid = data.get("sid", "")
+        self.state = JobState(data.get("dispatchState", "QUEUED"))
+        self.done_progress = float(data.get("doneProgress", 0))
+        self.event_count = int(data.get("eventCount", 0))
+        self.result_count = int(data.get("resultCount", 0))
+        self.scan_count = int(data.get("scanCount", 0))
+        self.run_duration = float(data.get("runDuration", 0))
+        self.is_done = data.get("isDone", False)
+        self.is_failed = data.get("isFailed", False)
+        self.is_paused = data.get("isPaused", False)
+        self.messages = data.get("messages", [])
 
     @property
     def progress_percent(self) -> float:
@@ -83,8 +84,8 @@ class JobProgress:
         """Get error message if job failed."""
         if self.is_failed and self.messages:
             for msg in self.messages:
-                if msg.get('type') == 'ERROR':
-                    return msg.get('text')
+                if msg.get("type") == "ERROR":
+                    return msg.get("text")
         return None
 
     def __repr__(self) -> str:
@@ -94,7 +95,7 @@ class JobProgress:
         )
 
 
-def get_dispatch_state(client: 'SplunkClient', sid: str) -> JobProgress:
+def get_dispatch_state(client: "SplunkClient", sid: str) -> JobProgress:
     """
     Get current job dispatch state.
 
@@ -109,20 +110,20 @@ def get_dispatch_state(client: 'SplunkClient', sid: str) -> JobProgress:
         NotFoundError: If job doesn't exist
     """
     response = client.get(
-        f'/search/v2/jobs/{sid}',
-        operation=f'get job status {sid}',
+        f"/search/v2/jobs/{sid}",
+        operation=f"get job status {sid}",
     )
 
-    if 'entry' in response and response['entry']:
-        content = response['entry'][0].get('content', {})
-        content['sid'] = sid
+    if "entry" in response and response["entry"]:
+        content = response["entry"][0].get("content", {})
+        content["sid"] = sid
         return JobProgress(content)
 
     raise ValueError(f"Invalid job status response for {sid}")
 
 
 def poll_job_status(
-    client: 'SplunkClient',
+    client: "SplunkClient",
     sid: str,
     timeout: int = 300,
     poll_interval: float = 1.0,
@@ -195,7 +196,7 @@ def poll_job_status(
 
 
 def wait_for_job(
-    client: 'SplunkClient',
+    client: "SplunkClient",
     sid: str,
     timeout: int = 300,
     show_progress: bool = False,
@@ -216,13 +217,15 @@ def wait_for_job(
         TimeoutError: If job doesn't complete
         JobFailedError: If job fails
     """
+
     def progress_callback(progress: JobProgress) -> None:
         if show_progress:
             print(
                 f"\rJob {progress.sid}: {progress.state.value} "
                 f"({progress.progress_percent:.0f}%) "
                 f"- {progress.result_count:,} results",
-                end='', flush=True
+                end="",
+                flush=True,
             )
 
     try:
@@ -238,7 +241,7 @@ def wait_for_job(
         raise
 
 
-def cancel_job(client: 'SplunkClient', sid: str) -> bool:
+def cancel_job(client: "SplunkClient", sid: str) -> bool:
     """
     Cancel a running search job.
 
@@ -253,14 +256,14 @@ def cancel_job(client: 'SplunkClient', sid: str) -> bool:
         SplunkError: On API errors
     """
     response = client.post(
-        f'/search/v2/jobs/{sid}/control',
-        data={'action': 'cancel'},
-        operation=f'cancel job {sid}',
+        f"/search/v2/jobs/{sid}/control",
+        data={"action": "cancel"},
+        operation=f"cancel job {sid}",
     )
     return True
 
 
-def pause_job(client: 'SplunkClient', sid: str) -> bool:
+def pause_job(client: "SplunkClient", sid: str) -> bool:
     """
     Pause a running search job.
 
@@ -272,14 +275,14 @@ def pause_job(client: 'SplunkClient', sid: str) -> bool:
         True if pause was successful
     """
     response = client.post(
-        f'/search/v2/jobs/{sid}/control',
-        data={'action': 'pause'},
-        operation=f'pause job {sid}',
+        f"/search/v2/jobs/{sid}/control",
+        data={"action": "pause"},
+        operation=f"pause job {sid}",
     )
     return True
 
 
-def unpause_job(client: 'SplunkClient', sid: str) -> bool:
+def unpause_job(client: "SplunkClient", sid: str) -> bool:
     """
     Resume a paused search job.
 
@@ -291,14 +294,14 @@ def unpause_job(client: 'SplunkClient', sid: str) -> bool:
         True if unpause was successful
     """
     response = client.post(
-        f'/search/v2/jobs/{sid}/control',
-        data={'action': 'unpause'},
-        operation=f'unpause job {sid}',
+        f"/search/v2/jobs/{sid}/control",
+        data={"action": "unpause"},
+        operation=f"unpause job {sid}",
     )
     return True
 
 
-def finalize_job(client: 'SplunkClient', sid: str) -> bool:
+def finalize_job(client: "SplunkClient", sid: str) -> bool:
     """
     Finalize a search job (stop streaming, return current results).
 
@@ -310,14 +313,14 @@ def finalize_job(client: 'SplunkClient', sid: str) -> bool:
         True if finalization was successful
     """
     response = client.post(
-        f'/search/v2/jobs/{sid}/control',
-        data={'action': 'finalize'},
-        operation=f'finalize job {sid}',
+        f"/search/v2/jobs/{sid}/control",
+        data={"action": "finalize"},
+        operation=f"finalize job {sid}",
     )
     return True
 
 
-def set_job_ttl(client: 'SplunkClient', sid: str, ttl: int) -> bool:
+def set_job_ttl(client: "SplunkClient", sid: str, ttl: int) -> bool:
     """
     Set job time-to-live to extend retention.
 
@@ -330,14 +333,14 @@ def set_job_ttl(client: 'SplunkClient', sid: str, ttl: int) -> bool:
         True if TTL was set successfully
     """
     response = client.post(
-        f'/search/v2/jobs/{sid}/control',
-        data={'action': 'setttl', 'ttl': ttl},
-        operation=f'set TTL for job {sid}',
+        f"/search/v2/jobs/{sid}/control",
+        data={"action": "setttl", "ttl": ttl},
+        operation=f"set TTL for job {sid}",
     )
     return True
 
 
-def touch_job(client: 'SplunkClient', sid: str) -> bool:
+def touch_job(client: "SplunkClient", sid: str) -> bool:
     """
     Touch a job to extend its TTL.
 
@@ -349,14 +352,14 @@ def touch_job(client: 'SplunkClient', sid: str) -> bool:
         True if touch was successful
     """
     response = client.post(
-        f'/search/v2/jobs/{sid}/control',
-        data={'action': 'touch'},
-        operation=f'touch job {sid}',
+        f"/search/v2/jobs/{sid}/control",
+        data={"action": "touch"},
+        operation=f"touch job {sid}",
     )
     return True
 
 
-def get_job_summary(client: 'SplunkClient', sid: str) -> Dict[str, Any]:
+def get_job_summary(client: "SplunkClient", sid: str) -> Dict[str, Any]:
     """
     Get job summary with field statistics.
 
@@ -368,14 +371,14 @@ def get_job_summary(client: 'SplunkClient', sid: str) -> Dict[str, Any]:
         Summary dictionary with field information
     """
     response = client.get(
-        f'/search/v2/jobs/{sid}/summary',
-        operation=f'get job summary {sid}',
+        f"/search/v2/jobs/{sid}/summary",
+        operation=f"get job summary {sid}",
     )
     return response
 
 
 def list_jobs(
-    client: 'SplunkClient',
+    client: "SplunkClient",
     count: int = 50,
     offset: int = 0,
 ) -> list:
@@ -391,21 +394,21 @@ def list_jobs(
         List of job information dictionaries
     """
     response = client.get(
-        '/search/jobs',
-        params={'count': count, 'offset': offset},
-        operation='list jobs',
+        "/search/jobs",
+        params={"count": count, "offset": offset},
+        operation="list jobs",
     )
 
     jobs = []
-    for entry in response.get('entry', []):
-        job_data = entry.get('content', {})
-        job_data['sid'] = entry.get('name', '')
+    for entry in response.get("entry", []):
+        job_data = entry.get("content", {})
+        job_data["sid"] = entry.get("name", "")
         jobs.append(job_data)
 
     return jobs
 
 
-def delete_job(client: 'SplunkClient', sid: str) -> bool:
+def delete_job(client: "SplunkClient", sid: str) -> bool:
     """
     Delete a search job.
 
@@ -417,7 +420,7 @@ def delete_job(client: 'SplunkClient', sid: str) -> bool:
         True if deletion was successful
     """
     response = client.delete(
-        f'/search/jobs/{sid}',
-        operation=f'delete job {sid}',
+        f"/search/jobs/{sid}",
+        operation=f"delete job {sid}",
     )
     return True

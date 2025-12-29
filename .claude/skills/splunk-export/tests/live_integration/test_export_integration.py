@@ -28,7 +28,9 @@ class TestExportEndpoint:
         assert response is not None
 
     @pytest.mark.live
-    @pytest.mark.xfail(reason="Export endpoint returns streaming JSON lines, not a single JSON object")
+    @pytest.mark.xfail(
+        reason="Export endpoint returns streaming JSON lines, not a single JSON object"
+    )
     def test_export_endpoint_json(self, splunk_client, test_index, test_data):
         """Test export endpoint returns JSON data."""
         response = splunk_client.post(
@@ -69,7 +71,9 @@ class TestJobResultsExport:
 
     @pytest.mark.live
     @pytest.mark.xfail(reason="CSV output_mode returns raw CSV, client expects JSON")
-    def test_export_job_results_csv(self, splunk_client, job_helper, test_index, test_data):
+    def test_export_job_results_csv(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test exporting job results in CSV format."""
         # Create and complete a job
         sid = job_helper.create(f"search index={test_index} | head 20")
@@ -86,7 +90,9 @@ class TestJobResultsExport:
         assert response is not None
 
     @pytest.mark.live
-    def test_export_job_results_json(self, splunk_client, job_helper, test_index, test_data):
+    def test_export_job_results_json(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test exporting job results in JSON format."""
         sid = job_helper.create(f"search index={test_index} | head 20")
         job_helper.wait_for_done(sid)
@@ -102,7 +108,9 @@ class TestJobResultsExport:
 
     @pytest.mark.live
     @pytest.mark.xfail(reason="XML output_mode returns raw XML, client expects JSON")
-    def test_export_job_results_xml(self, splunk_client, job_helper, test_index, test_data):
+    def test_export_job_results_xml(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test exporting job results in XML format."""
         sid = job_helper.create(f"search index={test_index} | head 10")
         job_helper.wait_for_done(sid)
@@ -117,9 +125,13 @@ class TestJobResultsExport:
         assert response is not None
 
     @pytest.mark.live
-    def test_export_with_field_selection(self, splunk_client, job_helper, test_index, test_data):
+    def test_export_with_field_selection(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test exporting with specific fields selected."""
-        sid = job_helper.create(f"search index={test_index} | head 10 | fields host, sourcetype, _time")
+        sid = job_helper.create(
+            f"search index={test_index} | head 10 | fields host, sourcetype, _time"
+        )
         job_helper.wait_for_done(sid)
 
         response = splunk_client.get(
@@ -164,7 +176,9 @@ class TestExportPagination:
     @pytest.mark.live
     def test_export_all_results(self, splunk_client, job_helper, test_index, test_data):
         """Test exporting all results with count=0."""
-        sid = job_helper.create(f"search index={test_index} | stats count by host, sourcetype")
+        sid = job_helper.create(
+            f"search index={test_index} | stats count by host, sourcetype"
+        )
         job_helper.wait_for_done(sid)
 
         response = splunk_client.get(
@@ -242,7 +256,9 @@ class TestStreamingExport:
         assert total_bytes > 0
 
     @pytest.mark.live
-    def test_stream_large_results(self, splunk_client, job_helper, test_index, test_data):
+    def test_stream_large_results(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test streaming larger result sets."""
         # Create a job that returns more results
         sid = job_helper.create(

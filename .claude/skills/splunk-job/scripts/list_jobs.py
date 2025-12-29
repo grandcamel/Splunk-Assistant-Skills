@@ -15,7 +15,9 @@ import argparse
 from pathlib import Path
 
 # Add shared lib to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
+sys.path.insert(
+    0, str(Path(__file__).parent.parent.parent / "shared" / "scripts" / "lib")
+)
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
@@ -26,14 +28,20 @@ from job_poller import list_jobs
 @handle_errors
 def main():
     parser = argparse.ArgumentParser(
-        description='List Splunk search jobs',
+        description="List Splunk search jobs",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument('--profile', '-p', help='Splunk profile to use')
-    parser.add_argument('--count', '-c', type=int, default=50,
-                       help='Maximum number of jobs to list (default: 50)')
-    parser.add_argument('--output', '-o', choices=['text', 'json'], default='text',
-                       help='Output format')
+    parser.add_argument("--profile", "-p", help="Splunk profile to use")
+    parser.add_argument(
+        "--count",
+        "-c",
+        type=int,
+        default=50,
+        help="Maximum number of jobs to list (default: 50)",
+    )
+    parser.add_argument(
+        "--output", "-o", choices=["text", "json"], default="text", help="Output format"
+    )
     args = parser.parse_args()
 
     # Get client
@@ -42,7 +50,7 @@ def main():
     # List jobs
     jobs = list_jobs(client, count=args.count)
 
-    if args.output == 'json':
+    if args.output == "json":
         print(format_json(jobs))
     else:
         if not jobs:
@@ -52,20 +60,24 @@ def main():
         # Format for display
         display_data = []
         for job in jobs:
-            display_data.append({
-                'SID': job.get('sid', '')[:30],
-                'State': job.get('dispatchState', 'Unknown'),
-                'Progress': f"{float(job.get('doneProgress', 0)) * 100:.0f}%",
-                'Results': job.get('resultCount', 0),
-                'Duration': f"{float(job.get('runDuration', 0)):.1f}s",
-            })
+            display_data.append(
+                {
+                    "SID": job.get("sid", "")[:30],
+                    "State": job.get("dispatchState", "Unknown"),
+                    "Progress": f"{float(job.get('doneProgress', 0)) * 100:.0f}%",
+                    "Results": job.get("resultCount", 0),
+                    "Duration": f"{float(job.get('runDuration', 0)):.1f}s",
+                }
+            )
 
-        print(format_table(
-            display_data,
-            columns=['SID', 'State', 'Progress', 'Results', 'Duration'],
-        ))
+        print(
+            format_table(
+                display_data,
+                columns=["SID", "State", "Progress", "Results", "Duration"],
+            )
+        )
         print(f"\nTotal: {len(jobs)} jobs")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

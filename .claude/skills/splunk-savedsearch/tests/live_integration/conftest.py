@@ -11,6 +11,7 @@ import pytest
 
 logging.basicConfig(level=logging.INFO)
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add shared lib to path
@@ -22,12 +23,20 @@ if str(lib_path) not in sys.path:
 
 # Import splunk_container module directly
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
-from splunk_container import SplunkContainer, ExternalSplunkConnection, get_splunk_connection
+from splunk_container import (
+    SplunkContainer,
+    ExternalSplunkConnection,
+    get_splunk_connection,
+)
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "live: marks tests as requiring live Splunk connection")
-    config.addinivalue_line("markers", "destructive: marks tests that modify Splunk configuration")
+    config.addinivalue_line(
+        "markers", "live: marks tests as requiring live Splunk connection"
+    )
+    config.addinivalue_line(
+        "markers", "destructive: marks tests that modify Splunk configuration"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -63,7 +72,7 @@ class SavedSearchHelper:
             self.client.post(
                 f"/servicesNS/nobody/{self.app}/saved/searches",
                 data=data,
-                operation="create saved search"
+                operation="create saved search",
             )
             self._created_searches.append(name)
             return True
@@ -75,7 +84,7 @@ class SavedSearchHelper:
         try:
             self.client.delete(
                 f"/servicesNS/nobody/{self.app}/saved/searches/{name}",
-                operation="delete saved search"
+                operation="delete saved search",
             )
             if name in self._created_searches:
                 self._created_searches.remove(name)
@@ -88,7 +97,7 @@ class SavedSearchHelper:
         response = self.client.post(
             f"/servicesNS/nobody/{self.app}/saved/searches/{name}/dispatch",
             data={"dispatch.now": "true"},
-            operation="dispatch saved search"
+            operation="dispatch saved search",
         )
         return response.get("sid")
 

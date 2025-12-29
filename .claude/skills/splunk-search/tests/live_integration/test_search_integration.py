@@ -133,7 +133,9 @@ class TestSearchNormal:
         assert int(status.get("resultCount", 0)) > 0
 
     @pytest.mark.live
-    def test_normal_search_get_results(self, splunk_client, job_helper, test_index, test_data):
+    def test_normal_search_get_results(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test retrieving results from completed job."""
         sid = job_helper.create(f"search index={test_index} | head 5")
         job_helper.wait_for_done(sid)
@@ -284,7 +286,9 @@ class TestSearchPerformance:
         assert len(results) > 0
 
     @pytest.mark.live
-    def test_search_with_preview(self, splunk_client, job_helper, test_index, test_data):
+    def test_search_with_preview(
+        self, splunk_client, job_helper, test_index, test_data
+    ):
         """Test getting preview results from running job."""
         # Create a job
         sid = job_helper.create(

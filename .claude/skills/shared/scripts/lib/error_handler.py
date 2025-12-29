@@ -51,7 +51,7 @@ class SplunkError(Exception):
         if self.status_code:
             parts.append(f"HTTP {self.status_code}:")
         parts.append(self.message)
-        return ' '.join(parts)
+        return " ".join(parts)
 
 
 class AuthenticationError(SplunkError):
@@ -182,17 +182,17 @@ def parse_error_response(response: requests.Response) -> Dict[str, Any]:
     """
     try:
         data = response.json()
-        messages = data.get('messages', [])
+        messages = data.get("messages", [])
         if messages:
             return {
-                'message': messages[0].get('text', 'Unknown error'),
-                'type': messages[0].get('type', 'ERROR'),
-                'code': messages[0].get('code'),
-                'details': data,
+                "message": messages[0].get("text", "Unknown error"),
+                "type": messages[0].get("type", "ERROR"),
+                "code": messages[0].get("code"),
+                "details": data,
             }
-        return {'message': str(data), 'details': data}
+        return {"message": str(data), "details": data}
     except (json.JSONDecodeError, ValueError):
-        return {'message': response.text or 'Unknown error'}
+        return {"message": response.text or "Unknown error"}
 
 
 def sanitize_error_message(message: str) -> str:
@@ -207,18 +207,20 @@ def sanitize_error_message(message: str) -> str:
     """
     # Patterns to redact
     patterns = [
-        (r'(token[=:]\s*)[^\s&]+', r'\1[REDACTED]'),
-        (r'(password[=:]\s*)[^\s&]+', r'\1[REDACTED]'),
-        (r'(Bearer\s+)[^\s]+', r'\1[REDACTED]'),
-        (r'(Authorization[=:]\s*)[^\s]+', r'\1[REDACTED]'),
-        (r'(api[_-]?key[=:]\s*)[^\s&]+', r'\1[REDACTED]'),
+        (r"(token[=:]\s*)[^\s&]+", r"\1[REDACTED]"),
+        (r"(password[=:]\s*)[^\s&]+", r"\1[REDACTED]"),
+        (r"(Bearer\s+)[^\s]+", r"\1[REDACTED]"),
+        (r"(Authorization[=:]\s*)[^\s]+", r"\1[REDACTED]"),
+        (r"(api[_-]?key[=:]\s*)[^\s&]+", r"\1[REDACTED]"),
     ]
     for pattern, replacement in patterns:
         message = re.sub(pattern, replacement, message, flags=re.IGNORECASE)
     return message
 
 
-def handle_splunk_error(response: requests.Response, operation: str = "API request") -> None:
+def handle_splunk_error(
+    response: requests.Response, operation: str = "API request"
+) -> None:
     """
     Handle Splunk API error response.
 
@@ -231,12 +233,12 @@ def handle_splunk_error(response: requests.Response, operation: str = "API reque
     """
     status_code = response.status_code
     error_info = parse_error_response(response)
-    message = sanitize_error_message(error_info.get('message', 'Unknown error'))
-    details = error_info.get('details', {})
+    message = sanitize_error_message(error_info.get("message", "Unknown error"))
+    details = error_info.get("details", {})
 
     error_kwargs = {
-        'operation': operation,
-        'details': details,
+        "operation": operation,
+        "details": details,
     }
 
     if status_code == 400:
@@ -248,7 +250,7 @@ def handle_splunk_error(response: requests.Response, operation: str = "API reque
     elif status_code == 404:
         raise NotFoundError(message, **error_kwargs)
     elif status_code == 429:
-        retry_after = response.headers.get('Retry-After')
+        retry_after = response.headers.get("Retry-After")
         raise RateLimitError(
             message,
             retry_after=int(retry_after) if retry_after else None,
@@ -256,7 +258,7 @@ def handle_splunk_error(response: requests.Response, operation: str = "API reque
         )
     elif status_code == 503:
         # Check if it's a search quota error
-        if 'search' in message.lower() or 'quota' in message.lower():
+        if "search" in message.lower() or "quota" in message.lower():
             raise SearchQuotaError(message, **error_kwargs)
         raise ServerError(message, status_code=status_code, **error_kwargs)
     elif status_code >= 500:
@@ -310,7 +312,10 @@ def handle_errors(func: Callable) -> Callable:
             print("\nOperation cancelled by user.", file=sys.stderr)
             sys.exit(130)
         except Exception as e:
-            print_error(f"Unexpected error: {sanitize_error_message(str(e))}", include_traceback=True)
+            print_error(
+                f"Unexpected error: {sanitize_error_message(str(e))}",
+                include_traceback=True,
+            )
             sys.exit(1)
 
     return wrapper
@@ -327,10 +332,10 @@ def format_error_for_json(error: SplunkError) -> Dict[str, Any]:
         Dictionary suitable for JSON serialization
     """
     return {
-        'error': True,
-        'type': type(error).__name__,
-        'message': error.message,
-        'status_code': error.status_code,
-        'operation': error.operation,
-        'details': error.details,
+        "error": True,
+        "type": type(error).__name__,
+        "message": error.message,
+        "status_code": error.status_code,
+        "operation": error.operation,
+        "details": error.details,
     }

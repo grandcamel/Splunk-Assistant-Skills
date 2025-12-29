@@ -10,10 +10,7 @@ class TestIndexOperations:
     @pytest.mark.live
     def test_list_indexes(self, splunk_client):
         """Test listing indexes."""
-        response = splunk_client.get(
-            "/data/indexes",
-            operation="list indexes"
-        )
+        response = splunk_client.get("/data/indexes", operation="list indexes")
 
         assert "entry" in response
         # Should have at least _internal
@@ -23,10 +20,7 @@ class TestIndexOperations:
     @pytest.mark.live
     def test_get_index_details(self, splunk_client):
         """Test getting index details."""
-        response = splunk_client.get(
-            "/data/indexes/main",
-            operation="get index"
-        )
+        response = splunk_client.get("/data/indexes/main", operation="get index")
 
         assert "entry" in response
         content = response["entry"][0].get("content", {})
@@ -39,8 +33,7 @@ class TestIndexOperations:
         assert index_helper.create(test_index_name)
 
         response = index_helper.client.get(
-            f"/data/indexes/{test_index_name}",
-            operation="get created index"
+            f"/data/indexes/{test_index_name}", operation="get created index"
         )
 
         assert "entry" in response
@@ -60,7 +53,7 @@ class TestSourcetypeDiscovery:
                 "output_mode": "json",
                 "earliest_time": "-24h",
             },
-            operation="metadata search"
+            operation="metadata search",
         )
 
         results = response.get("results", [])
@@ -77,7 +70,7 @@ class TestSourcetypeDiscovery:
                 "output_mode": "json",
                 "earliest_time": "-24h",
             },
-            operation="metadata search"
+            operation="metadata search",
         )
 
         results = response.get("results", [])
@@ -98,7 +91,7 @@ class TestSourceDiscovery:
                 "output_mode": "json",
                 "earliest_time": "-24h",
             },
-            operation="metadata search"
+            operation="metadata search",
         )
 
         results = response.get("results", [])
@@ -119,7 +112,7 @@ class TestHostDiscovery:
                 "output_mode": "json",
                 "earliest_time": "-24h",
             },
-            operation="metadata hosts search"
+            operation="metadata hosts search",
         )
 
         results = response.get("results", [])
@@ -136,7 +129,7 @@ class TestHostDiscovery:
                 "output_mode": "json",
                 "earliest_time": "-24h",
             },
-            operation="metadata hosts search"
+            operation="metadata hosts search",
         )
 
         results = response.get("results", [])
@@ -153,7 +146,7 @@ class TestIndexProperties:
         response = splunk_client.get(
             "/data/indexes",
             params={"count": 5, "output_mode": "json"},
-            operation="list indexes limited"
+            operation="list indexes limited",
         )
 
         assert "entry" in response
@@ -163,8 +156,7 @@ class TestIndexProperties:
     def test_get_internal_index_properties(self, splunk_client):
         """Test getting _internal index properties."""
         response = splunk_client.get(
-            "/data/indexes/_internal",
-            operation="get _internal index"
+            "/data/indexes/_internal", operation="get _internal index"
         )
 
         assert "entry" in response
@@ -178,7 +170,7 @@ class TestIndexProperties:
         response = splunk_client.get(
             "/data/indexes",
             params={"search": "datatype=event", "output_mode": "json"},
-            operation="list event indexes"
+            operation="list event indexes",
         )
 
         assert "entry" in response
@@ -202,7 +194,7 @@ class TestRESTMetadata:
                 "search": "| rest /services/server/info | fields splunk_server, version, build",
                 "output_mode": "json",
             },
-            operation="rest server info"
+            operation="rest server info",
         )
 
         results = response.get("results", [])
@@ -218,7 +210,7 @@ class TestRESTMetadata:
                 "search": "| rest /services/apps/local | head 10 | fields title, label, version",
                 "output_mode": "json",
             },
-            operation="rest apps"
+            operation="rest apps",
         )
 
         results = response.get("results", [])
@@ -234,7 +226,7 @@ class TestRESTMetadata:
                 "output_mode": "json",
                 "earliest_time": "-1h",
             },
-            operation="tstats count"
+            operation="tstats count",
         )
 
         results = response.get("results", [])
@@ -251,7 +243,7 @@ class TestDataModels:
         response = splunk_client.get(
             "/datamodel/model",
             params={"output_mode": "json"},
-            operation="list datamodels"
+            operation="list datamodels",
         )
 
         # Response should have entry (may be empty)

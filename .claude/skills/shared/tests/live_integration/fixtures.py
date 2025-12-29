@@ -116,7 +116,9 @@ def test_index(splunk_connection, test_index_name: str) -> Generator[str, None, 
     # Create the test index
     created = splunk_connection.create_test_index(test_index_name)
     if not created:
-        logger.warning(f"Could not create test index {test_index_name}, may already exist")
+        logger.warning(
+            f"Could not create test index {test_index_name}, may already exist"
+        )
 
     yield test_index_name
 
@@ -385,9 +387,7 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "external_splunk: marks tests for external Splunk only"
     )
-    config.addinivalue_line(
-        "markers", "slow_integration: marks slow integration tests"
-    )
+    config.addinivalue_line("markers", "slow_integration: marks slow integration tests")
     config.addinivalue_line(
         "markers", "destructive: marks tests that modify Splunk configuration"
     )

@@ -13,7 +13,9 @@ import argparse
 from pathlib import Path
 
 # Add shared lib to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
+sys.path.insert(
+    0, str(Path(__file__).parent.parent.parent / "shared" / "scripts" / "lib")
+)
 
 from config_manager import get_splunk_client
 from error_handler import handle_errors
@@ -25,11 +27,11 @@ from job_poller import cancel_job
 @handle_errors
 def main():
     parser = argparse.ArgumentParser(
-        description='Cancel a Splunk search job',
+        description="Cancel a Splunk search job",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument('sid', help='Search job ID')
-    parser.add_argument('--profile', '-p', help='Splunk profile to use')
+    parser.add_argument("sid", help="Search job ID")
+    parser.add_argument("--profile", "-p", help="Splunk profile to use")
     args = parser.parse_args()
 
     # Validate SID
@@ -43,5 +45,5 @@ def main():
     print_success(f"Job cancelled: {sid}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

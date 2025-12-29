@@ -6,17 +6,19 @@ from pathlib import Path
 from unittest.mock import Mock
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'shared' / 'scripts' / 'lib'))
+sys.path.insert(
+    0, str(Path(__file__).parent.parent.parent / "shared" / "scripts" / "lib")
+)
 
 
 @pytest.fixture
 def mock_splunk_client():
     """Create a mock SplunkClient for testing."""
     client = Mock()
-    client.base_url = 'https://splunk.example.com:8089/services'
-    client.auth_method = 'bearer'
+    client.base_url = "https://splunk.example.com:8089/services"
+    client.auth_method = "bearer"
     client.timeout = 30
-    client.get.return_value = {'entry': []}
+    client.get.return_value = {"entry": []}
     client.post.return_value = {}
     return client
 
@@ -25,21 +27,23 @@ def mock_splunk_client():
 def sample_index_response():
     """Sample single index response."""
     return {
-        'entry': [{
-            'name': 'main',
-            'content': {
-                'datatype': 'event',
-                'homePath': '$SPLUNK_DB/main/db',
-                'coldPath': '$SPLUNK_DB/main/colddb',
-                'thawedPath': '$SPLUNK_DB/main/thaweddb',
-                'maxDataSize': 'auto_high_volume',
-                'maxTotalDataSizeMB': 500000,
-                'frozenTimePeriodInSecs': 188697600,
-                'totalEventCount': 1000000,
-                'currentDBSizeMB': 1024,
-                'disabled': False,
+        "entry": [
+            {
+                "name": "main",
+                "content": {
+                    "datatype": "event",
+                    "homePath": "$SPLUNK_DB/main/db",
+                    "coldPath": "$SPLUNK_DB/main/colddb",
+                    "thawedPath": "$SPLUNK_DB/main/thaweddb",
+                    "maxDataSize": "auto_high_volume",
+                    "maxTotalDataSizeMB": 500000,
+                    "frozenTimePeriodInSecs": 188697600,
+                    "totalEventCount": 1000000,
+                    "currentDBSizeMB": 1024,
+                    "disabled": False,
+                },
             }
-        }]
+        ]
     }
 
 
@@ -47,8 +51,18 @@ def sample_index_response():
 def sample_sourcetypes_response():
     """Sample sourcetypes search results."""
     return {
-        'results': [
-            {'sourcetype': 'access_combined', 'totalCount': '10000', 'firstTime': '2024-01-01T00:00:00', 'lastTime': '2024-01-15T12:00:00'},
-            {'sourcetype': 'syslog', 'totalCount': '5000', 'firstTime': '2024-01-01T00:00:00', 'lastTime': '2024-01-15T12:00:00'},
+        "results": [
+            {
+                "sourcetype": "access_combined",
+                "totalCount": "10000",
+                "firstTime": "2024-01-01T00:00:00",
+                "lastTime": "2024-01-15T12:00:00",
+            },
+            {
+                "sourcetype": "syslog",
+                "totalCount": "5000",
+                "firstTime": "2024-01-01T00:00:00",
+                "lastTime": "2024-01-15T12:00:00",
+            },
         ]
     }

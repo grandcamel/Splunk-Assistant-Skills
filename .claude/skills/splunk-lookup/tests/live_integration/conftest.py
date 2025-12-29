@@ -11,6 +11,7 @@ import pytest
 
 logging.basicConfig(level=logging.INFO)
 import urllib3
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Add shared lib to path
@@ -22,12 +23,20 @@ if str(lib_path) not in sys.path:
 
 # Import splunk_container module directly
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
-from splunk_container import SplunkContainer, ExternalSplunkConnection, get_splunk_connection
+from splunk_container import (
+    SplunkContainer,
+    ExternalSplunkConnection,
+    get_splunk_connection,
+)
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "live: marks tests as requiring live Splunk connection")
-    config.addinivalue_line("markers", "destructive: marks tests that modify Splunk configuration")
+    config.addinivalue_line(
+        "markers", "live: marks tests as requiring live Splunk connection"
+    )
+    config.addinivalue_line(
+        "markers", "destructive: marks tests that modify Splunk configuration"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -61,25 +70,18 @@ class LookupHelper:
             url = f"{self.client.base_url.replace('/services', '')}/servicesNS/nobody/{self.app}/data/lookup-table-files"
 
             # Upload as multipart file
-            files = {
-                "eai:data": (name, content.encode('utf-8'), "text/csv")
-            }
-            data = {
-                "name": name,
-                "output_mode": "json"
-            }
+            files = {"eai:data": (name, content.encode("utf-8"), "text/csv")}
+            data = {"name": name, "output_mode": "json"}
 
             response = self.client.session.post(
-                url,
-                files=files,
-                data=data,
-                verify=self.client.verify_ssl
+                url, files=files, data=data, verify=self.client.verify_ssl
             )
             response.raise_for_status()
             self._created_lookups.append(name)
             return True
         except Exception as e:
             import logging
+
             logging.error(f"Upload failed: {e}")
             return False
 
@@ -88,7 +90,7 @@ class LookupHelper:
         try:
             self.client.delete(
                 f"/servicesNS/nobody/{self.app}/data/lookup-table-files/{name}",
-                operation="delete lookup"
+                operation="delete lookup",
             )
             if name in self._created_lookups:
                 self._created_lookups.remove(name)
