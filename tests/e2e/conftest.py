@@ -1,6 +1,7 @@
 """Pytest configuration and fixtures for E2E tests."""
 
 import os
+import subprocess
 import pytest
 from pathlib import Path
 
@@ -27,19 +28,43 @@ def pytest_addoption(parser):
         default=os.environ.get("E2E_VERBOSE", "").lower() == "true",
         help="Enable verbose output",
     )
+    parser.addoption(
+        "--use-oauth",
+        action="store_true",
+        default=os.environ.get("E2E_USE_OAUTH", "").lower() == "true",
+        help="Use OAuth authentication (ignore ANTHROPIC_API_KEY)",
+    )
+
+
+def _has_oauth_auth() -> bool:
+    """Check if OAuth authentication is available."""
+    # Check for credentials file
+    claude_dir = Path.home() / ".claude"
+    if claude_dir.exists() and (claude_dir / "credentials.json").exists():
+        return True
+    # Check legacy location
+    if (Path.home() / ".claude.json").exists():
+        return True
+    # Check via CLI (with timeout to avoid hanging)
+    try:
+        result = subprocess.run(
+            ["claude", "auth", "status"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False
 
 
 @pytest.fixture(scope="session")
 def e2e_enabled():
     """Check if E2E tests should run."""
     api_key = os.environ.get("ANTHROPIC_API_KEY")
-    claude_dir = Path.home() / ".claude"
-
     if api_key:
         return True
-    if claude_dir.exists() and (claude_dir / "credentials.json").exists():
-        return True
-    return False
+    return _has_oauth_auth()
 
 
 @pytest.fixture(scope="session")
@@ -73,7 +98,19 @@ def e2e_verbose(request):
 
 
 @pytest.fixture(scope="session")
-def claude_runner(project_root, e2e_timeout, e2e_model, e2e_verbose, e2e_enabled):
+def use_oauth(request):
+    """Determine if OAuth should be used (ignoring API key)."""
+    # Explicit flag takes precedence
+    if request.config.getoption("--use-oauth"):
+        return True
+    # If no API key set but OAuth is available, use OAuth
+    if not os.environ.get("ANTHROPIC_API_KEY") and _has_oauth_auth():
+        return True
+    return False
+
+
+@pytest.fixture(scope="session")
+def claude_runner(project_root, e2e_timeout, e2e_model, e2e_verbose, e2e_enabled, use_oauth):
     """Create Claude Code runner."""
     if not e2e_enabled:
         pytest.skip("E2E tests disabled (no API key or OAuth credentials)")
@@ -83,11 +120,12 @@ def claude_runner(project_root, e2e_timeout, e2e_model, e2e_verbose, e2e_enabled
         timeout=e2e_timeout,
         model=e2e_model,
         verbose=e2e_verbose,
+        use_oauth=use_oauth,
     )
 
 
 @pytest.fixture(scope="session")
-def e2e_runner(test_cases_path, project_root, e2e_timeout, e2e_model, e2e_verbose, e2e_enabled):
+def e2e_runner(test_cases_path, project_root, e2e_timeout, e2e_model, e2e_verbose, e2e_enabled, use_oauth):
     """Create E2E test runner."""
     if not e2e_enabled:
         pytest.skip("E2E tests disabled (no API key or OAuth credentials)")
@@ -98,6 +136,7 @@ def e2e_runner(test_cases_path, project_root, e2e_timeout, e2e_model, e2e_verbos
         timeout=e2e_timeout,
         model=e2e_model,
         verbose=e2e_verbose,
+        use_oauth=use_oauth,
     )
 
 

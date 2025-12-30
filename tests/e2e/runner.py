@@ -69,11 +69,13 @@ class ClaudeCodeRunner:
         timeout: int = 120,
         model: str = "claude-sonnet-4-20250514",
         verbose: bool = False,
+        use_oauth: bool = False,
     ):
         self.working_dir = working_dir
         self.timeout = timeout
         self.model = model
         self.verbose = verbose
+        self.use_oauth = use_oauth
         self._check_prerequisites()
 
     def _check_prerequisites(self):
@@ -101,6 +103,14 @@ class ClaudeCodeRunner:
             return True
         return False
 
+    def _get_env(self) -> Dict[str, str]:
+        """Get environment for subprocess, excluding API key if using OAuth."""
+        env = {**os.environ, "CLAUDE_CODE_SKIP_OOBE": "1"}
+        if self.use_oauth:
+            # Remove API key to force OAuth authentication
+            env.pop("ANTHROPIC_API_KEY", None)
+        return env
+
     def send_prompt(self, prompt: str, timeout: Optional[int] = None) -> Dict[str, Any]:
         """Send a prompt to Claude Code and capture the response."""
         timeout = timeout or self.timeout
@@ -122,7 +132,7 @@ class ClaudeCodeRunner:
                 capture_output=True,
                 text=True,
                 timeout=timeout,
-                env={**os.environ, "CLAUDE_CODE_SKIP_OOBE": "1"},
+                env=self._get_env(),
             )
 
             return {
@@ -212,17 +222,20 @@ class E2ETestRunner:
         timeout: int = 120,
         model: str = "claude-sonnet-4-20250514",
         verbose: bool = False,
+        use_oauth: bool = False,
     ):
         self.test_cases_path = test_cases_path
         self.working_dir = working_dir
         self.timeout = timeout
         self.model = model
         self.verbose = verbose
+        self.use_oauth = use_oauth
         self.claude = ClaudeCodeRunner(
             working_dir=working_dir,
             timeout=timeout,
             model=model,
             verbose=verbose,
+            use_oauth=use_oauth,
         )
         self.validator = TestCaseValidator()
 

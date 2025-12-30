@@ -37,8 +37,12 @@ done
 # Check auth
 if [[ -n "$ANTHROPIC_API_KEY" ]]; then
     echo -e "${GREEN}✓ API key configured${NC}"
+elif [[ -f "$HOME/.claude.json" ]]; then
+    echo -e "${GREEN}✓ OAuth configured (~/.claude.json)${NC}"
 elif [[ -f "$HOME/.claude/credentials.json" ]]; then
-    echo -e "${GREEN}✓ OAuth configured${NC}"
+    echo -e "${GREEN}✓ OAuth configured (credentials.json)${NC}"
+elif claude auth status &>/dev/null; then
+    echo -e "${GREEN}✓ Claude CLI authenticated${NC}"
 else
     echo -e "${RED}✗ No authentication${NC}"
     echo "Set ANTHROPIC_API_KEY or run: claude auth login"
@@ -53,12 +57,13 @@ if [[ "$USE_DOCKER" == "true" ]]; then
     docker compose -f docker/e2e/docker-compose.yml build e2e-tests
     docker compose -f docker/e2e/docker-compose.yml run --rm e2e-tests
 else
-    echo -e "${YELLOW}Running locally...${NC}"
-    pip install -q -r requirements-e2e.txt
+    echo -e "${YELLOW}Running locally (using CLI authentication)...${NC}"
+    pip3 install -q -r requirements-e2e.txt
+    # Use --use-oauth to prefer CLI OAuth over ANTHROPIC_API_KEY
     if [[ "$VERBOSE" == "true" ]]; then
-        python -m pytest tests/e2e/ -v --e2e-verbose --tb=short
+        python3 -m pytest tests/e2e/ -v --e2e-verbose --use-oauth --tb=short
     else
-        python -m pytest tests/e2e/ -v --tb=short
+        python3 -m pytest tests/e2e/ -v --use-oauth --tb=short
     fi
 fi
 
