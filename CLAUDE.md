@@ -698,3 +698,13 @@ Solutions:
 - Increase timeout for long searches
 - Use async mode with polling
 - Optimize SPL query
+
+
+### Run E2E Tests
+
+```bash
+# Requires ANTHROPIC_API_KEY
+./scripts/run-e2e-tests.sh           # Docker
+./scripts/run-e2e-tests.sh --local   # Local
+./scripts/run-e2e-tests.sh --verbose # Verbose
+```

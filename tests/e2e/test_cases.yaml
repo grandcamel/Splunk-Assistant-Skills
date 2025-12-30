@@ -1,0 +1,494 @@
+metadata:
+  name: splunk-assistant-skills-e2e
+  description: Auto-generated E2E tests for splunk-assistant-skills
+  version: 1.0.0
+  generated_from: Splunk-Assistant-Skills
+settings:
+  default_timeout: 120
+  default_model: claude-sonnet-4-20250514
+  retry_on_timeout: 1
+suites:
+  plugin_installation:
+    description: Plugin installation and verification
+    tests:
+    - id: install_plugin
+      name: Install plugin from local source
+      prompt: /plugin .
+      expect:
+        success: true
+        no_errors: true
+    - id: verify_all_skills
+      name: Verify all skills are loaded
+      prompt: List all skills available from the splunk-assistant-skills plugin
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-alert
+        - splunk-app
+        - splunk-assistant
+        - splunk-export
+        - splunk-job
+        no_errors: true
+    - id: plugin_description
+      name: Verify plugin description is accurate
+      prompt: What does the splunk-assistant-skills plugin do?
+      expect:
+        success: true
+        no_errors: true
+  splunk_alert:
+    description: Tests for splunk-alert skill
+    tests:
+    - id: splunk-alert_discoverable
+      name: Verify splunk-alert skill is discoverable
+      prompt: What can you tell me about the splunk-alert skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-alert
+        - splunk alert
+        - splunk-alert
+        no_errors: true
+    - id: splunk-alert_acknowledge_alert
+      name: Test acknowledge alert script
+      prompt: Use the splunk-alert skill to acknowledge alert
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-alert_list_alerts
+      name: Test list alerts script
+      prompt: Use the splunk-alert skill to list alerts
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-alert_get_alert
+      name: Test get alert script
+      prompt: Use the splunk-alert skill to get alert
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-alert_error_handling
+      name: Test splunk-alert error handling
+      prompt: Use splunk-alert with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_app:
+    description: Tests for splunk-app skill
+    tests:
+    - id: splunk-app_discoverable
+      name: Verify splunk-app skill is discoverable
+      prompt: What can you tell me about the splunk-app skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-app
+        - splunk app
+        - splunk-app
+        no_errors: true
+    - id: splunk-app_install_app
+      name: Test install app script
+      prompt: Use the splunk-app skill to install app
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-app_list_apps
+      name: Test list apps script
+      prompt: Use the splunk-app skill to list apps
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-app_get_app
+      name: Test get app script
+      prompt: Use the splunk-app skill to get app
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-app_error_handling
+      name: Test splunk-app error handling
+      prompt: Use splunk-app with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_assistant:
+    description: Tests for splunk-assistant skill
+    tests:
+    - id: splunk-assistant_discoverable
+      name: Verify splunk-assistant skill is discoverable
+      prompt: What can you tell me about the splunk-assistant skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-assistant
+        - splunk assistant
+        - splunk-assistant
+        no_errors: true
+    - id: splunk-assistant_error_handling
+      name: Test splunk-assistant error handling
+      prompt: Use splunk-assistant with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_export:
+    description: Tests for splunk-export skill
+    tests:
+    - id: splunk-export_discoverable
+      name: Verify splunk-export skill is discoverable
+      prompt: What can you tell me about the splunk-export skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-export
+        - splunk export
+        - splunk-export
+        no_errors: true
+    - id: splunk-export_estimate_export_size
+      name: Test estimate export size script
+      prompt: Use the splunk-export skill to estimate export size
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-export_export_results
+      name: Test export results script
+      prompt: Use the splunk-export skill to export results
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-export_error_handling
+      name: Test splunk-export error handling
+      prompt: Use splunk-export with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_job:
+    description: Tests for splunk-job skill
+    tests:
+    - id: splunk-job_discoverable
+      name: Verify splunk-job skill is discoverable
+      prompt: What can you tell me about the splunk-job skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-job
+        - splunk job
+        - splunk-job
+        no_errors: true
+    - id: splunk-job_set_job_ttl
+      name: Test set job ttl script
+      prompt: Use the splunk-job skill to set job ttl
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-job_pause_job
+      name: Test pause job script
+      prompt: Use the splunk-job skill to pause job
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-job_list_jobs
+      name: Test list jobs script
+      prompt: Use the splunk-job skill to list jobs
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-job_error_handling
+      name: Test splunk-job error handling
+      prompt: Use splunk-job with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_kvstore:
+    description: Tests for splunk-kvstore skill
+    tests:
+    - id: splunk-kvstore_discoverable
+      name: Verify splunk-kvstore skill is discoverable
+      prompt: What can you tell me about the splunk-kvstore skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-kvstore
+        - splunk kvstore
+        - splunk-kvstore
+        no_errors: true
+    - id: splunk-kvstore_update_record
+      name: Test update record script
+      prompt: Use the splunk-kvstore skill to update record
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-kvstore_insert_record
+      name: Test insert record script
+      prompt: Use the splunk-kvstore skill to insert record
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-kvstore_create_collection
+      name: Test create collection script
+      prompt: Use the splunk-kvstore skill to create collection
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-kvstore_error_handling
+      name: Test splunk-kvstore error handling
+      prompt: Use splunk-kvstore with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_lookup:
+    description: Tests for splunk-lookup skill
+    tests:
+    - id: splunk-lookup_discoverable
+      name: Verify splunk-lookup skill is discoverable
+      prompt: What can you tell me about the splunk-lookup skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-lookup
+        - splunk lookup
+        - splunk-lookup
+        no_errors: true
+    - id: splunk-lookup_upload_lookup
+      name: Test upload lookup script
+      prompt: Use the splunk-lookup skill to upload lookup
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-lookup_list_lookups
+      name: Test list lookups script
+      prompt: Use the splunk-lookup skill to list lookups
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-lookup_download_lookup
+      name: Test download lookup script
+      prompt: Use the splunk-lookup skill to download lookup
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-lookup_error_handling
+      name: Test splunk-lookup error handling
+      prompt: Use splunk-lookup with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_metadata:
+    description: Tests for splunk-metadata skill
+    tests:
+    - id: splunk-metadata_discoverable
+      name: Verify splunk-metadata skill is discoverable
+      prompt: What can you tell me about the splunk-metadata skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-metadata
+        - splunk metadata
+        - splunk-metadata
+        no_errors: true
+    - id: splunk-metadata_get_index
+      name: Test get index script
+      prompt: Use the splunk-metadata skill to get index
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-metadata_list_sourcetypes
+      name: Test list sourcetypes script
+      prompt: Use the splunk-metadata skill to list sourcetypes
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-metadata_create_index
+      name: Test create index script
+      prompt: Use the splunk-metadata skill to create index
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-metadata_error_handling
+      name: Test splunk-metadata error handling
+      prompt: Use splunk-metadata with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_metrics:
+    description: Tests for splunk-metrics skill
+    tests:
+    - id: splunk-metrics_discoverable
+      name: Verify splunk-metrics skill is discoverable
+      prompt: What can you tell me about the splunk-metrics skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-metrics
+        - splunk metrics
+        - splunk-metrics
+        no_errors: true
+    - id: splunk-metrics_error_handling
+      name: Test splunk-metrics error handling
+      prompt: Use splunk-metrics with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_rest_admin:
+    description: Tests for splunk-rest-admin skill
+    tests:
+    - id: splunk-rest-admin_discoverable
+      name: Verify splunk-rest-admin skill is discoverable
+      prompt: What can you tell me about the splunk-rest-admin skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-rest-admin
+        - splunk rest admin
+        - splunk-rest-admin
+        no_errors: true
+    - id: splunk-rest-admin_get_server_status
+      name: Test get server status script
+      prompt: Use the splunk-rest-admin skill to get server status
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-rest-admin_get_server_info
+      name: Test get server info script
+      prompt: Use the splunk-rest-admin skill to get server info
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-rest-admin_get_server_health
+      name: Test get server health script
+      prompt: Use the splunk-rest-admin skill to get server health
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-rest-admin_error_handling
+      name: Test splunk-rest-admin error handling
+      prompt: Use splunk-rest-admin with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_savedsearch:
+    description: Tests for splunk-savedsearch skill
+    tests:
+    - id: splunk-savedsearch_discoverable
+      name: Verify splunk-savedsearch skill is discoverable
+      prompt: What can you tell me about the splunk-savedsearch skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-savedsearch
+        - splunk savedsearch
+        - splunk-savedsearch
+        no_errors: true
+    - id: splunk-savedsearch_delete_savedsearch
+      name: Test delete savedsearch script
+      prompt: Use the splunk-savedsearch skill to delete savedsearch
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-savedsearch_update_savedsearch
+      name: Test update savedsearch script
+      prompt: Use the splunk-savedsearch skill to update savedsearch
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-savedsearch_get_savedsearch
+      name: Test get savedsearch script
+      prompt: Use the splunk-savedsearch skill to get savedsearch
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-savedsearch_error_handling
+      name: Test splunk-savedsearch error handling
+      prompt: Use splunk-savedsearch with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_search:
+    description: Tests for splunk-search skill
+    tests:
+    - id: splunk-search_discoverable
+      name: Verify splunk-search skill is discoverable
+      prompt: What can you tell me about the splunk-search skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-search
+        - splunk search
+        - splunk-search
+        no_errors: true
+    - id: splunk-search_validate_spl
+      name: Test validate spl script
+      prompt: Use the splunk-search skill to validate spl
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-search_search_blocking
+      name: Test search blocking script
+      prompt: Use the splunk-search skill to search blocking
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-search_search_normal
+      name: Test search normal script
+      prompt: Use the splunk-search skill to search normal
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-search_error_handling
+      name: Test splunk-search error handling
+      prompt: Use splunk-search with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_security:
+    description: Tests for splunk-security skill
+    tests:
+    - id: splunk-security_discoverable
+      name: Verify splunk-security skill is discoverable
+      prompt: What can you tell me about the splunk-security skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-security
+        - splunk security
+        - splunk-security
+        no_errors: true
+    - id: splunk-security_get_current_user
+      name: Test get current user script
+      prompt: Use the splunk-security skill to get current user
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-security_list_roles
+      name: Test list roles script
+      prompt: Use the splunk-security skill to list roles
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-security_list_users
+      name: Test list users script
+      prompt: Use the splunk-security skill to list users
+      expect:
+        success: true
+        no_crashes: true
+    - id: splunk-security_error_handling
+      name: Test splunk-security error handling
+      prompt: Use splunk-security with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  splunk_tag:
+    description: Tests for splunk-tag skill
+    tests:
+    - id: splunk-tag_discoverable
+      name: Verify splunk-tag skill is discoverable
+      prompt: What can you tell me about the splunk-tag skill?
+      expect:
+        success: true
+        output_contains_any:
+        - splunk-tag
+        - splunk tag
+        - splunk-tag
+        no_errors: true
+    - id: splunk-tag_error_handling
+      name: Test splunk-tag error handling
+      prompt: Use splunk-tag with invalid input that doesn't exist
+      expect:
+        no_crashes: true
+  error_handling:
+    description: Error handling and edge cases
+    tests:
+    - id: invalid_path
+      name: Handle invalid file path gracefully
+      prompt: Process the file at /nonexistent/path/file.txt
+      expect:
+        no_crashes: true
+    - id: empty_input
+      name: Handle empty input gracefully
+      prompt: Use the plugin with no specific request
+      expect:
+        no_crashes: true
