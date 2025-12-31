@@ -1,0 +1,26 @@
+{
+  "name": "splunk-assistant-skills",
+  "owner": {
+    "name": "grandcamel"
+  },
+  "metadata": {
+    "description": "Comprehensive Splunk automation skills for Claude Code - 14 specialized skills covering search, job management, exports, metadata discovery, and administration. Natural language Splunk automation with zero SPL memorization.",
+    "version": "1.1.0",
+    "homepage": "https://github.com/grandcamel/Splunk-Assistant-Skills",
+    "repository": "https://github.com/grandcamel/Splunk-Assistant-Skills",
+    "license": "MIT"
+  },
+  "plugins": [
+    {
+      "name": "splunk-assistant-skills",
+      "source": "./plugins/splunk-assistant-skills",
+      "description": "Complete Splunk automation suite with 14 specialized skills - search execution, job lifecycle, data export, metadata discovery, lookups, saved searches, alerts, and more",
+      "version": "1.1.0",
+      "category": "productivity",
+      "keywords": ["splunk", "search", "spl", "siem", "automation", "devops", "natural-language"],
+      "author": {
+        "name": "grandcamel"
+      }
+    }
+  ]
+}
