@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0](https://github.com/grandcamel/Splunk-Assistant-Skills/compare/v1.0.0...v1.1.0) (2025-12-31)
+
+
+### Features
+
+* **cli:** add splunk-skill CLI entry point with Click framework ([b180858](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/b180858520442299f5f2b1901ab61fd0d6f713e3))
+
+
+### Bug Fixes
+
+* **tests:** implement singleton container with reference counting ([1513231](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/15132317725a05be4a1b3e4b0c7d59e2e872c00c))
+
 ## [1.0.0] - 2024-12-29
 
 ### Added
