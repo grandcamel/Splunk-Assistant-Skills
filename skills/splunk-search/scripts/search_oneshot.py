@@ -14,6 +14,7 @@ Examples:
 import argparse
 
 from splunk_assistant_skills_lib import (
+    build_search,
     export_csv,
     format_json,
     format_search_results,
@@ -22,7 +23,6 @@ from splunk_assistant_skills_lib import (
     get_splunk_client,
     handle_errors,
     print_success,
-    build_search,
     validate_spl,
     validate_time_modifier,
 )

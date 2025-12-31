@@ -4,7 +4,6 @@
 from datetime import datetime
 
 import pytest
-
 from splunk_assistant_skills_lib import (
     format_splunk_time,
     get_relative_time,

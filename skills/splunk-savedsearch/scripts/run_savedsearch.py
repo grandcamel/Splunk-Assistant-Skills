@@ -5,9 +5,9 @@ import argparse
 import time
 
 from splunk_assistant_skills_lib import (
+    format_json,
     get_splunk_client,
     handle_errors,
-    format_json,
     print_info,
     print_success,
 )

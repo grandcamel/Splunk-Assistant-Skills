@@ -2,7 +2,6 @@
 """Unit tests for validators module."""
 
 import pytest
-
 from splunk_assistant_skills_lib import (
     validate_app_name,
     validate_index_name,

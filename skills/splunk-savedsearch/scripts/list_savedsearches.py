@@ -4,10 +4,10 @@
 import argparse
 
 from splunk_assistant_skills_lib import (
-    get_splunk_client,
-    handle_errors,
     format_json,
     format_table,
+    get_splunk_client,
+    handle_errors,
     print_success,
 )
 
