@@ -409,13 +409,21 @@ job = poll_job_status(
 
 ## Testing
 
+### Test Configuration
+
+Tests are configured via `pytest.ini` at the project root:
+- Uses `--import-mode=importlib` to avoid module name conflicts
+- Excludes `live_integration` directories by default (require extra dependencies)
+- Defines markers: `live`, `destructive`, `slow`, `integration`, `docker_required`
+
 ### Test Coverage Summary
 
 | Category | Tests | Status |
 |----------|-------|--------|
+| Unit Tests (skills) | 87 | ✅ Passing |
 | Unit Tests (shared library) | 73 | ✅ Passing |
 | Live Integration Tests | 175 | 168 passing, 7 xfailed |
-| **Total** | **248** | |
+| **Total** | **335** | |
 
 ### Unit Tests
 
@@ -423,8 +431,8 @@ job = poll_job_status(
 # Install dependencies
 pip install -r requirements.txt
 
-# Run all unit tests
-pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration
+# Run all unit tests (live_integration excluded by default via pytest.ini)
+pytest skills/*/tests/ -v
 
 # Run tests for specific skill
 pytest skills/splunk-search/tests/ -v
@@ -435,7 +443,8 @@ pytest skills/shared/tests/ -v
 
 ### Live Integration Tests
 
-Live integration tests require a running Splunk instance.
+Live integration tests require a running Splunk instance and extra dependencies (`testcontainers`).
+These tests are excluded by default via `pytest.ini` and must be run explicitly.
 
 #### Environment Variables
 
@@ -449,12 +458,15 @@ export SPLUNK_TEST_PASSWORD="your-password"
 #### Running Tests
 
 ```bash
-# Run all integration tests for a skill
+# Install extra dependencies for live tests
+pip install testcontainers docker
+
+# Run all integration tests for a skill (must specify path explicitly)
 pytest skills/splunk-search/tests/live_integration/ -v
 
 # Run with specific markers
-pytest -m "live" -v                    # All live tests
-pytest -m "not destructive" -v         # Skip tests that modify data
+pytest skills/*/tests/live_integration/ -m "live" -v           # All live tests
+pytest skills/*/tests/live_integration/ -m "not destructive" -v # Skip destructive tests
 
 # Run single test class
 pytest skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
@@ -578,12 +590,15 @@ skills/new-skill/
 ├── scripts/           # Python scripts
 │   └── ...
 ├── tests/             # Unit tests
-│   ├── conftest.py
+│   ├── conftest.py    # Skill-specific fixtures only (see note below)
 │   └── test_*.py
 ├── tests/live_integration/  # Integration tests
+│   ├── conftest.py    # Live test fixtures
 │   └── test_*.py
 └── references/        # API docs, examples
 ```
+
+**Note on conftest.py**: Common fixtures (`mock_splunk_client`, `mock_config`, `temp_path`, `temp_dir`, `sample_job_response`, `sample_search_results`) are provided by the root `conftest.py`. Skill-specific conftest files should only define fixtures unique to that skill. Do not add `__init__.py` files to test directories.
 
 ### SKILL.md Template
 

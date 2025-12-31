@@ -506,8 +506,8 @@ cd Splunk-Assistant-Skills
 # Install dependencies
 pip install -r requirements.txt
 
-# Run tests
-pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration
+# Run tests (live_integration excluded by default via pytest.ini)
+pytest skills/*/tests/ -v
 ```
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
