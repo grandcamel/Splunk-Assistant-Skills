@@ -11,7 +11,7 @@ _THIS_FILE = Path(__file__).resolve()
 _SRC_DIR = _THIS_FILE.parent  # src/splunk_assistant_skills/
 _PROJECT_ROOT = _SRC_DIR.parent.parent  # Splunk-Assistant-Skills/
 
-SKILLS_ROOT_DIR = _PROJECT_ROOT / "skills"
+SKILLS_ROOT_DIR = _PROJECT_ROOT / "plugins" / "splunk-assistant-skills" / "skills"
 
 
 def get_script_path(skill_name: str, script_name: str) -> Path:
@@ -85,7 +85,7 @@ def try_import_execute_function(
     try:
         import importlib
 
-        module_path = f"skills.{module_skill_name}.scripts.{script_name}"
+        module_path = f"plugins.splunk_assistant_skills.skills.{module_skill_name}.scripts.{script_name}"
         module = importlib.import_module(module_path)
 
         # Look for execute_* function or main function
