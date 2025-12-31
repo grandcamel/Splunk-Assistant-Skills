@@ -6,7 +6,7 @@ These tests run against a real Splunk instance (Docker or external).
 
 Usage:
     # With Docker
-    pytest .claude/skills/splunk-search/tests/live_integration/ -v
+    pytest skills/splunk-search/tests/live_integration/ -v
 
     # With external Splunk
     SPLUNK_TEST_URL=https://splunk:8089 SPLUNK_TEST_TOKEN=xxx pytest ... -v

@@ -7,12 +7,12 @@ Splunk deployment.
 
 Usage:
     # Run with Docker (default)
-    pytest .claude/skills/*/tests/live_integration/ -v
+    pytest skills/*/tests/live_integration/ -v
 
     # Run against external Splunk
     SPLUNK_TEST_URL=https://splunk.example.com:8089 \
     SPLUNK_TEST_TOKEN=your-token \
-    pytest .claude/skills/*/tests/live_integration/ -v
+    pytest skills/*/tests/live_integration/ -v
 
     # Skip Docker tests in CI without Docker
     pytest -m "not docker_required"

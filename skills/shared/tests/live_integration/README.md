@@ -13,7 +13,7 @@ The framework supports two modes:
 ### Docker Mode
 - Docker installed and running
 - Python 3.8+
-- Dependencies: `pip install -r .claude/skills/shared/scripts/lib/requirements.txt`
+- Dependencies: `pip install -r requirements.txt`
 
 ### External Mode
 - Access to a Splunk instance with REST API enabled
@@ -25,11 +25,11 @@ The framework supports two modes:
 
 ```bash
 # Run all live integration tests
-pytest .claude/skills/shared/tests/live_integration/ -v -m live
+pytest skills/shared/tests/live_integration/ -v -m live
 
 # Run specific skill tests
-pytest .claude/skills/splunk-search/tests/live_integration/ -v
-pytest .claude/skills/splunk-job/tests/live_integration/ -v
+pytest skills/splunk-search/tests/live_integration/ -v
+pytest skills/splunk-job/tests/live_integration/ -v
 ```
 
 ### Using External Splunk
@@ -45,7 +45,7 @@ export SPLUNK_TEST_USERNAME=admin
 export SPLUNK_TEST_PASSWORD=changeme
 
 # Run tests
-pytest .claude/skills/splunk-search/tests/live_integration/ -v
+pytest skills/splunk-search/tests/live_integration/ -v
 ```
 
 ## Environment Variables
@@ -281,6 +281,6 @@ jobs:
           SPLUNK_TEST_USERNAME: admin
           SPLUNK_TEST_PASSWORD: testpassword123
         run: |
-          pip install -r .claude/skills/shared/scripts/lib/requirements.txt
-          pytest .claude/skills/*/tests/live_integration/ -v -m live
+          pip install -r requirements.txt
+          pytest skills/*/tests/live_integration/ -v -m live
 ```
