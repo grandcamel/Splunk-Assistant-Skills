@@ -15,7 +15,7 @@
 <sub>Specialized skills<br>one conversation</sub>
 </td>
 <td align="center">
-<h2>62</h2>
+<h2>83</h2>
 <sub>Production-ready<br>Python scripts</sub>
 </td>
 <td align="center">
@@ -26,7 +26,7 @@
 </table>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-248%20passing-brightgreen?logo=pytest" alt="Tests">
+  <img src="https://img.shields.io/badge/tests-335%20passing-brightgreen?logo=pytest" alt="Tests">
   <img src="https://img.shields.io/badge/python-3.8+-3776AB?logo=python&logoColor=white" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/skills-14-FF6900" alt="Skills">
   <a href="https://pypi.org/project/splunk-assistant-skills-lib/"><img src="https://img.shields.io/pypi/v/splunk-assistant-skills-lib?color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
@@ -440,9 +440,9 @@ flowchart TD
 
 | Category | Tests | Description |
 |----------|------:|-------------|
-| Unit Tests | 73 | Core library validation |
+| Unit Tests | 160 | Core library validation |
 | Integration Tests | 175 | Live Splunk API verification |
-| **Total** | **248** | Comprehensive coverage |
+| **Total** | **335** | Comprehensive coverage |
 
 > Tests run against live Splunk instances to ensure real-world reliability.
 
