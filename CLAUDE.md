@@ -29,30 +29,34 @@ This project provides 14 specialized skills for interacting with Splunk via natu
 
 ```
 .claude-plugin/
-└── plugin.json                # Plugin manifest
+├── marketplace.json           # Marketplace manifest (for plugin distribution)
+└── plugin.json                # (moved to plugins/)
 
 .claude/
 ├── settings.example.json      # Example config (copy to settings.local.json)
 └── settings.local.json        # Personal credentials (gitignored)
 
-skills/
-├── splunk-assistant/          # Hub router
-├── splunk-job/                # Job lifecycle
-├── splunk-search/             # SPL execution
-├── splunk-export/             # Data extraction
-├── splunk-metadata/           # Discovery
-├── splunk-lookup/             # Lookups
-├── splunk-tag/                # Tags
-├── splunk-savedsearch/        # Saved searches
-├── splunk-rest-admin/         # REST admin
-├── splunk-security/           # Security
-├── splunk-metrics/            # Metrics
-├── splunk-alert/              # Alerts
-├── splunk-app/                # Apps
-├── splunk-kvstore/            # KV Store
-└── shared/                    # Shared config and tests
-    ├── config/
-    └── tests/
+plugins/
+└── splunk-assistant-skills/   # Plugin package
+    ├── plugin.json            # Plugin manifest
+    └── skills/
+        ├── splunk-assistant/  # Hub router
+        ├── splunk-job/        # Job lifecycle
+        ├── splunk-search/     # SPL execution
+        ├── splunk-export/     # Data extraction
+        ├── splunk-metadata/   # Discovery
+        ├── splunk-lookup/     # Lookups
+        ├── splunk-tag/        # Tags
+        ├── splunk-savedsearch/# Saved searches
+        ├── splunk-rest-admin/ # REST admin
+        ├── splunk-security/   # Security
+        ├── splunk-metrics/    # Metrics
+        ├── splunk-alert/      # Alerts
+        ├── splunk-app/        # Apps
+        ├── splunk-kvstore/    # KV Store
+        └── shared/            # Shared config and tests
+            ├── config/
+            └── tests/
 ```
 
 ### Shared Library Pattern
@@ -492,13 +496,13 @@ Tests are configured via `pytest.ini` at the project root:
 pip install -r requirements.txt
 
 # Run all unit tests (live_integration excluded by default via pytest.ini)
-pytest skills/*/tests/ -v
+pytest plugins/splunk-assistant-skills/skills/*/tests/ -v
 
 # Run tests for specific skill
-pytest skills/splunk-search/tests/ -v
+pytest plugins/splunk-assistant-skills/skills/splunk-search/tests/ -v
 
 # Run shared library tests only
-pytest skills/shared/tests/ -v
+pytest plugins/splunk-assistant-skills/skills/shared/tests/ -v
 ```
 
 ### Live Integration Tests
@@ -522,14 +526,14 @@ export SPLUNK_TEST_PASSWORD="your-password"
 pip install testcontainers docker
 
 # Run all integration tests for a skill (must specify path explicitly)
-pytest skills/splunk-search/tests/live_integration/ -v
+pytest plugins/splunk-assistant-skills/skills/splunk-search/tests/live_integration/ -v
 
 # Run with specific markers
-pytest skills/*/tests/live_integration/ -m "live" -v           # All live tests
-pytest skills/*/tests/live_integration/ -m "not destructive" -v # Skip destructive tests
+pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -m "live" -v           # All live tests
+pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -m "not destructive" -v # Skip destructive tests
 
 # Run single test class
-pytest skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
+pytest plugins/splunk-assistant-skills/skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
 ```
 
 ### Docker-Based Testing
@@ -552,7 +556,7 @@ export SPLUNK_TEST_URL="https://localhost:8089"
 export SPLUNK_TEST_USERNAME="admin"
 export SPLUNK_TEST_PASSWORD="Admin123!"
 
-pytest skills/splunk-metadata/tests/live_integration/ -v
+pytest plugins/splunk-assistant-skills/skills/splunk-metadata/tests/live_integration/ -v
 ```
 
 ### Test Markers
@@ -647,7 +651,7 @@ def test_script_function():
 ### Required Files
 
 ```
-skills/new-skill/
+plugins/splunk-assistant-skills/skills/new-skill/
 ├── SKILL.md           # Skill documentation
 ├── scripts/           # Python scripts
 │   └── ...
@@ -710,7 +714,7 @@ Configuration follows `config.schema.json`. Key sections:
 
 ### Adding New Settings
 
-1. Update `skills/shared/config/config.schema.json`
+1. Update `plugins/splunk-assistant-skills/skills/shared/config/config.schema.json`
 2. Update `.claude/settings.example.json`
 3. Update `config_manager.py` if needed
 4. Document in `CLAUDE.md`
