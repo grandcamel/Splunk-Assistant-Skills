@@ -26,7 +26,7 @@
 </table>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-335%20passing-brightgreen?logo=pytest" alt="Tests">
+  <img src="https://img.shields.io/badge/tests-355%20passing-brightgreen?logo=pytest" alt="Tests">
   <img src="https://img.shields.io/badge/python-3.8+-3776AB?logo=python&logoColor=white" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/skills-14-FF6900" alt="Skills">
   <a href="https://pypi.org/project/splunk-assistant-skills-lib/"><img src="https://img.shields.io/pypi/v/splunk-assistant-skills-lib?color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
@@ -147,12 +147,21 @@ export SPLUNK_SITE_URL="https://splunk.example.com"
 # Or create .claude/settings.local.json for profiles
 ```
 
-#### 4. Start Using
+#### 4. Install CLI
 
 ```bash
-# Direct script execution
-python skills/splunk-search/scripts/search_oneshot.py \
-  "index=main | stats count by sourcetype" --earliest -1h
+# Install the splunk-skill CLI
+pip install -e .
+
+# Verify installation
+splunk-skill --version
+```
+
+#### 5. Start Using
+
+```bash
+# CLI usage (recommended)
+splunk-skill search oneshot "index=main | stats count by sourcetype" --earliest -1h
 
 # Or with Claude Code
 > "Search for errors in the main index from the last hour"
@@ -440,9 +449,9 @@ flowchart TD
 
 | Category | Tests | Description |
 |----------|------:|-------------|
-| Unit Tests | 160 | Core library validation |
+| Unit Tests | 180 | Core library and CLI validation |
 | Integration Tests | 175 | Live Splunk API verification |
-| **Total** | **335** | Comprehensive coverage |
+| **Total** | **355** | Comprehensive coverage |
 
 > Tests run against live Splunk instances to ensure real-world reliability.
 
@@ -503,11 +512,12 @@ Contributions are welcome! See our contributing guidelines.
 git clone https://github.com/grandcamel/Splunk-Assistant-Skills.git
 cd Splunk-Assistant-Skills
 
-# Install dependencies
+# Install dependencies and CLI
 pip install -r requirements.txt
+pip install -e .
 
 # Run tests (live_integration excluded by default via pytest.ini)
-pytest skills/*/tests/ -v
+pytest tests/ skills/*/tests/ -v
 ```
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
