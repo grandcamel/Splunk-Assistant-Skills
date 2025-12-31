@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
-"""Pytest configuration for live integration tests."""
+"""
+Pytest configuration for splunk-kvstore live integration tests.
 
+Imports fixtures from the shared live_integration module to ensure
+a single Splunk container is reused across all skills.
+"""
+
+import json
 import logging
 import sys
 import uuid
@@ -16,30 +22,39 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 shared_path = Path(__file__).parent.parent.parent.parent / "shared"
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
 
-from splunk_container import (
-    ExternalSplunkConnection,
-    SplunkContainer,
-    get_splunk_connection,
+# Import session-scoped fixtures from shared module
+# DO NOT redefine splunk_connection - this ensures a single container is shared
+from fixtures import (
+    splunk_connection,
+    splunk_client,
+    splunk_info,
+    test_index_name,
+    test_index,
+    test_data,
+    fresh_test_data,
+    search_helper,
+    job_helper,
 )
 
+# Re-export for pytest discovery
+__all__ = [
+    "splunk_connection",
+    "splunk_client",
+    "splunk_info",
+    "test_index_name",
+    "test_index",
+    "test_data",
+    "fresh_test_data",
+    "search_helper",
+    "job_helper",
+    "kvstore_helper",
+    "test_collection_name",
+]
 
-# Note: pytest markers (live, destructive, etc.) are defined in root conftest.py
 
-
-@pytest.fixture(scope="session")
-def splunk_connection():
-    connection = get_splunk_connection()
-    if isinstance(connection, SplunkContainer):
-        connection.start()
-        yield connection
-        connection.stop()
-    else:
-        yield connection
-
-
-@pytest.fixture(scope="session")
-def splunk_client(splunk_connection):
-    yield splunk_connection.get_client()
+# =============================================================================
+# Skill-Specific Fixtures
+# =============================================================================
 
 
 class KVStoreHelper:
@@ -83,8 +98,6 @@ class KVStoreHelper:
 
     def insert_record(self, collection, record):
         """Insert a record into a collection."""
-        import json
-
         url = f"{self.client.base_url.replace('/services', '')}/servicesNS/nobody/{self.app}/storage/collections/data/{collection}"
         response = self.client.session.post(
             url,

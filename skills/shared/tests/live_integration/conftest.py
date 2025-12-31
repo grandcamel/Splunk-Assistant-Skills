@@ -24,6 +24,9 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+# Add this directory to path for absolute imports in fixtures.py
+sys.path.insert(0, str(Path(__file__).parent))
+
 # Import and re-export all fixtures
 # Import fixtures - pytest discovers these automatically via conftest.py
 from .fixtures import *

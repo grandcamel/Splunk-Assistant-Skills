@@ -1,46 +1,59 @@
 #!/usr/bin/env python3
-"""Pytest configuration for live integration tests."""
+"""
+Pytest configuration for splunk-lookup live integration tests.
+
+Imports fixtures from the shared live_integration module to ensure
+a single Splunk container is reused across all skills.
+"""
 
 import logging
-import os
 import sys
 import uuid
 from pathlib import Path
 
 import pytest
-
-logging.basicConfig(level=logging.INFO)
 import urllib3
 
+logging.basicConfig(level=logging.INFO)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Import splunk_container module directly
+# Add shared test utilities to path
 shared_path = Path(__file__).parent.parent.parent.parent / "shared"
 sys.path.insert(0, str(shared_path / "tests" / "live_integration"))
-from splunk_container import (
-    ExternalSplunkConnection,
-    SplunkContainer,
-    get_splunk_connection,
+
+# Import session-scoped fixtures from shared module
+# DO NOT redefine splunk_connection - this ensures a single container is shared
+from fixtures import (
+    splunk_connection,
+    splunk_client,
+    splunk_info,
+    test_index_name,
+    test_index,
+    test_data,
+    fresh_test_data,
+    search_helper,
+    job_helper,
 )
 
+# Re-export for pytest discovery
+__all__ = [
+    "splunk_connection",
+    "splunk_client",
+    "splunk_info",
+    "test_index_name",
+    "test_index",
+    "test_data",
+    "fresh_test_data",
+    "search_helper",
+    "job_helper",
+    "lookup_helper",
+    "test_lookup_name",
+]
 
-# Note: pytest markers (live, destructive, etc.) are defined in root conftest.py
 
-
-@pytest.fixture(scope="session")
-def splunk_connection():
-    connection = get_splunk_connection()
-    if isinstance(connection, SplunkContainer):
-        connection.start()
-        yield connection
-        connection.stop()
-    else:
-        yield connection
-
-
-@pytest.fixture(scope="session")
-def splunk_client(splunk_connection):
-    yield splunk_connection.get_client()
+# =============================================================================
+# Skill-Specific Fixtures
+# =============================================================================
 
 
 class LookupHelper:
@@ -63,8 +76,6 @@ class LookupHelper:
             self._created_lookups.append(name)
             return True
         except Exception as e:
-            import logging
-
             logging.error(f"Upload failed: {e}")
             return False
 

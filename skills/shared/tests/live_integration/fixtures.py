@@ -26,7 +26,7 @@ import pytest
 lib_path = Path(__file__).parent.parent.parent / "scripts" / "lib"
 sys.path.insert(0, str(lib_path))
 
-from .splunk_container import (
+from splunk_container import (
     ExternalSplunkConnection,
     SplunkContainer,
     get_splunk_connection,
@@ -144,7 +144,7 @@ def test_data(splunk_connection, test_index: str) -> dict:
     Returns:
         dict: Information about generated test data
     """
-    from .test_utils import generate_test_events, wait_for_indexing
+    from test_utils import generate_test_events, wait_for_indexing
 
     # Generate various types of test events
     event_types = [
@@ -213,7 +213,7 @@ def fresh_test_data(splunk_connection, test_index: str) -> dict:
     """
     import uuid
 
-    from .test_utils import generate_test_events
+    from test_utils import generate_test_events
 
     test_marker = str(uuid.uuid4())[:8]
 

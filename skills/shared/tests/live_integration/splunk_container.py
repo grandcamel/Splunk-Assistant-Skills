@@ -83,6 +83,9 @@ class SplunkContainer(DockerContainer):
     def _configure(self) -> None:
         """Configure container environment and ports."""
         # Environment variables for Splunk
+        # Note: Both SPLUNK_GENERAL_TERMS and SPLUNK_START_ARGS are required
+        # for newer Splunk Docker images (9.x+)
+        self.with_env("SPLUNK_GENERAL_TERMS", "--accept-sgt-current-at-splunk-com")
         self.with_env("SPLUNK_START_ARGS", "--accept-license")
         self.with_env("SPLUNK_PASSWORD", self.splunk_password)
         self.with_env("SPLUNK_HEC_TOKEN", self.hec_token)
@@ -101,16 +104,43 @@ class SplunkContainer(DockerContainer):
         # Note: These are set via Docker, may need adjustment
         self.with_kwargs(mem_limit="4g")
 
+        # Reference counting for shared container support
+        self._ref_count = 0
+        self._is_started = False
+
     def start(self) -> "SplunkContainer":
-        """Start the container and wait for Splunk to be ready."""
+        """Start the container and wait for Splunk to be ready.
+
+        Uses reference counting to support sharing across pytest sessions.
+        """
+        self._ref_count += 1
+
+        if self._is_started:
+            logger.info(f"Reusing already-started Splunk container (ref_count={self._ref_count})")
+            return self
+
         logger.info(f"Starting Splunk container ({self.splunk_image})...")
         super().start()
 
         # Wait for Splunk to be fully ready
         self._wait_for_splunk_ready()
 
+        self._is_started = True
         logger.info(f"Splunk ready at {self.get_management_url()}")
         return self
+
+    def stop(self, **kwargs) -> None:
+        """Stop the container only when all references are released."""
+        self._ref_count -= 1
+
+        if self._ref_count > 0:
+            logger.info(f"Keeping Splunk container running (ref_count={self._ref_count})")
+            return
+
+        if self._is_started:
+            logger.info("Stopping Splunk container (ref_count=0)")
+            self._is_started = False
+            super().stop(**kwargs)
 
     def _wait_for_splunk_ready(self) -> None:
         """Wait for Splunk to be fully initialized and accepting connections."""
@@ -382,9 +412,16 @@ class ExternalSplunkConnection:
         return response.get("results", [])
 
 
+# Global singleton for container reuse across pytest sessions
+_shared_container = None
+
+
 def get_splunk_connection():
     """
     Get a Splunk connection, preferring external if configured.
+
+    Uses a singleton pattern to ensure only one Docker container is created
+    across all pytest sessions/conftest files.
 
     Environment Variables:
         SPLUNK_TEST_URL: External Splunk URL (skips Docker)
@@ -395,6 +432,8 @@ def get_splunk_connection():
     Returns:
         SplunkContainer or ExternalSplunkConnection
     """
+    global _shared_container
+
     external_url = os.environ.get("SPLUNK_TEST_URL")
 
     if external_url:
@@ -406,5 +445,10 @@ def get_splunk_connection():
             password=os.environ.get("SPLUNK_TEST_PASSWORD"),
         )
     else:
-        logger.info("Using Docker Splunk container")
-        return SplunkContainer()
+        # Use singleton pattern to share container across all tests
+        if _shared_container is None:
+            logger.info("Creating new Docker Splunk container (singleton)")
+            _shared_container = SplunkContainer()
+        else:
+            logger.info("Reusing existing Docker Splunk container (singleton)")
+        return _shared_container
