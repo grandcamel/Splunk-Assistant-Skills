@@ -31,13 +31,7 @@ from splunk_container import (
 )
 
 
-def pytest_configure(config):
-    config.addinivalue_line(
-        "markers", "live: marks tests as requiring live Splunk connection"
-    )
-    config.addinivalue_line(
-        "markers", "destructive: marks tests that modify Splunk configuration"
-    )
+# Note: pytest markers (live, destructive, etc.) are defined in root conftest.py
 
 
 @pytest.fixture(scope="session")

@@ -1,20 +1,12 @@
 #!/usr/bin/env python3
-"""Pytest fixtures for splunk-security tests."""
+"""
+Pytest fixtures for splunk-security tests.
 
-from unittest.mock import Mock
+Note: Common fixtures (mock_splunk_client, mock_config, temp_path, temp_dir)
+are provided by the root conftest.py.
+"""
 
 import pytest
-
-
-@pytest.fixture
-def mock_splunk_client():
-    """Create a mock SplunkClient for testing."""
-    client = Mock()
-    client.base_url = "https://splunk.example.com:8089/services"
-    client.auth_method = "bearer"
-    client.timeout = 30
-    client.get.return_value = {"entry": []}
-    return client
 
 
 @pytest.fixture

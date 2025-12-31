@@ -29,21 +29,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from .fixtures import *
 
 
-def pytest_configure(config):
-    """Configure pytest with custom markers."""
-    config.addinivalue_line(
-        "markers", "live: marks tests as requiring live Splunk connection"
-    )
-    config.addinivalue_line(
-        "markers", "docker_required: marks tests that require Docker"
-    )
-    config.addinivalue_line(
-        "markers", "external_splunk: marks tests for external Splunk only"
-    )
-    config.addinivalue_line("markers", "slow_integration: marks slow integration tests")
-    config.addinivalue_line(
-        "markers", "destructive: marks tests that modify Splunk configuration"
-    )
+# Note: pytest markers (live, destructive, etc.) are defined in root conftest.py
 
 
 def pytest_collection_modifyitems(config, items):
