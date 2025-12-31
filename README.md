@@ -166,6 +166,43 @@ python skills/splunk-search/scripts/search_oneshot.py \
 
 ---
 
+## Setup (Assistant Skills)
+
+If you installed via the plugin system, run the setup wizard:
+
+```bash
+/assistant-skills-setup
+```
+
+This configures:
+- Shared Python venv at `~/.assistant-skills-venv/`
+- Required dependencies from `requirements.txt`
+- Environment variables (prompts you to set credentials)
+- `claude-as` shell function for running Claude with dependencies
+
+After setup, use `claude-as` instead of `claude`:
+```bash
+claude-as  # Runs Claude with Assistant Skills venv activated
+```
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SPLUNK_SITE_URL` | Yes | Splunk server URL (e.g., `https://splunk.example.com`) |
+| `SPLUNK_TOKEN` | Auth* | Bearer token (preferred). Create in Splunk Web: Settings > Tokens |
+| `SPLUNK_USERNAME` | Auth* | Basic auth username (alternative to token) |
+| `SPLUNK_PASSWORD` | Auth* | Basic auth password (use with `SPLUNK_USERNAME`) |
+| `SPLUNK_MANAGEMENT_PORT` | No | Management API port (default: `8089`) |
+| `SPLUNK_VERIFY_SSL` | No | Verify SSL certificates (default: `true`) |
+| `SPLUNK_DEFAULT_APP` | No | Default Splunk app context (default: `search`) |
+| `SPLUNK_DEFAULT_INDEX` | No | Default search index (default: `main`) |
+| `SPLUNK_PROFILE` | No | Profile name for multi-instance setups |
+
+*\*Authentication: Either `SPLUNK_TOKEN` OR both `SPLUNK_USERNAME` and `SPLUNK_PASSWORD` required.*
+
+---
+
 ## What You Can Do
 
 ```mermaid
