@@ -85,6 +85,65 @@ The `splunk-assistant-skills-lib` package provides:
 | `job_poller` | Async job polling |
 | `time_utils` | Time modifier handling |
 
+### CLI Entry Point
+
+The project provides a unified CLI via the `splunk-skill` command:
+
+```bash
+# Install in development mode
+pip install -e .
+
+# Verify installation
+splunk-skill --version
+```
+
+#### CLI Usage
+
+```bash
+# Get help
+splunk-skill --help
+splunk-skill search --help
+
+# Search commands
+splunk-skill search oneshot "index=main | head 10"
+splunk-skill search normal "index=main | stats count" --wait
+splunk-skill search blocking "index=main | head 10" --timeout 60
+
+# Job management
+splunk-skill job list
+splunk-skill job status 1703779200.12345
+splunk-skill job cancel 1703779200.12345
+
+# Metadata discovery
+splunk-skill metadata indexes
+splunk-skill metadata sourcetypes --index main
+
+# Export data
+splunk-skill export results 1703779200.12345 --output-file results.csv
+
+# Administration
+splunk-skill admin info
+splunk-skill security whoami
+```
+
+#### Available Command Groups
+
+| Group | Description |
+|-------|-------------|
+| `search` | SPL query execution (oneshot/normal/blocking) |
+| `job` | Search job lifecycle management |
+| `export` | Data export and extraction |
+| `metadata` | Index, source, sourcetype discovery |
+| `lookup` | CSV and lookup file management |
+| `kvstore` | App Key Value Store operations |
+| `savedsearch` | Saved search and report management |
+| `alert` | Alert management and monitoring |
+| `app` | Application management |
+| `security` | Token management and RBAC |
+| `admin` | Server administration and REST API |
+| `tag` | Knowledge object tagging |
+| `metrics` | Real-time metrics operations |
+
 ## Configuration System
 
 ### Priority Order
@@ -143,7 +202,7 @@ Configure multiple Splunk instances:
 
 Use profiles:
 ```bash
-python search_oneshot.py "index=main | head 10" --profile development
+splunk-skill search oneshot "index=main | head 10" --profile development
 ```
 
 ### Assistant Skills Setup
@@ -422,8 +481,9 @@ Tests are configured via `pytest.ini` at the project root:
 |----------|-------|--------|
 | Unit Tests (skills) | 87 | ✅ Passing |
 | Unit Tests (shared library) | 73 | ✅ Passing |
+| Unit Tests (CLI) | 20 | ✅ Passing |
 | Live Integration Tests | 175 | 168 passing, 7 xfailed |
-| **Total** | **335** | |
+| **Total** | **355** | |
 
 ### Unit Tests
 
@@ -554,10 +614,10 @@ from splunk_assistant_skills_lib import (
 )
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description='Script description')
     parser.add_argument('--profile', '-p', help='Splunk profile')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
     # Implementation
@@ -566,6 +626,8 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+
+**Note:** The `argv` parameter enables CLI integration and testability. Always use `parser.parse_args(argv)` instead of `parser.parse_args()`.
 
 2. Create test in `{skill}/tests/test_{script}.py`:
 
@@ -618,6 +680,10 @@ Keywords that activate this skill.
 ## Examples
 
 \`\`\`bash
+# CLI usage (recommended)
+splunk-skill newskill command --option value
+
+# Direct script (alternative)
 python script_name.py --help
 \`\`\`
 
