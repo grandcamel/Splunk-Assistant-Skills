@@ -10,13 +10,13 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 
-class TestGetIndex:
-    """Tests for get_index script."""
+class TestGetIndexInfo:
+    """Tests for get_index_info script."""
 
-    @patch("get_index.get_splunk_client")
-    @patch("get_index.format_table")
-    @patch("get_index.print_success")
-    def test_get_index_text_output(
+    @patch("get_index_info.get_splunk_client")
+    @patch("get_index_info.format_table")
+    @patch("get_index_info.print_success")
+    def test_get_index_info_text_output(
         self,
         mock_print,
         mock_format,
@@ -29,17 +29,17 @@ class TestGetIndex:
         mock_splunk_client.get.return_value = sample_index_response
         mock_format.return_value = "formatted table"
 
-        from get_index import main
+        from get_index_info import main
 
-        with patch("sys.argv", ["get_index.py", "main"]):
+        with patch("sys.argv", ["get_index_info.py", "main"]):
             main()
 
         mock_splunk_client.get.assert_called_once()
         assert "main" in mock_splunk_client.get.call_args[0][0]
 
-    @patch("get_index.get_splunk_client")
-    @patch("get_index.format_json")
-    def test_get_index_json_output(
+    @patch("get_index_info.get_splunk_client")
+    @patch("get_index_info.format_json")
+    def test_get_index_info_json_output(
         self,
         mock_format_json,
         mock_get_client,
@@ -51,9 +51,9 @@ class TestGetIndex:
         mock_splunk_client.get.return_value = sample_index_response
         mock_format_json.return_value = "{}"
 
-        from get_index import main
+        from get_index_info import main
 
-        with patch("sys.argv", ["get_index.py", "main", "--output", "json"]):
+        with patch("sys.argv", ["get_index_info.py", "main", "--output", "json"]):
             main()
 
         mock_format_json.assert_called_once()
