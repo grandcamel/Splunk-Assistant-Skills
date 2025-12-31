@@ -18,9 +18,6 @@ class TestLookupOperations:
         assert "entry" in response
 
     @pytest.mark.live
-    @pytest.mark.xfail(
-        reason="Lookup file upload requires complex multipart form handling"
-    )
     def test_upload_and_get_lookup(self, lookup_helper, test_lookup_name):
         """Test uploading and retrieving a lookup file."""
         csv_content = (
@@ -57,9 +54,6 @@ class TestLookupSearch:
     """Integration tests for using lookups in searches."""
 
     @pytest.mark.live
-    @pytest.mark.xfail(
-        reason="Depends on lookup upload which requires complex multipart form handling"
-    )
     def test_lookup_in_search(self, lookup_helper, splunk_client, test_lookup_name):
         """Test using a lookup in a search."""
         csv_content = "code,description\n200,OK\n404,Not Found\n500,Server Error"

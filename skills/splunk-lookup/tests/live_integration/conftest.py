@@ -60,17 +60,12 @@ class LookupHelper:
     def upload(self, name, content):
         """Upload a lookup file."""
         try:
-            # First, create the lookup definition via form data
-            url = f"{self.client.base_url.replace('/services', '')}/servicesNS/nobody/{self.app}/data/lookup-table-files"
-
-            # Upload as multipart file
-            files = {"eai:data": (name, content.encode("utf-8"), "text/csv")}
-            data = {"name": name, "output_mode": "json"}
-
-            response = self.client.session.post(
-                url, files=files, data=data, verify=self.client.verify_ssl
+            # Use the client's upload_lookup method which handles the eai:data format
+            self.client.upload_lookup(
+                lookup_name=name,
+                content=content,
+                app=self.app,
             )
-            response.raise_for_status()
             self._created_lookups.append(name)
             return True
         except Exception as e:

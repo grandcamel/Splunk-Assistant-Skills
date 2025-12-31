@@ -1,7 +1,7 @@
 # Splunk Assistant Skills - Python Dependencies
 
 # Shared library (from PyPI)
-splunk-assistant-skills-lib>=0.1.0
+splunk-assistant-skills-lib>=0.2.2
 
 # Testing
 pytest>=7.0.0

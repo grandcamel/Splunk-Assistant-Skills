@@ -10,10 +10,9 @@ class TestExportEndpoint:
     """Integration tests for the export endpoint."""
 
     @pytest.mark.live
-    @pytest.mark.xfail(reason="Export endpoint returns raw CSV, client expects JSON")
     def test_export_endpoint_csv(self, splunk_client, test_index, test_data):
         """Test export endpoint returns CSV data."""
-        response = splunk_client.post(
+        response = splunk_client.post_text(
             "/search/v2/jobs/export",
             data={
                 "search": f"search index={test_index} | head 10",
@@ -25,16 +24,17 @@ class TestExportEndpoint:
             operation="export csv",
         )
 
-        # Export returns raw content, not JSON
+        # Export returns raw CSV content
         assert response is not None
+        assert isinstance(response, str)
+        # CSV should have at least a header line
+        assert len(response.strip()) > 0
 
     @pytest.mark.live
-    @pytest.mark.xfail(
-        reason="Export endpoint returns streaming JSON lines, not a single JSON object"
-    )
-    def test_export_endpoint_json(self, splunk_client, test_index, test_data):
-        """Test export endpoint returns JSON data."""
-        response = splunk_client.post(
+    def test_export_endpoint_json_lines(self, splunk_client, test_index, test_data):
+        """Test export endpoint returns JSON lines data."""
+        # Use post_text since export returns JSON lines (one JSON per line)
+        response = splunk_client.post_text(
             "/search/v2/jobs/export",
             data={
                 "search": f"search index={test_index} | head 10",
@@ -47,12 +47,15 @@ class TestExportEndpoint:
         )
 
         assert response is not None
+        assert isinstance(response, str)
+        # Should have at least one JSON line
+        lines = [line for line in response.strip().split("\n") if line]
+        assert len(lines) > 0
 
     @pytest.mark.live
-    @pytest.mark.xfail(reason="Export endpoint returns raw CSV, client expects JSON")
     def test_export_with_stats(self, splunk_client, test_index, test_data):
         """Test export with aggregation query."""
-        response = splunk_client.post(
+        response = splunk_client.post_text(
             "/search/v2/jobs/export",
             data={
                 "search": f"search index={test_index} | stats count by host",
@@ -65,13 +68,15 @@ class TestExportEndpoint:
         )
 
         assert response is not None
+        assert isinstance(response, str)
+        # CSV should contain 'host' and 'count' columns
+        assert "host" in response or "count" in response
 
 
 class TestJobResultsExport:
     """Integration tests for exporting results from completed jobs."""
 
     @pytest.mark.live
-    @pytest.mark.xfail(reason="CSV output_mode returns raw CSV, client expects JSON")
     def test_export_job_results_csv(
         self, splunk_client, job_helper, test_index, test_data
     ):
@@ -80,8 +85,8 @@ class TestJobResultsExport:
         sid = job_helper.create(f"search index={test_index} | head 20")
         job_helper.wait_for_done(sid)
 
-        # Get results in CSV format
-        response = splunk_client.get(
+        # Get results in CSV format using get_text
+        response = splunk_client.get_text(
             f"/search/v2/jobs/{sid}/results",
             params={"output_mode": "csv", "count": 0},
             operation="get csv results",
@@ -89,6 +94,9 @@ class TestJobResultsExport:
 
         # Response should be CSV content
         assert response is not None
+        assert isinstance(response, str)
+        # CSV should have data
+        assert len(response.strip()) > 0
 
     @pytest.mark.live
     def test_export_job_results_json(
@@ -108,7 +116,6 @@ class TestJobResultsExport:
         assert len(response["results"]) > 0
 
     @pytest.mark.live
-    @pytest.mark.xfail(reason="XML output_mode returns raw XML, client expects JSON")
     def test_export_job_results_xml(
         self, splunk_client, job_helper, test_index, test_data
     ):
@@ -116,7 +123,8 @@ class TestJobResultsExport:
         sid = job_helper.create(f"search index={test_index} | head 10")
         job_helper.wait_for_done(sid)
 
-        response = splunk_client.get(
+        # Get results in XML format using get_text
+        response = splunk_client.get_text(
             f"/search/v2/jobs/{sid}/results",
             params={"output_mode": "xml", "count": 0},
             operation="get xml results",
@@ -124,6 +132,9 @@ class TestJobResultsExport:
 
         # Response should be XML content
         assert response is not None
+        assert isinstance(response, str)
+        # XML should start with xml declaration or results tag
+        assert "<" in response
 
     @pytest.mark.live
     def test_export_with_field_selection(
