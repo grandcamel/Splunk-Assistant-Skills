@@ -50,9 +50,9 @@ skills/
 ├── splunk-alert/              # Alerts
 ├── splunk-app/                # Apps
 ├── splunk-kvstore/            # KV Store
-└── shared/                    # Shared library
-    ├── scripts/lib/
-    └── config/
+└── shared/                    # Shared config and tests
+    ├── config/
+    └── tests/
 ```
 
 ### Shared Library Pattern
@@ -144,6 +144,25 @@ Configure multiple Splunk instances:
 Use profiles:
 ```bash
 python search_oneshot.py "index=main | head 10" --profile development
+```
+
+### Assistant Skills Setup
+
+If installed via the Claude Code plugin system, use the universal setup wizard:
+
+```bash
+/assistant-skills-setup
+```
+
+This configures:
+- Shared Python venv at `~/.assistant-skills-venv/`
+- Required dependencies from `requirements.txt`
+- Environment variables (prompts for Splunk credentials)
+- `claude-as` shell function for running Claude with dependencies
+
+After setup, use `claude-as` instead of `claude`:
+```bash
+claude-as  # Runs Claude with Assistant Skills venv activated
 ```
 
 ## Authentication
@@ -699,12 +718,15 @@ Solutions:
 - Use async mode with polling
 - Optimize SPL query
 
+## E2E Tests
 
-### Run E2E Tests
+End-to-end tests validate the plugin with the Claude Code CLI.
 
 ```bash
-# Requires ANTHROPIC_API_KEY
+# Requires ANTHROPIC_API_KEY or OAuth authentication
 ./scripts/run-e2e-tests.sh           # Docker
 ./scripts/run-e2e-tests.sh --local   # Local
 ./scripts/run-e2e-tests.sh --verbose # Verbose
 ```
+
+See [tests/e2e/README.md](tests/e2e/README.md) for details.
