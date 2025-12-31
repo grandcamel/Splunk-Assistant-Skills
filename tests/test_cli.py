@@ -22,7 +22,7 @@ class TestCLIRoot:
         """Test --version flag."""
         result = runner.invoke(cli, ["--version"])
         assert result.exit_code == 0
-        assert "1.0.0" in result.output
+        assert "1.1.0" in result.output
 
     def test_help(self, runner):
         """Test --help flag."""

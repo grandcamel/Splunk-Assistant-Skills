@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-01-01
+
+### Added
+
+#### CLI Entry Point
+- New `splunk-skill` command-line interface using Click framework
+- 13 command groups: search, job, export, metadata, lookup, kvstore, savedsearch, alert, app, security, admin, tag, metrics
+- Global options: `--profile`, `--output`, `--verbose`, `--quiet`
+- Install via `pip install -e .`
+
+#### Script Refactoring
+- All 83 scripts now use `main(argv: list[str] | None = None)` pattern
+- Enables CLI integration and improved testability
+- Subprocess delegation for sandbox compatibility
+
+#### Testing
+- 20 new CLI tests using Click's CliRunner
+- Total tests: 355 (180 unit + 175 integration)
+
+#### Documentation
+- Updated CLAUDE.md with CLI documentation and examples
+- Updated README.md with CLI installation steps
+- Updated all 14 SKILL.md files with CLI syntax
+
+### Changed
+- Script signature changed from `def main():` to `def main(argv=None):`
+- `parser.parse_args()` changed to `parser.parse_args(argv)`
+
 ## [1.0.0] - 2024-12-29
 
 ### Added

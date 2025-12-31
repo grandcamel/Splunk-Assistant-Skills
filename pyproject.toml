@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "splunk-assistant-skills"
-version = "1.0.0"
+version = "1.1.0"
 description = "A collection of CLI-based assistant skills for interacting with Splunk."
 readme = "README.md"
 license = "MIT"
