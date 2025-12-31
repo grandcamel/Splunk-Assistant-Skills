@@ -15,7 +15,15 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Import splunk_container module directly
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "shared" / "tests" / "live_integration"))
+sys.path.insert(
+    0,
+    str(
+        Path(__file__).parent.parent.parent.parent
+        / "shared"
+        / "tests"
+        / "live_integration"
+    ),
+)
 from splunk_container import (
     ExternalSplunkConnection,
     SplunkContainer,
