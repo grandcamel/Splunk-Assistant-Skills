@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""List sourcetypes in Splunk."""
+"""List unique sources in Splunk."""
 
 import argparse
 
@@ -14,7 +14,7 @@ from splunk_assistant_skills_lib import (
 
 @handle_errors
 def main():
-    parser = argparse.ArgumentParser(description="List sourcetypes")
+    parser = argparse.ArgumentParser(description="List unique sources")
     parser.add_argument("--index", "-i", help="Filter by index")
     parser.add_argument(
         "--count", "-c", type=int, default=100, help="Max results (default: 100)"
@@ -25,8 +25,8 @@ def main():
 
     client = get_splunk_client(profile=args.profile)
 
-    # Use metadata search to get sourcetypes
-    search = "| metadata type=sourcetypes"
+    # Use metadata search to get sources
+    search = "| metadata type=sources"
     if args.index:
         search += f" index={args.index}"
     search += " | sort -totalCount | head " + str(args.count)
@@ -39,7 +39,7 @@ def main():
             "earliest_time": "-24h",
             "latest_time": "now",
         },
-        operation="list sourcetypes",
+        operation="list sources",
     )
 
     results = response.get("results", [])
@@ -49,7 +49,7 @@ def main():
     else:
         display_data = [
             {
-                "Sourcetype": r.get("sourcetype", "N/A"),
+                "Source": r.get("source", "N/A"),
                 "Total Count": r.get("totalCount", 0),
                 "First Time": (
                     r.get("firstTime", "N/A")[:19] if r.get("firstTime") else "N/A"
@@ -62,7 +62,7 @@ def main():
         ]
         print(format_table(display_data))
         index_info = f" in index '{args.index}'" if args.index else ""
-        print_success(f"Found {len(results)} sourcetypes{index_info}")
+        print_success(f"Found {len(results)} sources{index_info}")
 
 
 if __name__ == "__main__":

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """
-Export Splunk search results to file.
+Export raw Splunk events to file.
 
-Streams results efficiently for large exports (>50K rows).
+Streams raw event data efficiently for large exports.
+Unlike export_results.py which exports processed results, this exports raw events
+with their original _raw field content.
 
 Examples:
-    python export_results.py "index=main | stats count by host" --output results.csv
-    python export_results.py "index=main" --earliest -7d --format json --output data.json
+    python export_raw.py "index=main" --output raw_events.txt
+    python export_raw.py "index=main error" --earliest -1h --output errors.txt
+    python export_raw.py "index=main" --earliest -7d --format json --output events.json
 """
 
 import argparse
@@ -28,7 +31,7 @@ from splunk_assistant_skills_lib import (
 @handle_errors
 def main():
     parser = argparse.ArgumentParser(
-        description="Export Splunk search results to file",
+        description="Export raw Splunk events to file",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("spl", help="SPL query to execute")
@@ -36,14 +39,13 @@ def main():
     parser.add_argument(
         "--format",
         "-f",
-        choices=["csv", "json", "xml"],
-        default="csv",
-        help="Output format (default: csv)",
+        choices=["raw", "json", "xml"],
+        default="raw",
+        help="Output format (default: raw)",
     )
     parser.add_argument("--profile", "-p", help="Splunk profile to use")
     parser.add_argument("--earliest", "-e", help="Earliest time")
     parser.add_argument("--latest", "-l", help="Latest time")
-    parser.add_argument("--fields", help="Comma-separated fields to export")
     parser.add_argument("--progress", action="store_true", help="Show progress")
     args = parser.parse_args()
 
@@ -89,29 +91,27 @@ def main():
         show_progress=args.progress,
     )
 
-    print_info(f"Exporting {progress.result_count:,} results...")
+    print_info(f"Exporting {progress.event_count:,} raw events...")
 
     # Build export params
     params = {
         "output_mode": args.format,
-        "count": 0,  # All results
+        "count": 0,  # All events
     }
-    if args.fields:
-        params["field_list"] = args.fields
 
-    # Stream to file
+    # Stream to file using events endpoint
     bytes_written = 0
     with open(args.output, "wb") as f:
         for chunk in client.stream_results(
-            f"/search/v2/jobs/{sid}/results",
+            f"/search/v2/jobs/{sid}/events",
             params=params,
             timeout=api_settings.get("search_timeout", 300),
-            operation="export results",
+            operation="export raw events",
         ):
             f.write(chunk)
             bytes_written += len(chunk)
 
-    print_success(f"Exported {progress.result_count:,} results to {args.output}")
+    print_success(f"Exported {progress.event_count:,} raw events to {args.output}")
     print_info(f"File size: {bytes_written / 1024 / 1024:.2f} MB")
 
 

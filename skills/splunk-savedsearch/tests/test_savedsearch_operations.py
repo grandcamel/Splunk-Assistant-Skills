@@ -238,3 +238,105 @@ class TestRunSavedsearch:
         call_args = mock_splunk_client.post.call_args
         data = call_args[1].get("data", {})
         assert data.get("dispatch.earliest_time") == "-7d"
+
+
+class TestEnableSchedule:
+    """Tests for enable_schedule script."""
+
+    @patch("enable_schedule.get_splunk_client")
+    @patch("enable_schedule.print_success")
+    def test_enable_schedule_basic(
+        self, mock_print, mock_get_client, mock_splunk_client
+    ):
+        """Test enabling schedule without cron."""
+        mock_get_client.return_value = mock_splunk_client
+        mock_splunk_client.post.return_value = {}
+
+        from enable_schedule import main
+
+        with patch("sys.argv", ["enable_schedule.py", "Daily Error Report"]):
+            main()
+
+        mock_splunk_client.post.assert_called_once()
+        call_args = mock_splunk_client.post.call_args
+        data = call_args[1].get("data", {})
+        assert data.get("is_scheduled") == "1"
+
+    @patch("enable_schedule.get_splunk_client")
+    @patch("enable_schedule.print_success")
+    def test_enable_schedule_with_cron(
+        self, mock_print, mock_get_client, mock_splunk_client
+    ):
+        """Test enabling schedule with cron expression."""
+        mock_get_client.return_value = mock_splunk_client
+        mock_splunk_client.post.return_value = {}
+
+        from enable_schedule import main
+
+        with patch(
+            "sys.argv",
+            ["enable_schedule.py", "Daily Error Report", "--cron", "0 6 * * *"],
+        ):
+            main()
+
+        call_args = mock_splunk_client.post.call_args
+        data = call_args[1].get("data", {})
+        assert data.get("is_scheduled") == "1"
+        assert data.get("cron_schedule") == "0 6 * * *"
+
+    @patch("enable_schedule.get_splunk_client")
+    @patch("enable_schedule.print_success")
+    def test_enable_schedule_custom_app(
+        self, mock_print, mock_get_client, mock_splunk_client
+    ):
+        """Test enabling schedule in custom app."""
+        mock_get_client.return_value = mock_splunk_client
+        mock_splunk_client.post.return_value = {}
+
+        from enable_schedule import main
+
+        with patch("sys.argv", ["enable_schedule.py", "My Report", "--app", "my_app"]):
+            main()
+
+        call_args = mock_splunk_client.post.call_args
+        assert "/servicesNS/nobody/my_app/" in call_args[0][0]
+
+
+class TestDisableSchedule:
+    """Tests for disable_schedule script."""
+
+    @patch("disable_schedule.get_splunk_client")
+    @patch("disable_schedule.print_success")
+    def test_disable_schedule_basic(
+        self, mock_print, mock_get_client, mock_splunk_client
+    ):
+        """Test disabling schedule."""
+        mock_get_client.return_value = mock_splunk_client
+        mock_splunk_client.post.return_value = {}
+
+        from disable_schedule import main
+
+        with patch("sys.argv", ["disable_schedule.py", "Daily Error Report"]):
+            main()
+
+        mock_splunk_client.post.assert_called_once()
+        call_args = mock_splunk_client.post.call_args
+        data = call_args[1].get("data", {})
+        assert data.get("is_scheduled") == "0"
+
+    @patch("disable_schedule.get_splunk_client")
+    @patch("disable_schedule.print_success")
+    def test_disable_schedule_custom_app(
+        self, mock_print, mock_get_client, mock_splunk_client
+    ):
+        """Test disabling schedule in custom app."""
+        mock_get_client.return_value = mock_splunk_client
+        mock_splunk_client.post.return_value = {}
+
+        from disable_schedule import main
+
+        with patch("sys.argv", ["disable_schedule.py", "My Report", "--app", "my_app"]):
+            main()
+
+        call_args = mock_splunk_client.post.call_args
+        assert "/servicesNS/nobody/my_app/" in call_args[0][0]

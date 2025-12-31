@@ -24,11 +24,71 @@ Create and manage alerts, monitor triggered alerts, and configure alert actions.
 ## Examples
 
 ```bash
-python list_alerts.py --app search
-python get_triggered_alerts.py --severity high
-python acknowledge_alert.py alert_12345
+# Create an alert
+python create_alert.py "High Error Rate" \
+  "index=main sourcetype=app_logs error | stats count" \
+  --alert-type "number of events" \
+  --alert-comparator "greater than" \
+  --alert-threshold 100 \
+  --severity 4 \
+  --cron "*/5 * * * *" \
+  --actions email \
+  --email-to ops@example.com
+
+# List all configured alerts (fired alerts)
+python list_alerts.py --app search --count 100
+
+# Get specific alert details
+python get_alert.py alert_12345
+
+# List triggered alert instances with filters
+python get_triggered_alerts.py --severity 4
+python get_triggered_alerts.py --savedsearch "High Error Rate"
+python get_triggered_alerts.py --app search --count 20
+
+# Acknowledge/delete a triggered alert
+python acknowledge_alert.py alert_12345 --force
 ```
 
-## Alert Actions
+## Alert Configuration
 
-- email, webhook, script, custom
+### Severity Levels
+
+- 1 = debug
+- 2 = info
+- 3 = warn (default)
+- 4 = error
+- 5 = severe
+- 6 = fatal
+
+### Alert Types
+
+- `always` - Trigger on every scheduled execution
+- `number of events` - Trigger when result count meets condition
+- `number of hosts` - Trigger when host count meets condition
+- `number of sources` - Trigger when source count meets condition
+- `custom` - Custom alert condition
+
+### Alert Comparators
+
+- `greater than`
+- `less than`
+- `equal to`
+- `not equal to`
+- `drops by`
+- `rises by`
+
+### Alert Actions
+
+- `email` - Send email notification
+- `webhook` - HTTP POST to webhook URL
+- `script` - Execute custom script
+- Custom actions configured in Splunk
+
+## API Endpoints
+
+- `GET /services/alerts/fired_alerts` - List triggered alerts
+- `GET /services/alerts/fired_alerts/{name}` - Get specific triggered alert
+- `DELETE /services/alerts/fired_alerts/{name}` - Acknowledge/delete triggered alert
+- `POST /servicesNS/nobody/{app}/saved/searches` - Create alert (via saved search)
+- `GET /servicesNS/nobody/{app}/saved/searches` - List alert configurations
