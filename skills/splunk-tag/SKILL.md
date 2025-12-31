@@ -23,9 +23,17 @@ Add, remove, and manage tags associated with field values for easier searching.
 ## Examples
 
 ```bash
-python add_tag.py --field host --value webserver01 --tag production
-python list_tags.py
-python search_by_tag.py production
+# List all tags
+splunk-skill tag list
+
+# Add tag to field value
+splunk-skill tag add production host webserver01
+
+# Remove tag from field value
+splunk-skill tag remove production host webserver01
+
+# Search by tag
+splunk-skill tag search production --earliest -1h
 ```
 
 ## SPL Patterns

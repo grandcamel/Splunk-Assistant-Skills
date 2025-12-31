@@ -13,7 +13,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Install Splunk app")
     parser.add_argument(
         "source", help="App package path (.tar.gz/.tgz/.spl) or Splunkbase app ID"
@@ -26,7 +26,7 @@ def main():
     )
     parser.add_argument("--force", "-f", action="store_true", help="Skip confirmation")
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     source_path = Path(args.source)
     is_file = source_path.exists() and source_path.is_file()

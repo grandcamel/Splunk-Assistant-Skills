@@ -27,9 +27,29 @@ Create, read, update, delete saved searches, reports, and scheduled searches.
 ## Examples
 
 ```bash
-python list_savedsearches.py --app search
-python get_savedsearch.py "My Report"
-python run_savedsearch.py "My Report" --wait
+# List saved searches
+splunk-skill savedsearch list --app search
+
+# Get saved search details
+splunk-skill savedsearch get "My Report"
+
+# Create saved search
+splunk-skill savedsearch create "My Report" "index=main | stats count" --app search
+
+# Update saved search
+splunk-skill savedsearch update "My Report" --search "index=main | stats count by host"
+
+# Run saved search
+splunk-skill savedsearch run "My Report" --wait
+
+# Enable scheduling
+splunk-skill savedsearch enable "My Report"
+
+# Disable scheduling
+splunk-skill savedsearch disable "My Report"
+
+# Delete saved search
+splunk-skill savedsearch delete "My Report"
 ```
 
 ## API Endpoints

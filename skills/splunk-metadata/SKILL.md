@@ -26,16 +26,22 @@ Discover and explore metadata about indexes, sources, sourcetypes, and fields.
 
 ```bash
 # List all indexes
-python list_indexes.py
+splunk-skill metadata indexes
 
 # Get index details
-python get_index_info.py main
+splunk-skill metadata index-info main
 
 # List sourcetypes
-python list_sourcetypes.py --index main
+splunk-skill metadata sourcetypes --index main
+
+# List sources
+splunk-skill metadata sources --index main
 
 # Field summary
-python get_field_summary.py --index main --sourcetype access_combined
+splunk-skill metadata fields --index main --sourcetype access_combined
+
+# Metadata search
+splunk-skill metadata search --type sourcetypes --index main
 ```
 
 ## SPL Patterns

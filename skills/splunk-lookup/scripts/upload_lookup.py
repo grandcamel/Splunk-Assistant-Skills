@@ -13,7 +13,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Upload lookup file")
     parser.add_argument("file", help="Path to CSV file to upload")
     parser.add_argument(
@@ -23,7 +23,7 @@ def main():
         "--app", "-a", default="search", help="App namespace (default: search)"
     )
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     file_path = Path(args.file)
     if not file_path.exists():

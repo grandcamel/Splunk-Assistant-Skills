@@ -13,7 +13,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Get preview results from a running job"
     )
@@ -23,7 +23,7 @@ def main():
         "--count", "-c", type=int, default=100, help="Max preview results"
     )
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     sid = validate_sid(args.sid)
     client = get_splunk_client(profile=args.profile)

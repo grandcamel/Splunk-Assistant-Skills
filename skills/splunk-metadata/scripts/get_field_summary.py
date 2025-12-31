@@ -13,7 +13,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Get field summary")
     parser.add_argument("--index", "-i", help="Filter by index")
     parser.add_argument("--sourcetype", "-s", help="Filter by sourcetype")
@@ -45,7 +45,7 @@ def main():
     )
     parser.add_argument("--profile", "-p", help="Splunk profile")
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

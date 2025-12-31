@@ -12,7 +12,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Delete (revoke) a JWT authentication token"
     )
@@ -24,7 +24,7 @@ def main():
     parser.add_argument(
         "--force", "-f", action="store_true", help="Skip confirmation prompt"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

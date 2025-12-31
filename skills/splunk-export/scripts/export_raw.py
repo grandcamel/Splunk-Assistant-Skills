@@ -29,7 +29,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Export raw Splunk events to file",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -47,7 +47,7 @@ def main():
     parser.add_argument("--earliest", "-e", help="Earliest time")
     parser.add_argument("--latest", "-l", help="Latest time")
     parser.add_argument("--progress", action="store_true", help="Show progress")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Get defaults
     defaults = get_search_defaults(args.profile)

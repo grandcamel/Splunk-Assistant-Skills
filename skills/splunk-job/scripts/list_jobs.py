@@ -22,7 +22,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="List Splunk search jobs",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -38,7 +38,7 @@ def main():
     parser.add_argument(
         "--output", "-o", choices=["text", "json"], default="text", help="Output format"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Get client
     client = get_splunk_client(profile=args.profile)

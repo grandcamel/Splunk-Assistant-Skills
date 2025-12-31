@@ -59,11 +59,11 @@ Routes natural language requests to specialized Splunk skills based on intent. P
 ## Connection Verification
 
 ```bash
-# Test connection and authentication
-python verify_connection.py --profile production
+# Get server information (verify connection)
+splunk-skill admin info --profile production
 
-# Get server information
-python get_server_info.py --profile production
+# Get server health status
+splunk-skill admin health --profile production
 ```
 
 ## Examples
@@ -71,7 +71,7 @@ python get_server_info.py --profile production
 ### Verify Connection
 
 ```bash
-python verify_connection.py
+splunk-skill admin info
 # Output:
 # ✓ Connected to splunk.example.com:8089
 # ✓ Authentication: Bearer token valid
@@ -82,8 +82,27 @@ python verify_connection.py
 ### Get Server Info
 
 ```bash
-python get_server_info.py --output json
+splunk-skill admin info --output json
 # Output: Server version, build, OS, cluster status, etc.
+```
+
+### Common CLI Commands
+
+```bash
+# Search commands
+splunk-skill search oneshot "index=main | head 10"
+splunk-skill search normal "index=main | stats count" --wait
+
+# Job management
+splunk-skill job list
+splunk-skill job status 1703779200.12345
+
+# Metadata discovery
+splunk-skill metadata indexes
+splunk-skill metadata sourcetypes --index main
+
+# Security
+splunk-skill security whoami
 ```
 
 ## Best Practices

@@ -25,9 +25,23 @@ Install, uninstall, enable, disable, and manage Splunk applications.
 ## Examples
 
 ```bash
-python list_apps.py
-python get_app.py search
-python install_app.py my_app.tgz
+# List installed apps
+splunk-skill app list
+
+# Get app details
+splunk-skill app get search
+
+# Install app
+splunk-skill app install my_app.tgz
+
+# Uninstall app
+splunk-skill app uninstall my_app
+
+# Enable app
+splunk-skill app enable my_app
+
+# Disable app
+splunk-skill app disable my_app
 ```
 
 ## API Endpoints

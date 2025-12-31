@@ -38,44 +38,51 @@ oneshot (inline results), normal (async with polling), and blocking (sync wait).
 
 ```bash
 # Simple search
-python search_oneshot.py "index=main | stats count by sourcetype"
+splunk-skill search oneshot "index=main | stats count by sourcetype"
 
 # With time range
-python search_oneshot.py "index=main | head 100" --earliest -1h --latest now
+splunk-skill search oneshot "index=main | head 100" --earliest -1h --latest now
 
 # Output as JSON
-python search_oneshot.py "index=main | top host" --output json
+splunk-skill search oneshot "index=main | top host" --output json
 ```
 
 ### Normal Search (Async)
 
 ```bash
 # Create job and poll
-python search_normal.py "index=main | stats count" --wait
+splunk-skill search normal "index=main | stats count" --wait
 
 # Create job only (returns SID)
-python search_normal.py "index=main | stats count"
-# Then use: python get_results.py <SID>
+splunk-skill search normal "index=main | stats count"
+# Then use: splunk-skill search results <SID>
 ```
 
 ### Blocking Search (Sync)
 
 ```bash
 # Wait for completion and return results
-python search_blocking.py "index=main | head 10" --timeout 60
+splunk-skill search blocking "index=main | head 10" --timeout 60
 ```
 
 ### Get Results
 
 ```bash
 # From completed job
-python get_results.py 1703779200.12345
+splunk-skill search results 1703779200.12345
 
 # With pagination
-python get_results.py 1703779200.12345 --count 100 --offset 0
+splunk-skill search results 1703779200.12345 --count 100 --offset 0
 
 # Specific fields only
-python get_results.py 1703779200.12345 --fields host,status,uri
+splunk-skill search results 1703779200.12345 --fields host,status,uri
+```
+
+### Validate SPL
+
+```bash
+# Validate SPL syntax
+splunk-skill search validate "index=main | stats count"
 ```
 
 ## API Endpoints

@@ -52,7 +52,7 @@ def load_checkpoint(checkpoint_file):
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Export with checkpoint-based resume capability",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -83,7 +83,7 @@ def main():
     parser.add_argument("--latest", "-l", help="Latest time")
     parser.add_argument("--fields", help="Comma-separated fields to export")
     parser.add_argument("--progress", action="store_true", help="Show progress")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

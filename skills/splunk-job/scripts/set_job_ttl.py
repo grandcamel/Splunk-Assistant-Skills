@@ -13,7 +13,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Set TTL for a Splunk search job")
     parser.add_argument("sid", help="Search job ID")
     parser.add_argument(
@@ -24,7 +24,7 @@ def main():
         help="Time-to-live in seconds (default: 3600)",
     )
     parser.add_argument("--profile", "-p", help="Splunk profile to use")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     sid = validate_sid(args.sid)
     client = get_splunk_client(profile=args.profile)

@@ -52,15 +52,15 @@ QUEUED → PARSING → RUNNING → FINALIZING → DONE
 
 ```bash
 # Create job
-python create_job.py "index=main | stats count by sourcetype" --earliest -1h
+splunk-skill job create "index=main | stats count by sourcetype" --earliest -1h
 # Output: Job created: 1703779200.12345
 
 # Check status
-python get_job_status.py 1703779200.12345
+splunk-skill job status 1703779200.12345
 # Output: State: RUNNING, Progress: 45%, Events: 12345
 
 # Wait for completion
-python poll_job.py 1703779200.12345 --timeout 300
+splunk-skill job poll 1703779200.12345 --timeout 300
 # Output: Job completed: DONE, Results: 42
 ```
 
@@ -68,30 +68,30 @@ python poll_job.py 1703779200.12345 --timeout 300
 
 ```bash
 # Pause running job
-python pause_job.py 1703779200.12345
+splunk-skill job pause 1703779200.12345
 
 # Resume paused job
-python unpause_job.py 1703779200.12345
+splunk-skill job unpause 1703779200.12345
 
 # Cancel job
-python cancel_job.py 1703779200.12345
+splunk-skill job cancel 1703779200.12345
 
 # Finalize (stop and return current results)
-python finalize_job.py 1703779200.12345
+splunk-skill job finalize 1703779200.12345
 ```
 
 ### Job Management
 
 ```bash
 # List all jobs
-python list_jobs.py
+splunk-skill job list
 # Output: Table of active jobs with status
 
 # Extend TTL
-python set_job_ttl.py 1703779200.12345 --ttl 3600
+splunk-skill job set-ttl 1703779200.12345 --ttl 3600
 
 # Delete job
-python delete_job.py 1703779200.12345
+splunk-skill job delete 1703779200.12345
 ```
 
 ## API Endpoints

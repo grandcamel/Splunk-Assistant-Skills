@@ -23,7 +23,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Poll Splunk search job until completion",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -49,7 +49,7 @@ Examples:
     parser.add_argument(
         "--output", "-o", choices=["text", "json"], default="text", help="Output format"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Validate SID
     sid = validate_sid(args.sid)

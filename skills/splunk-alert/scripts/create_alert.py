@@ -11,7 +11,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Create alert from saved search")
     parser.add_argument("name", help="Alert/saved search name")
     parser.add_argument("search", help="SPL query")
@@ -71,7 +71,7 @@ def main():
     )
     parser.add_argument("--throttle", help="Throttle period (e.g., 60s, 5m, 1h)")
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

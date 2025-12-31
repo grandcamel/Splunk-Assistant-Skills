@@ -12,12 +12,12 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Uninstall Splunk app")
     parser.add_argument("name", help="App name to uninstall")
     parser.add_argument("--force", "-f", action="store_true", help="Skip confirmation")
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if not args.force:
         print_warning(f"This will permanently remove the app: {args.name}")

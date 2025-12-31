@@ -11,7 +11,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Create Splunk index")
     parser.add_argument("name", help="Index name")
     parser.add_argument(
@@ -26,7 +26,7 @@ def main():
     parser.add_argument("--home-path", help="Home path for hot/warm buckets")
     parser.add_argument("--cold-path", help="Cold path for cold buckets")
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

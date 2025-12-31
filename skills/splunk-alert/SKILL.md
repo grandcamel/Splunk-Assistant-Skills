@@ -25,7 +25,7 @@ Create and manage alerts, monitor triggered alerts, and configure alert actions.
 
 ```bash
 # Create an alert
-python create_alert.py "High Error Rate" \
+splunk-skill alert create "High Error Rate" \
   "index=main sourcetype=app_logs error | stats count" \
   --alert-type "number of events" \
   --alert-comparator "greater than" \
@@ -35,19 +35,19 @@ python create_alert.py "High Error Rate" \
   --actions email \
   --email-to ops@example.com
 
-# List all configured alerts (fired alerts)
-python list_alerts.py --app search --count 100
+# List all configured alerts
+splunk-skill alert list --app search --count 100
 
 # Get specific alert details
-python get_alert.py alert_12345
+splunk-skill alert get alert_12345
 
 # List triggered alert instances with filters
-python get_triggered_alerts.py --severity 4
-python get_triggered_alerts.py --savedsearch "High Error Rate"
-python get_triggered_alerts.py --app search --count 20
+splunk-skill alert triggered --severity 4
+splunk-skill alert triggered --savedsearch "High Error Rate"
+splunk-skill alert triggered --app search --count 20
 
 # Acknowledge/delete a triggered alert
-python acknowledge_alert.py alert_12345 --force
+splunk-skill alert acknowledge alert_12345 --force
 ```
 
 ## Alert Configuration

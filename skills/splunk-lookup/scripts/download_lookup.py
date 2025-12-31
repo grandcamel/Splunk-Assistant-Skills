@@ -7,7 +7,7 @@ from splunk_assistant_skills_lib import get_splunk_client, handle_errors, print_
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Download lookup file")
     parser.add_argument("name", help="Lookup filename in Splunk")
     parser.add_argument(
@@ -17,7 +17,7 @@ def main():
         "--app", "-a", default="search", help="App namespace (default: search)"
     )
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

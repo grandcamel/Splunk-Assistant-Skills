@@ -13,7 +13,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="List triggered alert instances")
     parser.add_argument(
         "--count", "-c", type=int, default=50, help="Max results (default: 50)"
@@ -29,7 +29,7 @@ def main():
     parser.add_argument("--app", "-a", help="Filter by app namespace")
     parser.add_argument("--profile", "-p", help="Splunk profile")
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

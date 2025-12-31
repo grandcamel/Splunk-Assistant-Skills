@@ -24,9 +24,20 @@ Upload, download, and manage CSV lookup files and lookup definitions.
 ## Examples
 
 ```bash
-python upload_lookup.py users.csv --app search
-python download_lookup.py users.csv --output ./users.csv
-python list_lookups.py --app search
+# List lookups
+splunk-skill lookup list --app search
+
+# Get lookup info
+splunk-skill lookup get users.csv --app search
+
+# Upload lookup
+splunk-skill lookup upload users.csv --app search
+
+# Download lookup
+splunk-skill lookup download users.csv --output-file ./users.csv
+
+# Delete lookup
+splunk-skill lookup delete users.csv --app search
 ```
 
 ## API Endpoints

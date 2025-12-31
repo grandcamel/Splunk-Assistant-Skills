@@ -13,7 +13,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Update record in KV Store collection")
     parser.add_argument("collection", help="Collection name")
     parser.add_argument("key", help="Record _key value")
@@ -22,7 +22,7 @@ def main():
         "--app", "-a", default="search", help="App namespace (default: search)"
     )
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

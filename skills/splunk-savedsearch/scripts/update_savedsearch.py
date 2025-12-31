@@ -11,7 +11,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Update saved search")
     parser.add_argument("name", help="Saved search name")
     parser.add_argument(
@@ -33,7 +33,7 @@ def main():
         "--disable-schedule", action="store_true", help="Disable scheduling"
     )
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

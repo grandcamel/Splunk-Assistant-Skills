@@ -23,9 +23,17 @@ Query and analyze metrics data using mstats and mcatalog commands.
 ## Examples
 
 ```bash
-python mstats.py "avg(cpu.percent)" --index metrics --by host
-python mcatalog.py --index metrics
-python list_metrics.py --index metrics
+# List metrics
+splunk-skill metrics list --index metrics
+
+# List metric indexes
+splunk-skill metrics indexes
+
+# Query with mstats
+splunk-skill metrics mstats cpu.percent --agg avg --by host --span 1h
+
+# Discover metrics with mcatalog
+splunk-skill metrics mcatalog --index metrics --filter "cpu.*"
 ```
 
 ## SPL Patterns

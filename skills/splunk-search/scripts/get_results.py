@@ -24,7 +24,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Get results from a Splunk search job",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -40,7 +40,7 @@ def main():
         "--output", "-o", choices=["text", "json", "csv"], default="text"
     )
     parser.add_argument("--output-file", help="Write to file")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     sid = validate_sid(args.sid)
     client = get_splunk_client(profile=args.profile)

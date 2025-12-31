@@ -11,7 +11,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Enable scheduled execution for a saved search"
     )
@@ -21,7 +21,7 @@ def main():
     )
     parser.add_argument("--cron", help="Cron schedule (optional, e.g., '0 * * * *')")
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

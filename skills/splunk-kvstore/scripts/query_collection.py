@@ -14,7 +14,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Query KV Store collection")
     parser.add_argument("collection", help="Collection name")
     parser.add_argument(
@@ -33,7 +33,7 @@ def main():
     parser.add_argument("--skip", type=int, default=0, help="Records to skip (offset)")
     parser.add_argument("--profile", "-p", help="Splunk profile")
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

@@ -28,30 +28,30 @@ Supports checkpoint-based resume for reliability during long exports.
 
 ```bash
 # Export to CSV
-python export_results.py "index=main | stats count by host" --output results.csv
+splunk-skill export results 1703779200.12345 --output-file results.csv
 
 # Export to JSON
-python export_results.py "index=main | head 100000" --format json --output data.json
+splunk-skill export results 1703779200.12345 --format json --output-file data.json
 
-# Stream with progress
-python export_results.py "index=main" --earliest -7d --progress
+# Export raw events
+splunk-skill export raw 1703779200.12345 --output-file events.json
 ```
 
 ### Large Export with Checkpoints
 
 ```bash
 # Start export with checkpoint file
-python export_with_checkpoint.py "index=main" --output large_export.csv --checkpoint export.ckpt
+splunk-skill export checkpoint "index=main" --output large_export.csv --checkpoint export.ckpt
 
 # Resume interrupted export
-python export_with_checkpoint.py --resume export.ckpt
+splunk-skill export checkpoint --resume export.ckpt
 ```
 
 ### Estimate Size
 
 ```bash
 # Preview count before export
-python estimate_export_size.py "index=main | stats count by host" --earliest -7d
+splunk-skill export estimate "index=main | stats count by host" --earliest -7d
 # Output: Estimated 1,234,567 results
 ```
 

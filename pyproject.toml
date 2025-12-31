@@ -1,8 +1,83 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "splunk-assistant-skills"
+version = "1.0.0"
+description = "A collection of CLI-based assistant skills for interacting with Splunk."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "Jason Krueger", email = "grandcamel@gmail.com" }
+]
+keywords = [
+    "splunk",
+    "cli",
+    "assistant",
+    "skills",
+    "automation",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "splunk-assistant-skills-lib>=0.2.2",
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    "black>=23.0.0",
+    "isort>=5.12.0,<6.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.scripts]
+splunk-skill = "splunk_assistant_skills.cli.main:cli"
+
+[project.urls]
+Homepage = "https://github.com/grandcamel/Splunk-Assistant-Skills"
+Repository = "https://github.com/grandcamel/Splunk-Assistant-Skills"
+Issues = "https://github.com/grandcamel/Splunk-Assistant-Skills/issues"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/skills",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/splunk_assistant_skills"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "skills/*/tests"]
+pythonpath = ["src", "."]
+addopts = "-v --tb=short --ignore=skills/*/tests/live_integration"
+
 [tool.black]
 line-length = 88
-target-version = ['py38', 'py39', 'py310', 'py311']
-include = '\.pyi?$'
+target-version = ["py39", "py310", "py311", "py312"]
 
 [tool.isort]
 profile = "black"
 line_length = 88
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true

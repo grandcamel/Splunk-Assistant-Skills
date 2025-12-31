@@ -21,7 +21,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Add a tag to a field value",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -45,7 +45,7 @@ Examples:
         "--app", "-a", default="search", help="App context (default: search)"
     )
     parser.add_argument("--profile", "-p", help="Splunk profile to use")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if not args.field or not args.value:
         print_error("Field and value are required")

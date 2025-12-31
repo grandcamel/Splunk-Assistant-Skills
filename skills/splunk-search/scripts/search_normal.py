@@ -28,7 +28,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="Execute a Splunk normal (async) search",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -42,7 +42,7 @@ def main():
         "--timeout", "-t", type=int, default=300, help="Wait timeout (seconds)"
     )
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Get defaults
     defaults = get_search_defaults(args.profile)

@@ -16,14 +16,14 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Validate SPL syntax")
     parser.add_argument("spl", help="SPL query to validate")
     parser.add_argument(
         "--suggestions", "-s", action="store_true", help="Show optimization suggestions"
     )
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     is_valid, issues = validate_spl_syntax(args.spl)
     commands = parse_spl_commands(args.spl)

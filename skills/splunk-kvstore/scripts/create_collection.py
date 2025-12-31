@@ -12,7 +12,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Create KV Store collection")
     parser.add_argument("name", help="Collection name")
     parser.add_argument(
@@ -28,7 +28,7 @@ def main():
         help='Accelerated fields as JSON: {"index_name": {"field1": 1}}',
     )
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

@@ -17,14 +17,14 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Estimate export size")
     parser.add_argument("spl", help="SPL query")
     parser.add_argument("--profile", "-p", help="Splunk profile")
     parser.add_argument("--earliest", "-e", help="Earliest time")
     parser.add_argument("--latest", "-l", help="Latest time")
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     defaults = get_search_defaults(args.profile)
     earliest = args.earliest or defaults.get("earliest_time", "-24h")

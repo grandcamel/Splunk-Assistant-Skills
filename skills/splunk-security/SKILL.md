@@ -26,9 +26,32 @@ Manage JWT tokens, check permissions, and configure ACLs on knowledge objects.
 ## Examples
 
 ```bash
-python list_tokens.py
-python get_capabilities.py --user admin
-python check_permission.py --object saved/searches/MySearch
+# Get current user info
+splunk-skill security whoami
+
+# List users
+splunk-skill security list-users
+
+# List roles
+splunk-skill security list-roles
+
+# List tokens
+splunk-skill security list-tokens
+
+# Create token
+splunk-skill security create-token --audience "my-app" --expires 30d
+
+# Delete token
+splunk-skill security delete-token token_123
+
+# Get capabilities
+splunk-skill security capabilities --user admin
+
+# Check permission
+splunk-skill security check-permission --object saved/searches/MySearch
+
+# Get ACL
+splunk-skill security acl saved/searches/MySearch
 ```
 
 ## API Endpoints

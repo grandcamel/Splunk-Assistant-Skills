@@ -16,7 +16,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(
         description="List metric names in a metrics index",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -41,7 +41,7 @@ Examples:
     parser.add_argument(
         "--output", "-o", choices=["text", "json"], default="text", help="Output format"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     # Get defaults
     defaults = get_search_defaults(args.profile)

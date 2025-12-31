@@ -12,7 +12,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Delete lookup file")
     parser.add_argument("name", help="Lookup filename in Splunk")
     parser.add_argument(
@@ -20,7 +20,7 @@ def main():
     )
     parser.add_argument("--force", "-f", action="store_true", help="Skip confirmation")
     parser.add_argument("--profile", "-p", help="Splunk profile")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if not args.force:
         print_warning(f"This will permanently delete lookup file '{args.name}'")

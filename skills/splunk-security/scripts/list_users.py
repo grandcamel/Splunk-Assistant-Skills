@@ -13,14 +13,14 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="List Splunk users")
     parser.add_argument(
         "--count", "-c", type=int, default=100, help="Max results (default: 100)"
     )
     parser.add_argument("--profile", "-p", help="Splunk profile")
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 

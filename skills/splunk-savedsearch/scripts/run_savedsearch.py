@@ -14,7 +14,7 @@ from splunk_assistant_skills_lib import (
 
 
 @handle_errors
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description="Run saved search on-demand")
     parser.add_argument("name", help="Saved search name")
     parser.add_argument(
@@ -32,7 +32,7 @@ def main():
     parser.add_argument("--latest", help="Override latest time")
     parser.add_argument("--profile", "-p", help="Splunk profile")
     parser.add_argument("--output", "-o", choices=["text", "json"], default="text")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     client = get_splunk_client(profile=args.profile)
 
