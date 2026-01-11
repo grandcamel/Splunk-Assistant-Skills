@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0](https://github.com/grandcamel/Splunk-Assistant-Skills/compare/v1.1.0...v2.0.0) (2026-01-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* Restructure plugin to be documentation and slash commands only. CLI functionality (`splunk-skill`) removed and replaced by `splunk-as` from `splunk-assistant-skills-lib>=1.0.0`.
+
+### Features
+
+* **plugin:** add setup command and README ([eca6bcc](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/eca6bcc635d6d3163ca7a935f8462c4f72731aca))
+
+
+### Bug Fixes
+
+* **cli:** update script paths for new plugin directory structure ([65d2bae](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/65d2baec5634055a92d89f60eb86a98ab46fb8e6))
+
+
+### Code Refactoring
+
+* convert plugin to documentation-only, CLI moved to library ([c0edffe](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/c0edffeef56967183669981392bfbde968f437ee))
+
 ## [1.1.0] - 2025-01-01
 
 ### Added
