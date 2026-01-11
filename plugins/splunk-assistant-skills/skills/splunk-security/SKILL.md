@@ -27,31 +27,31 @@ Manage JWT tokens, check permissions, and configure ACLs on knowledge objects.
 
 ```bash
 # Get current user info
-splunk-skill security whoami
+splunk-as security whoami
 
 # List users
-splunk-skill security list-users
+splunk-as security list-users
 
 # List roles
-splunk-skill security list-roles
+splunk-as security list-roles
 
 # List tokens
-splunk-skill security list-tokens
+splunk-as security list-tokens
 
 # Create token
-splunk-skill security create-token --audience "my-app" --expires 30d
+splunk-as security create-token --audience "my-app" --expires 30d
 
 # Delete token
-splunk-skill security delete-token token_123
+splunk-as security delete-token token_123
 
 # Get capabilities
-splunk-skill security capabilities --user admin
+splunk-as security capabilities --user admin
 
 # Check permission
-splunk-skill security check-permission --object saved/searches/MySearch
+splunk-as security check-permission --object saved/searches/MySearch
 
 # Get ACL
-splunk-skill security acl saved/searches/MySearch
+splunk-as security acl saved/searches/MySearch
 ```
 
 ## API Endpoints

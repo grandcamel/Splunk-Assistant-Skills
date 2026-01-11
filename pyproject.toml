@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "splunk-assistant-skills"
-version = "1.1.0"
-description = "A collection of CLI-based assistant skills for interacting with Splunk."
+version = "2.0.0"
+description = "Claude Code plugin for natural language Splunk automation - documentation and slash commands for splunk-as CLI"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
@@ -14,10 +14,11 @@ authors = [
 ]
 keywords = [
     "splunk",
-    "cli",
+    "claude",
     "assistant",
     "skills",
     "automation",
+    "plugin",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -33,8 +34,7 @@ classifiers = [
     "Topic :: System :: Systems Administration",
 ]
 dependencies = [
-    "splunk-assistant-skills-lib>=0.2.2",
-    "click>=8.0",
+    "splunk-assistant-skills-lib>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -47,9 +47,6 @@ dev = [
     "mypy>=1.0.0",
 ]
 
-[project.scripts]
-splunk-skill = "splunk_assistant_skills.cli.main:cli"
-
 [project.urls]
 Homepage = "https://github.com/grandcamel/Splunk-Assistant-Skills"
 Repository = "https://github.com/grandcamel/Splunk-Assistant-Skills"
@@ -57,17 +54,15 @@ Issues = "https://github.com/grandcamel/Splunk-Assistant-Skills/issues"
 
 [tool.hatch.build.targets.sdist]
 include = [
-    "/src",
-    "/skills",
+    "/plugins",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/splunk_assistant_skills"]
+packages = ["plugins/splunk-assistant-skills"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "skills/*/tests"]
-pythonpath = ["src", "."]
-addopts = "-v --tb=short --ignore=skills/*/tests/live_integration"
+testpaths = ["tests"]
+addopts = "-v --tb=short"
 
 [tool.black]
 line-length = 88

@@ -25,7 +25,7 @@ Create and manage alerts, monitor triggered alerts, and configure alert actions.
 
 ```bash
 # Create an alert
-splunk-skill alert create "High Error Rate" \
+splunk-as alert create "High Error Rate" \
   "index=main sourcetype=app_logs error | stats count" \
   --alert-type "number of events" \
   --alert-comparator "greater than" \
@@ -36,18 +36,18 @@ splunk-skill alert create "High Error Rate" \
   --email-to ops@example.com
 
 # List all configured alerts
-splunk-skill alert list --app search --count 100
+splunk-as alert list --app search --count 100
 
 # Get specific alert details
-splunk-skill alert get alert_12345
+splunk-as alert get alert_12345
 
 # List triggered alert instances with filters
-splunk-skill alert triggered --severity 4
-splunk-skill alert triggered --savedsearch "High Error Rate"
-splunk-skill alert triggered --app search --count 20
+splunk-as alert triggered --severity 4
+splunk-as alert triggered --savedsearch "High Error Rate"
+splunk-as alert triggered --app search --count 20
 
 # Acknowledge/delete a triggered alert
-splunk-skill alert acknowledge alert_12345 --force
+splunk-as alert acknowledge alert_12345 --force
 ```
 
 ## Alert Configuration

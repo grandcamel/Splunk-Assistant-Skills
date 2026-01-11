@@ -60,10 +60,10 @@ Routes natural language requests to specialized Splunk skills based on intent. P
 
 ```bash
 # Get server information (verify connection)
-splunk-skill admin info --profile production
+splunk-as admin info --profile production
 
 # Get server health status
-splunk-skill admin health --profile production
+splunk-as admin health --profile production
 ```
 
 ## Examples
@@ -71,7 +71,7 @@ splunk-skill admin health --profile production
 ### Verify Connection
 
 ```bash
-splunk-skill admin info
+splunk-as admin info
 # Output:
 # ✓ Connected to splunk.example.com:8089
 # ✓ Authentication: Bearer token valid
@@ -82,7 +82,7 @@ splunk-skill admin info
 ### Get Server Info
 
 ```bash
-splunk-skill admin info --output json
+splunk-as admin info --output json
 # Output: Server version, build, OS, cluster status, etc.
 ```
 
@@ -90,19 +90,19 @@ splunk-skill admin info --output json
 
 ```bash
 # Search commands
-splunk-skill search oneshot "index=main | head 10"
-splunk-skill search normal "index=main | stats count" --wait
+splunk-as search oneshot "index=main | head 10"
+splunk-as search normal "index=main | stats count" --wait
 
 # Job management
-splunk-skill job list
-splunk-skill job status 1703779200.12345
+splunk-as job list
+splunk-as job status 1703779200.12345
 
 # Metadata discovery
-splunk-skill metadata indexes
-splunk-skill metadata sourcetypes --index main
+splunk-as metadata indexes
+splunk-as metadata sourcetypes --index main
 
 # Security
-splunk-skill security whoami
+splunk-as security whoami
 ```
 
 ## Best Practices

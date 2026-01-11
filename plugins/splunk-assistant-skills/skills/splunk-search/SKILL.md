@@ -38,51 +38,51 @@ oneshot (inline results), normal (async with polling), and blocking (sync wait).
 
 ```bash
 # Simple search
-splunk-skill search oneshot "index=main | stats count by sourcetype"
+splunk-as search oneshot "index=main | stats count by sourcetype"
 
 # With time range
-splunk-skill search oneshot "index=main | head 100" --earliest -1h --latest now
+splunk-as search oneshot "index=main | head 100" --earliest -1h --latest now
 
 # Output as JSON
-splunk-skill search oneshot "index=main | top host" --output json
+splunk-as search oneshot "index=main | top host" --output json
 ```
 
 ### Normal Search (Async)
 
 ```bash
 # Create job and poll
-splunk-skill search normal "index=main | stats count" --wait
+splunk-as search normal "index=main | stats count" --wait
 
 # Create job only (returns SID)
-splunk-skill search normal "index=main | stats count"
-# Then use: splunk-skill search results <SID>
+splunk-as search normal "index=main | stats count"
+# Then use: splunk-as search results <SID>
 ```
 
 ### Blocking Search (Sync)
 
 ```bash
 # Wait for completion and return results
-splunk-skill search blocking "index=main | head 10" --timeout 60
+splunk-as search blocking "index=main | head 10" --timeout 60
 ```
 
 ### Get Results
 
 ```bash
 # From completed job
-splunk-skill search results 1703779200.12345
+splunk-as search results 1703779200.12345
 
 # With pagination
-splunk-skill search results 1703779200.12345 --count 100 --offset 0
+splunk-as search results 1703779200.12345 --count 100 --offset 0
 
 # Specific fields only
-splunk-skill search results 1703779200.12345 --fields host,status,uri
+splunk-as search results 1703779200.12345 --fields host,status,uri
 ```
 
 ### Validate SPL
 
 ```bash
 # Validate SPL syntax
-splunk-skill search validate "index=main | stats count"
+splunk-as search validate "index=main | stats count"
 ```
 
 ## API Endpoints

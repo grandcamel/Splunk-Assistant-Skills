@@ -24,16 +24,16 @@ Query and analyze metrics data using mstats and mcatalog commands.
 
 ```bash
 # List metrics
-splunk-skill metrics list --index metrics
+splunk-as metrics list --index metrics
 
 # List metric indexes
-splunk-skill metrics indexes
+splunk-as metrics indexes
 
 # Query with mstats
-splunk-skill metrics mstats cpu.percent --agg avg --by host --span 1h
+splunk-as metrics mstats cpu.percent --agg avg --by host --span 1h
 
 # Discover metrics with mcatalog
-splunk-skill metrics mcatalog --index metrics --filter "cpu.*"
+splunk-as metrics mcatalog --index metrics --filter "cpu.*"
 ```
 
 ## SPL Patterns

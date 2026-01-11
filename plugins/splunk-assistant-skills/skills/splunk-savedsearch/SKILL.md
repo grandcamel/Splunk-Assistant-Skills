@@ -28,28 +28,28 @@ Create, read, update, delete saved searches, reports, and scheduled searches.
 
 ```bash
 # List saved searches
-splunk-skill savedsearch list --app search
+splunk-as savedsearch list --app search
 
 # Get saved search details
-splunk-skill savedsearch get "My Report"
+splunk-as savedsearch get "My Report"
 
 # Create saved search
-splunk-skill savedsearch create "My Report" "index=main | stats count" --app search
+splunk-as savedsearch create "My Report" "index=main | stats count" --app search
 
 # Update saved search
-splunk-skill savedsearch update "My Report" --search "index=main | stats count by host"
+splunk-as savedsearch update "My Report" --search "index=main | stats count by host"
 
 # Run saved search
-splunk-skill savedsearch run "My Report" --wait
+splunk-as savedsearch run "My Report" --wait
 
 # Enable scheduling
-splunk-skill savedsearch enable "My Report"
+splunk-as savedsearch enable "My Report"
 
 # Disable scheduling
-splunk-skill savedsearch disable "My Report"
+splunk-as savedsearch disable "My Report"
 
 # Delete saved search
-splunk-skill savedsearch delete "My Report"
+splunk-as savedsearch delete "My Report"
 ```
 
 ## API Endpoints

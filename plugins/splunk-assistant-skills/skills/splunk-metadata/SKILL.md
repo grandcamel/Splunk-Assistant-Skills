@@ -26,22 +26,22 @@ Discover and explore metadata about indexes, sources, sourcetypes, and fields.
 
 ```bash
 # List all indexes
-splunk-skill metadata indexes
+splunk-as metadata indexes
 
 # Get index details
-splunk-skill metadata index-info main
+splunk-as metadata index-info main
 
 # List sourcetypes
-splunk-skill metadata sourcetypes --index main
+splunk-as metadata sourcetypes --index main
 
 # List sources
-splunk-skill metadata sources --index main
+splunk-as metadata sources --index main
 
 # Field summary
-splunk-skill metadata fields --index main --sourcetype access_combined
+splunk-as metadata fields --index main --sourcetype access_combined
 
 # Metadata search
-splunk-skill metadata search --type sourcetypes --index main
+splunk-as metadata search --type sourcetypes --index main
 ```
 
 ## SPL Patterns

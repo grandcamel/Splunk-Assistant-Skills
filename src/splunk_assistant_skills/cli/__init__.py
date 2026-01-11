@@ -1,1 +1,0 @@
-"""Splunk Assistant Skills CLI."""

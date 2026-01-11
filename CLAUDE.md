@@ -91,43 +91,43 @@ The `splunk-assistant-skills-lib` package provides:
 
 ### CLI Entry Point
 
-The project provides a unified CLI via the `splunk-skill` command:
+The project provides a unified CLI via the `splunk-as` command:
 
 ```bash
 # Install in development mode
 pip install -e .
 
 # Verify installation
-splunk-skill --version
+splunk-as --version
 ```
 
 #### CLI Usage
 
 ```bash
 # Get help
-splunk-skill --help
-splunk-skill search --help
+splunk-as --help
+splunk-as search --help
 
 # Search commands
-splunk-skill search oneshot "index=main | head 10"
-splunk-skill search normal "index=main | stats count" --wait
-splunk-skill search blocking "index=main | head 10" --timeout 60
+splunk-as search oneshot "index=main | head 10"
+splunk-as search normal "index=main | stats count" --wait
+splunk-as search blocking "index=main | head 10" --timeout 60
 
 # Job management
-splunk-skill job list
-splunk-skill job status 1703779200.12345
-splunk-skill job cancel 1703779200.12345
+splunk-as job list
+splunk-as job status 1703779200.12345
+splunk-as job cancel 1703779200.12345
 
 # Metadata discovery
-splunk-skill metadata indexes
-splunk-skill metadata sourcetypes --index main
+splunk-as metadata indexes
+splunk-as metadata sourcetypes --index main
 
 # Export data
-splunk-skill export results 1703779200.12345 --output-file results.csv
+splunk-as export results 1703779200.12345 --output-file results.csv
 
 # Administration
-splunk-skill admin info
-splunk-skill security whoami
+splunk-as admin info
+splunk-as security whoami
 ```
 
 #### Available Command Groups
@@ -206,7 +206,7 @@ Configure multiple Splunk instances:
 
 Use profiles:
 ```bash
-splunk-skill search oneshot "index=main | head 10" --profile development
+splunk-as search oneshot "index=main | head 10" --profile development
 ```
 
 ### Assistant Skills Setup
@@ -685,7 +685,7 @@ Keywords that activate this skill.
 
 \`\`\`bash
 # CLI usage (recommended)
-splunk-skill newskill command --option value
+splunk-as newskill command --option value
 
 # Direct script (alternative)
 python script_name.py --help

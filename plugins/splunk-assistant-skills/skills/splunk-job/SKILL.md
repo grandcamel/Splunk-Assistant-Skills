@@ -52,15 +52,15 @@ QUEUED → PARSING → RUNNING → FINALIZING → DONE
 
 ```bash
 # Create job
-splunk-skill job create "index=main | stats count by sourcetype" --earliest -1h
+splunk-as job create "index=main | stats count by sourcetype" --earliest -1h
 # Output: Job created: 1703779200.12345
 
 # Check status
-splunk-skill job status 1703779200.12345
+splunk-as job status 1703779200.12345
 # Output: State: RUNNING, Progress: 45%, Events: 12345
 
 # Wait for completion
-splunk-skill job poll 1703779200.12345 --timeout 300
+splunk-as job poll 1703779200.12345 --timeout 300
 # Output: Job completed: DONE, Results: 42
 ```
 
@@ -68,30 +68,30 @@ splunk-skill job poll 1703779200.12345 --timeout 300
 
 ```bash
 # Pause running job
-splunk-skill job pause 1703779200.12345
+splunk-as job pause 1703779200.12345
 
 # Resume paused job
-splunk-skill job unpause 1703779200.12345
+splunk-as job unpause 1703779200.12345
 
 # Cancel job
-splunk-skill job cancel 1703779200.12345
+splunk-as job cancel 1703779200.12345
 
 # Finalize (stop and return current results)
-splunk-skill job finalize 1703779200.12345
+splunk-as job finalize 1703779200.12345
 ```
 
 ### Job Management
 
 ```bash
 # List all jobs
-splunk-skill job list
+splunk-as job list
 # Output: Table of active jobs with status
 
 # Extend TTL
-splunk-skill job set-ttl 1703779200.12345 --ttl 3600
+splunk-as job set-ttl 1703779200.12345 --ttl 3600
 
 # Delete job
-splunk-skill job delete 1703779200.12345
+splunk-as job delete 1703779200.12345
 ```
 
 ## API Endpoints

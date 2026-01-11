@@ -24,16 +24,16 @@ Add, remove, and manage tags associated with field values for easier searching.
 
 ```bash
 # List all tags
-splunk-skill tag list
+splunk-as tag list
 
 # Add tag to field value
-splunk-skill tag add production host webserver01
+splunk-as tag add production host webserver01
 
 # Remove tag from field value
-splunk-skill tag remove production host webserver01
+splunk-as tag remove production host webserver01
 
 # Search by tag
-splunk-skill tag search production --earliest -1h
+splunk-as tag search production --earliest -1h
 ```
 
 ## SPL Patterns

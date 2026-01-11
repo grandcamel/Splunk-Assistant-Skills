@@ -25,25 +25,25 @@ Query and manage Splunk server configurations, users, roles, and system info.
 
 ```bash
 # Get server info
-splunk-skill admin info
+splunk-as admin info
 
 # Get server status
-splunk-skill admin status
+splunk-as admin status
 
 # Get server health
-splunk-skill admin health
+splunk-as admin health
 
 # List users
-splunk-skill admin list-users
+splunk-as admin list-users
 
 # List roles
-splunk-skill admin list-roles
+splunk-as admin list-roles
 
 # REST GET request
-splunk-skill admin rest-get /services/authentication/users
+splunk-as admin rest-get /services/authentication/users
 
 # REST POST request
-splunk-skill admin rest-post /services/saved/searches -d '{"name": "test"}'
+splunk-as admin rest-post /services/saved/searches -d '{"name": "test"}'
 ```
 
 ## SPL Patterns

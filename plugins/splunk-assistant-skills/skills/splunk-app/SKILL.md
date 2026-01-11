@@ -26,22 +26,22 @@ Install, uninstall, enable, disable, and manage Splunk applications.
 
 ```bash
 # List installed apps
-splunk-skill app list
+splunk-as app list
 
 # Get app details
-splunk-skill app get search
+splunk-as app get search
 
 # Install app
-splunk-skill app install my_app.tgz
+splunk-as app install my_app.tgz
 
 # Uninstall app
-splunk-skill app uninstall my_app
+splunk-as app uninstall my_app
 
 # Enable app
-splunk-skill app enable my_app
+splunk-as app enable my_app
 
 # Disable app
-splunk-skill app disable my_app
+splunk-as app disable my_app
 ```
 
 ## API Endpoints

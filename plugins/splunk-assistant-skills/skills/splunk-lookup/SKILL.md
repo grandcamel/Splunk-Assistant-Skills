@@ -25,19 +25,19 @@ Upload, download, and manage CSV lookup files and lookup definitions.
 
 ```bash
 # List lookups
-splunk-skill lookup list --app search
+splunk-as lookup list --app search
 
 # Get lookup info
-splunk-skill lookup get users.csv --app search
+splunk-as lookup get users.csv --app search
 
 # Upload lookup
-splunk-skill lookup upload users.csv --app search
+splunk-as lookup upload users.csv --app search
 
 # Download lookup
-splunk-skill lookup download users.csv --output-file ./users.csv
+splunk-as lookup download users.csv --output-file ./users.csv
 
 # Delete lookup
-splunk-skill lookup delete users.csv --app search
+splunk-as lookup delete users.csv --app search
 ```
 
 ## API Endpoints

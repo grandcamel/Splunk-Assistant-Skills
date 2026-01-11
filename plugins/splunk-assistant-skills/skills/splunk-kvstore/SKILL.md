@@ -28,28 +28,28 @@ Create and manage KV store collections and records for persistent data storage.
 
 ```bash
 # List collections
-splunk-skill kvstore list --app search
+splunk-as kvstore list --app search
 
 # Create collection
-splunk-skill kvstore create my_collection --app search
+splunk-as kvstore create my_collection --app search
 
 # Insert record
-splunk-skill kvstore insert my_collection '{"name": "test", "value": 123}'
+splunk-as kvstore insert my_collection '{"name": "test", "value": 123}'
 
 # Get record
-splunk-skill kvstore get my_collection abc123
+splunk-as kvstore get my_collection abc123
 
 # Query collection
-splunk-skill kvstore query my_collection --filter '{"name": "test"}'
+splunk-as kvstore query my_collection --filter '{"name": "test"}'
 
 # Update record
-splunk-skill kvstore update my_collection abc123 '{"name": "updated"}'
+splunk-as kvstore update my_collection abc123 '{"name": "updated"}'
 
 # Delete record
-splunk-skill kvstore delete-record my_collection abc123
+splunk-as kvstore delete-record my_collection abc123
 
 # Delete collection
-splunk-skill kvstore delete my_collection --app search
+splunk-as kvstore delete my_collection --app search
 ```
 
 ## API Endpoints
