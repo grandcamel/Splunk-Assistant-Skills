@@ -167,46 +167,11 @@ export SPLUNK_PASSWORD="changeme"               # Basic Auth
 # Connection
 export SPLUNK_SITE_URL="https://splunk.example.com"
 export SPLUNK_MANAGEMENT_PORT="8089"
-export SPLUNK_PROFILE="production"
 export SPLUNK_VERIFY_SSL="true"
 
 # Defaults
 export SPLUNK_DEFAULT_APP="search"
 export SPLUNK_DEFAULT_INDEX="main"
-```
-
-### Profile Support
-
-Configure multiple Splunk instances:
-
-```json
-{
-  "splunk": {
-    "default_profile": "production",
-    "profiles": {
-      "production": {
-        "url": "https://splunk.company.com",
-        "port": 8089,
-        "auth_method": "bearer"
-      },
-      "cloud": {
-        "url": "https://deployment.splunkcloud.com",
-        "port": 8089,
-        "auth_method": "bearer"
-      },
-      "development": {
-        "url": "https://splunk-dev.company.com",
-        "port": 8089,
-        "auth_method": "basic"
-      }
-    }
-  }
-}
-```
-
-Use profiles:
-```bash
-splunk-as search oneshot "index=main | head 10" --profile development
 ```
 
 ### Assistant Skills Setup
@@ -620,10 +585,9 @@ from splunk_assistant_skills_lib import (
 @handle_errors
 def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser(description='Script description')
-    parser.add_argument('--profile', '-p', help='Splunk profile')
     args = parser.parse_args(argv)
 
-    client = get_splunk_client(profile=args.profile)
+    client = get_splunk_client()
     # Implementation
     print_success("Operation completed")
 
@@ -705,7 +669,6 @@ Configuration follows `config.schema.json`. Key sections:
 ```json
 {
   "splunk": {
-    "profiles": {},      // Connection profiles
     "api": {},           // API behavior
     "search_defaults": {} // Search parameters
   }
@@ -725,7 +688,6 @@ Configuration follows `config.schema.json`. Key sections:
 
 - Use environment variables for sensitive data
 - Store tokens in `.claude/settings.local.json` (gitignored)
-- Use profiles for different environments
 - Rotate tokens regularly
 
 ### DON'T

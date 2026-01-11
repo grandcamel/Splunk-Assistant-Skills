@@ -150,18 +150,18 @@ export SPLUNK_SITE_URL="https://splunk.example.com"
 #### 4. Install CLI
 
 ```bash
-# Install the splunk-skill CLI
-pip install -e .
+# Install the splunk-as CLI
+pip install splunk-assistant-skills-lib
 
 # Verify installation
-splunk-skill --version
+splunk-as --version
 ```
 
 #### 5. Start Using
 
 ```bash
 # CLI usage (recommended)
-splunk-skill search oneshot "index=main | stats count by sourcetype" --earliest -1h
+splunk-as search oneshot "index=main | stats count by sourcetype" --earliest -1h
 
 # Or with Claude Code
 > "Search for errors in the main index from the last hour"
@@ -206,7 +206,6 @@ claude-as  # Runs Claude with Assistant Skills venv activated
 | `SPLUNK_VERIFY_SSL` | No | Verify SSL certificates (default: `true`) |
 | `SPLUNK_DEFAULT_APP` | No | Default Splunk app context (default: `search`) |
 | `SPLUNK_DEFAULT_INDEX` | No | Default search index (default: `main`) |
-| `SPLUNK_PROFILE` | No | Profile name for multi-instance setups |
 
 *\*Authentication: Either `SPLUNK_TOKEN` OR both `SPLUNK_USERNAME` and `SPLUNK_PASSWORD` required.*
 
@@ -435,7 +434,7 @@ flowchart TD
 ### Technical Highlights
 
 - **Dual Authentication**: JWT Bearer tokens (preferred) and Basic Auth support
-- **Multi-Profile**: Configure dev/staging/production environments
+- **Environment Config**: Configure via environment variables
 - **Search Modes**: Oneshot (ad-hoc), Normal (async), Blocking (sync), Export (streaming)
 - **Progressive Disclosure**: 3-level optimization guidance
 - **Robust Error Handling**: Custom exception hierarchy with retry logic
