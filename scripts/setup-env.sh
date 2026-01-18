@@ -359,9 +359,13 @@ if prompt_yes_no "Source ${SHELL_RC} now?" "y"; then
     env | grep "^SPLUNK_" | while read line; do
         key="${line%%=*}"
         value="${line#*=}"
-        # Mask sensitive values
+        # Mask sensitive values - only show last 4 chars if value is long enough
         if [[ "$key" == "SPLUNK_TOKEN" || "$key" == "SPLUNK_PASSWORD" ]]; then
-            echo -e "  ${key}=****${value: -4}"
+            if [[ ${#value} -gt 8 ]]; then
+                echo -e "  ${key}=****${value: -4}"
+            else
+                echo -e "  ${key}=********"
+            fi
         else
             echo -e "  ${key}=${value}"
         fi
