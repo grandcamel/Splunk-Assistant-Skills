@@ -506,11 +506,13 @@ pytest plugins/splunk-assistant-skills/skills/splunk-job/tests/live_integration/
 Use the Splunk Docker container for local testing:
 
 ```bash
-# Start Splunk container
+# Start Splunk container (note: both license flags are required as of 2024+)
 docker run -d --name splunk-dev \
-  -p 8089:8089 -p 8000:8000 \
+  -p 8089:8089 -p 8000:8000 -p 8088:8088 \
   -e SPLUNK_START_ARGS="--accept-license" \
+  -e SPLUNK_GENERAL_TERMS="--accept-sgt-current-at-splunk-com" \
   -e SPLUNK_PASSWORD="Admin123!" \
+  -e SPLUNK_LICENSE_URI="Free" \
   splunk/splunk:latest
 
 # Wait for Splunk to be ready (about 2-3 minutes)
@@ -523,6 +525,16 @@ export SPLUNK_TEST_PASSWORD="Admin123!"
 
 pytest plugins/splunk-assistant-skills/skills/splunk-metadata/tests/live_integration/ -v
 ```
+
+#### Splunk Docker Gotchas
+
+| Issue | Solution |
+|-------|----------|
+| License not accepted error | Add both `SPLUNK_START_ARGS="--accept-license"` AND `SPLUNK_GENERAL_TERMS="--accept-sgt-current-at-splunk-com"` |
+| Image version not found | Use `splunk/splunk:latest` instead of specific versions like `9.1.0` |
+| Volume mount permission errors | Don't use `:ro` flag on app directories - Splunk needs to chown them |
+| Health check failures | Use `http://localhost:8000/en-US/account/login` instead of management API with auth |
+| Port conflicts | Common ports (8080, 6379, 3000, 4317/4318) are often in use - use alternatives like 18080, 16379, etc. |
 
 ### Test Markers
 
@@ -777,3 +789,75 @@ End-to-end tests validate the plugin with the Claude Code CLI.
 ```
 
 See [tests/e2e/README.md](tests/e2e/README.md) for details.
+
+## Splunk Demo Environment
+
+A companion demo project (`splunk-demo`) provides a fully-configured Splunk environment for testing and demonstrations.
+
+### Location
+
+The demo is in a separate repository: `/Users/jasonkrueger/IdeaProjects/splunk-demo/`
+
+### Quick Start
+
+```bash
+cd /path/to/splunk-demo
+make dev   # Start in development mode
+```
+
+### Access Points (Development Mode)
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| Splunk Web | http://localhost:8000 | admin / DemoPass123! |
+| Landing Page | http://localhost:18080 | Invite token |
+| Grafana | http://localhost:13000 | admin / admin |
+| Webhooks | http://localhost:8081 | - |
+
+### Demo Data
+
+The demo seeds 7 days of historical data across 5 indexes:
+
+| Index | Purpose | Sourcetypes |
+|-------|---------|-------------|
+| `demo_devops` | CI/CD, containers | cicd:pipeline, container:docker, deploy:events |
+| `demo_sre` | Errors, latency | app:errors, metrics:latency, health:checks |
+| `demo_support` | Sessions, tickets | session:trace, error:user, feature:usage |
+| `demo_business` | KPIs, compliance | kpi:revenue, compliance:audit, capacity:metrics |
+| `demo_main` | General logs | app:logs |
+
+### Sample Queries
+
+```spl
+# DevOps: Failed pipelines
+index=demo_devops sourcetype=cicd:pipeline status=failure
+| stats count by repository | sort -count
+
+# SRE: P99 latency by endpoint
+index=demo_sre sourcetype=metrics:latency
+| stats perc99(duration_ms) as p99 by endpoint
+| where p99 > 500
+
+# Support: Customer session trace
+index=demo_support sourcetype=session:trace user_id="cust_456"
+| sort _time | table _time page action duration_ms
+
+# Business: Daily revenue by region
+index=demo_business sourcetype=kpi:revenue
+| timechart span=1d sum(value) as revenue by region
+```
+
+### Architecture
+
+```
+splunk-demo/
+├── docker-compose.yml      # Main orchestration
+├── docker-compose.dev.yml  # Development overrides (different ports)
+├── Makefile                # Build/run commands
+├── demo-container/         # Interactive Claude terminal
+├── log-generator/          # Real-time event generation
+├── seed-data/              # Historical data seeder
+├── queue-manager/          # Session management
+├── splunk/apps/demo_app/   # Splunk indexes, inputs, saved searches
+└── observability/          # LGTM stack (Grafana, Loki, Tempo, Mimir)
+```
