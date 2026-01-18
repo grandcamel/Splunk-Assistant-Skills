@@ -377,9 +377,10 @@ class EventBuilder:
 
         for name, value in self.fields.items():
             if isinstance(value, list):
-                values_csv = ",".join(str(v) for v in value)
+                # Use pipe delimiter to avoid issues with values containing commas
+                values_str = "|".join(str(v) for v in value)
                 parts.append(
-                    f'| eval {name}=mvindex(split("{values_csv}", ","), random() % {len(value)})'
+                    f'| eval {name}=mvindex(split("{values_str}", "|"), random() % {len(value)})'
                 )
             else:
                 parts.append(f'| eval {name}="{value}"')
@@ -463,7 +464,24 @@ def get_splunk_version(
     info = client.get_server_info()
     version_str = info.get("version", "0.0.0")
     parts = version_str.split(".")[:3]
-    return tuple(int(p) for p in parts)
+
+    # Handle malformed versions like "9.0.0-beta" by extracting leading digits
+    numeric_parts = []
+    for p in parts:
+        # Extract leading digits only (handles "0-beta", "1rc2", etc.)
+        digits = ""
+        for c in p:
+            if c.isdigit():
+                digits += c
+            else:
+                break
+        numeric_parts.append(int(digits) if digits else 0)
+
+    # Ensure we always return exactly 3 parts
+    while len(numeric_parts) < 3:
+        numeric_parts.append(0)
+
+    return tuple(numeric_parts[:3])
 
 
 def skip_if_version_below(
