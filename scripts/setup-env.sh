@@ -226,17 +226,17 @@ echo -e "${GREEN}═══ Test Connection ═══${NC}"
 if prompt_yes_no "Test connection to Splunk?" "y"; then
     echo -e "${YELLOW}Testing connection to ${SPLUNK_SITE_URL}:${SPLUNK_MANAGEMENT_PORT}...${NC}"
 
-    # Build curl command
-    curl_opts="-s -o /dev/null -w %{http_code} --connect-timeout 10"
+    # Build curl command using array for proper quoting
+    curl_opts=(-s -o /dev/null -w "%{http_code}" --connect-timeout 10)
     if [[ "$SPLUNK_VERIFY_SSL" == "false" ]]; then
-        curl_opts="$curl_opts -k"
+        curl_opts+=(-k)
     fi
 
     if [[ -n "$SPLUNK_TOKEN" ]]; then
-        http_code=$(curl $curl_opts -H "Authorization: Bearer $SPLUNK_TOKEN" \
+        http_code=$(curl "${curl_opts[@]}" -H "Authorization: Bearer ${SPLUNK_TOKEN}" \
             "${SPLUNK_SITE_URL}:${SPLUNK_MANAGEMENT_PORT}/services/server/info" 2>/dev/null || echo "000")
     else
-        http_code=$(curl $curl_opts -u "${SPLUNK_USERNAME}:${SPLUNK_PASSWORD}" \
+        http_code=$(curl "${curl_opts[@]}" -u "${SPLUNK_USERNAME}:${SPLUNK_PASSWORD}" \
             "${SPLUNK_SITE_URL}:${SPLUNK_MANAGEMENT_PORT}/services/server/info" 2>/dev/null || echo "000")
     fi
 
