@@ -300,6 +300,16 @@ def search_helper(splunk_client):
             """Check if search returns any results."""
             return self.count(spl, **kwargs) > 0
 
+        def cleanup(self):
+            """
+            Cleanup search helper resources.
+
+            Note: Oneshot searches don't create persistent jobs,
+            so no cleanup is needed. This method exists for API
+            consistency with JobHelper.
+            """
+            pass
+
     return SearchHelper(splunk_client)
 
 
