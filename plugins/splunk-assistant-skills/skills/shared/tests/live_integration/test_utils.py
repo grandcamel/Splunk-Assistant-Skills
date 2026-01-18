@@ -65,10 +65,10 @@ def generate_test_events(
     # Add field assignments
     for field_name, field_value in fields.items():
         if isinstance(field_value, list):
-            # Random selection from list
-            values_str = ", ".join(f'"{v}"' for v in field_value)
+            # Random selection from list using pipe delimiter to avoid comma issues
+            values_str = "|".join(str(v) for v in field_value)
             spl_parts.append(
-                f'| eval {field_name}=mvindex(split("{",".join(str(v) for v in field_value)}", ","), random() % {len(field_value)})'
+                f'| eval {field_name}=mvindex(split("{values_str}", "|"), random() % {len(field_value)})'
             )
         else:
             # Static value
@@ -106,7 +106,7 @@ def generate_test_events(
         logger.info(f"Generated {count} test events in index={index}")
         return count
     except Exception as e:
-        logger.error(f"Failed to generate test events: {e}")
+        logger.error(f"Failed to generate test events: {e}", exc_info=True)
         return 0
 
 
@@ -151,7 +151,7 @@ def generate_simple_events(
         )
         return count
     except Exception as e:
-        logger.error(f"Failed to generate simple events: {e}")
+        logger.error(f"Failed to generate simple events: {e}", exc_info=True)
         return 0
 
 
@@ -160,26 +160,53 @@ def wait_for_indexing(
     index: str,
     min_events: int = 1,
     timeout: int = 60,
-    poll_interval: float = 2.0,
+    poll_interval: float = 1.0,
+    max_interval: float = 8.0,
 ) -> bool:
     """
     Wait for events to be indexed and searchable.
+
+    Uses exponential backoff to reduce load on Splunk during polling.
 
     Args:
         connection: SplunkContainer or ExternalSplunkConnection
         index: Index to check
         min_events: Minimum number of events expected
         timeout: Maximum time to wait in seconds
-        poll_interval: Time between checks in seconds
+        poll_interval: Initial time between checks in seconds
+        max_interval: Maximum time between checks in seconds
 
     Returns:
         bool: True if events are available, False if timeout
     """
     client = connection.get_client()
     start_time = time.time()
+    current_interval = poll_interval
 
     while time.time() - start_time < timeout:
         try:
+            # First try lightweight index metadata check
+            try:
+                response = client.get(
+                    f"/data/indexes/{index}",
+                    operation="check index metadata",
+                )
+                if "entry" in response and response["entry"]:
+                    event_count = response["entry"][0].get("content", {}).get(
+                        "totalEventCount", 0
+                    )
+                    if isinstance(event_count, str):
+                        event_count = int(event_count)
+                    if event_count >= min_events:
+                        logger.info(
+                            f"Index {index} has {event_count} events (>= {min_events})"
+                        )
+                        return True
+            except Exception:
+                # Fall back to search if metadata check fails
+                pass
+
+            # Fallback: use search to count events
             response = client.post(
                 "/search/jobs/oneshot",
                 data={
@@ -202,7 +229,9 @@ def wait_for_indexing(
         except Exception as e:
             logger.debug(f"Indexing check failed: {e}")
 
-        time.sleep(poll_interval)
+        time.sleep(current_interval)
+        # Exponential backoff with cap
+        current_interval = min(current_interval * 1.5, max_interval)
 
     logger.warning(f"Timeout waiting for {min_events} events in index {index}")
     return False
