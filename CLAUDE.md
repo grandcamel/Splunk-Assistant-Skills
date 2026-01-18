@@ -448,11 +448,8 @@ Tests are configured via `pytest.ini` at the project root:
 
 | Category | Tests | Status |
 |----------|-------|--------|
-| Unit Tests (skills) | 87 | ✅ Passing |
 | Unit Tests (shared library) | 73 | ✅ Passing |
-| Unit Tests (CLI) | 20 | ✅ Passing |
-| Live Integration Tests | 175 | 168 passing, 7 xfailed |
-| **Total** | **355** | |
+| Live Integration Tests | ~175 | Requires `testcontainers` |
 
 ### Unit Tests
 
