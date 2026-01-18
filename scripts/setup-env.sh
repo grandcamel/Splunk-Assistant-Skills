@@ -48,8 +48,12 @@ prompt_value() {
 
     if [[ -n "$default" ]]; then
         if [[ "$is_secret" == "true" ]]; then
-            # Mask secret values
-            local masked="${default:0:4}****${default: -4}"
+            # Mask secret values - only show partial if long enough
+            if [[ ${#default} -gt 8 ]]; then
+                local masked="${default:0:4}****${default: -4}"
+            else
+                local masked="********"
+            fi
             echo -en "${BLUE}$prompt${NC} [${masked}]: "
         else
             echo -en "${BLUE}$prompt${NC} [$default]: "
