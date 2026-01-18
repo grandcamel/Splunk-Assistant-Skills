@@ -389,19 +389,7 @@ def job_helper(splunk_client):
 # Markers and Skip Conditions
 # =============================================================================
 
-
-def pytest_configure(config):
-    """Register custom markers."""
-    config.addinivalue_line(
-        "markers", "docker_required: marks tests that require Docker"
-    )
-    config.addinivalue_line(
-        "markers", "external_splunk: marks tests for external Splunk only"
-    )
-    config.addinivalue_line("markers", "slow_integration: marks slow integration tests")
-    config.addinivalue_line(
-        "markers", "destructive: marks tests that modify Splunk configuration"
-    )
+# Note: pytest_configure for markers is in root conftest.py to avoid duplicates
 
 
 @pytest.fixture(autouse=True)
