@@ -66,14 +66,22 @@ def generate_test_events(
     ]
 
     # Add field assignments
+    # Use ~|~ as delimiter - unlikely to appear in test data
+    delimiter = "~|~"
     for field_name, field_value in fields.items():
         if isinstance(field_value, list):
             if not field_value:
                 raise ValueError(f"Field '{field_name}' has empty value list")
-            # Random selection from list using pipe delimiter to avoid comma issues
-            values_str = "|".join(str(v) for v in field_value)
+            # Validate values don't contain delimiter
+            for v in field_value:
+                if delimiter in str(v):
+                    raise ValueError(
+                        f"Field '{field_name}' value contains delimiter '{delimiter}'"
+                    )
+            # Random selection from list
+            values_str = delimiter.join(str(v) for v in field_value)
             spl_parts.append(
-                f'| eval {field_name}=mvindex(split("{values_str}", "|"), random() % {len(field_value)})'
+                f'| eval {field_name}=mvindex(split("{values_str}", "{delimiter}"), random() % {len(field_value)})'
             )
         else:
             # Static value
@@ -376,6 +384,8 @@ class EventBuilder:
 
     def build(self) -> str:
         """Build the SPL query."""
+        # Use ~|~ as delimiter - unlikely to appear in test data
+        delimiter = "~|~"
         parts = [
             f"| makeresults count={self.count}",
             f"| eval _time=_time - random() % {self.timestamp_spread}",
@@ -385,10 +395,16 @@ class EventBuilder:
             if isinstance(value, list):
                 if not value:
                     raise ValueError(f"Field '{name}' has empty value list")
-                # Use pipe delimiter to avoid issues with values containing commas
-                values_str = "|".join(str(v) for v in value)
+                # Validate values don't contain delimiter
+                for v in value:
+                    if delimiter in str(v):
+                        raise ValueError(
+                            f"Field '{name}' value contains delimiter '{delimiter}'"
+                        )
+                # Random selection from list
+                values_str = delimiter.join(str(v) for v in value)
                 parts.append(
-                    f'| eval {name}=mvindex(split("{values_str}", "|"), random() % {len(value)})'
+                    f'| eval {name}=mvindex(split("{values_str}", "{delimiter}"), random() % {len(value)})'
                 )
             else:
                 parts.append(f'| eval {name}="{value}"')
