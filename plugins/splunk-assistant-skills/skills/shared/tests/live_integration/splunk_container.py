@@ -12,6 +12,7 @@ Provides a testcontainers-based Splunk Enterprise container with:
 
 import logging
 import os
+import threading
 import time
 from typing import Optional
 
@@ -112,6 +113,8 @@ class SplunkContainer(DockerContainer):
         self.with_kwargs(mem_limit=mem_limit)
 
         # Reference counting for shared container support
+        # Lock ensures thread-safe access for pytest-xdist parallel execution
+        self._lock = threading.Lock()
         self._ref_count = 0
         self._is_started = False
 
@@ -119,35 +122,45 @@ class SplunkContainer(DockerContainer):
         """Start the container and wait for Splunk to be ready.
 
         Uses reference counting to support sharing across pytest sessions.
+        Thread-safe for parallel test execution with pytest-xdist.
         """
-        self._ref_count += 1
+        with self._lock:
+            self._ref_count += 1
 
-        if self._is_started:
-            logger.info(f"Reusing already-started Splunk container (ref_count={self._ref_count})")
+            if self._is_started:
+                logger.info(
+                    f"Reusing already-started Splunk container (ref_count={self._ref_count})"
+                )
+                return self
+
+            logger.info(f"Starting Splunk container ({self.splunk_image})...")
+            super().start()
+
+            # Wait for Splunk to be fully ready
+            self._wait_for_splunk_ready()
+
+            self._is_started = True
+            logger.info(f"Splunk ready at {self.get_management_url()}")
             return self
 
-        logger.info(f"Starting Splunk container ({self.splunk_image})...")
-        super().start()
-
-        # Wait for Splunk to be fully ready
-        self._wait_for_splunk_ready()
-
-        self._is_started = True
-        logger.info(f"Splunk ready at {self.get_management_url()}")
-        return self
-
     def stop(self, **kwargs) -> None:
-        """Stop the container only when all references are released."""
-        self._ref_count -= 1
+        """Stop the container only when all references are released.
 
-        if self._ref_count > 0:
-            logger.info(f"Keeping Splunk container running (ref_count={self._ref_count})")
-            return
+        Thread-safe for parallel test execution with pytest-xdist.
+        """
+        with self._lock:
+            self._ref_count -= 1
 
-        if self._is_started:
-            logger.info("Stopping Splunk container (ref_count=0)")
-            self._is_started = False
-            super().stop(**kwargs)
+            if self._ref_count > 0:
+                logger.info(
+                    f"Keeping Splunk container running (ref_count={self._ref_count})"
+                )
+                return
+
+            if self._is_started:
+                logger.info("Stopping Splunk container (ref_count=0)")
+                self._is_started = False
+                super().stop(**kwargs)
 
     def _wait_for_splunk_ready(self) -> None:
         """Wait for Splunk to be fully initialized and accepting connections."""
@@ -155,19 +168,26 @@ class SplunkContainer(DockerContainer):
 
         # First, wait for the "Ansible playbook complete" log message
         # This indicates Splunk has finished initial setup
+        # Use half the timeout for logs, reserve half for health checks
+        log_timeout = self.STARTUP_TIMEOUT // 2
         try:
             wait_for_logs(
                 self,
                 "Ansible playbook complete",
-                timeout=self.STARTUP_TIMEOUT,
+                timeout=log_timeout,
             )
         except TimeoutError:
             # Fallback: some versions may not have this exact message
             logger.warning("Did not find Ansible complete message, checking health...")
 
+        # Calculate remaining timeout for health checks
+        elapsed = time.time() - start_time
+        remaining_timeout = max(30, self.STARTUP_TIMEOUT - elapsed)  # At least 30s for health
+
         # Then verify the management port is actually responding
         management_url = self.get_management_url()
-        while time.time() - start_time < self.STARTUP_TIMEOUT:
+        health_start = time.time()
+        while time.time() - health_start < remaining_timeout:
             try:
                 response = requests.get(
                     f"{management_url}/services/server/info",
@@ -420,7 +440,9 @@ class ExternalSplunkConnection:
 
 
 # Global singleton for container reuse across pytest sessions
+# Lock ensures thread-safe singleton creation for pytest-xdist
 _shared_container = None
+_container_lock = threading.Lock()
 
 
 def get_splunk_connection():
@@ -428,7 +450,8 @@ def get_splunk_connection():
     Get a Splunk connection, preferring external if configured.
 
     Uses a singleton pattern to ensure only one Docker container is created
-    across all pytest sessions/conftest files.
+    across all pytest sessions/conftest files. Thread-safe for parallel
+    test execution with pytest-xdist.
 
     Environment Variables:
         SPLUNK_TEST_URL: External Splunk URL (skips Docker)
@@ -452,10 +475,15 @@ def get_splunk_connection():
             password=os.environ.get("SPLUNK_TEST_PASSWORD"),
         )
     else:
-        # Use singleton pattern to share container across all tests
+        # Use double-checked locking for thread-safe singleton
         if _shared_container is None:
-            logger.info("Creating new Docker Splunk container (singleton)")
-            _shared_container = SplunkContainer()
+            with _container_lock:
+                # Check again inside lock (double-checked locking)
+                if _shared_container is None:
+                    logger.info("Creating new Docker Splunk container (singleton)")
+                    _shared_container = SplunkContainer()
+                else:
+                    logger.info("Reusing existing Docker Splunk container (singleton)")
         else:
             logger.info("Reusing existing Docker Splunk container (singleton)")
         return _shared_container
