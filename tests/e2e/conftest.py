@@ -1,9 +1,13 @@
 """Pytest configuration and fixtures for E2E tests."""
 
+import logging
 import os
 import subprocess
+
 import pytest
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 from .runner import E2ETestRunner, ClaudeCodeRunner
 
@@ -51,10 +55,14 @@ def _has_oauth_auth() -> bool:
             ["claude", "auth", "status"],
             capture_output=True,
             text=True,
-            timeout=5,
+            timeout=10,  # Allow more time for slower CI systems
         )
         return result.returncode == 0
-    except (subprocess.TimeoutExpired, FileNotFoundError):
+    except subprocess.TimeoutExpired:
+        logger.warning("OAuth auth check timed out after 10s - assuming unavailable")
+        return False
+    except FileNotFoundError:
+        logger.debug("Claude CLI not found - OAuth auth unavailable")
         return False
 
 
