@@ -478,6 +478,7 @@ One-click cloud environment with all dependencies pre-installed.
 | [CLAUDE.md](CLAUDE.md) | Comprehensive project documentation |
 | [CHANGELOG.md](CHANGELOG.md) | Version history and release notes |
 | Skill SKILL.md files | Per-skill detailed documentation |
+| [splunk-demo](https://github.com/grandcamel/splunk-demo) | Live demo environment with pre-configured Splunk |
 
 ### Need Help?
 
