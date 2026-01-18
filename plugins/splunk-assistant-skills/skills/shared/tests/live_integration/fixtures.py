@@ -16,16 +16,11 @@ Usage in tests:
 
 import logging
 import os
-import sys
-from pathlib import Path
 from typing import Generator, Optional
 
 import pytest
 
-# Add shared lib to path
-lib_path = Path(__file__).parent.parent.parent / "scripts" / "lib"
-sys.path.insert(0, str(lib_path))
-
+# splunk_container is in the same directory, discovered via pytest.ini pythonpath
 from splunk_container import (
     ExternalSplunkConnection,
     SplunkContainer,
@@ -361,15 +356,19 @@ def job_helper(splunk_client):
 
         def cleanup(self):
             """Cancel and delete all created jobs."""
+            failed = []
             for sid in self.created_jobs:
                 try:
                     self.client.post(
                         f"/search/v2/jobs/{sid}/control",
                         data={"action": "cancel"},
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.warning(f"Failed to cancel job {sid}: {e}")
+                    failed.append(sid)
             self.created_jobs.clear()
+            if failed:
+                logger.error(f"Failed to cleanup {len(failed)} job(s): {failed}")
 
     helper = JobHelper(splunk_client)
     yield helper
