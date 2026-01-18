@@ -26,7 +26,7 @@
 </table>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-355%20passing-brightgreen?logo=pytest" alt="Tests">
+  <img src="https://img.shields.io/badge/tests-348%20passing%2C%207%20xfail-brightgreen?logo=pytest" alt="Tests">
   <img src="https://img.shields.io/badge/python-3.8+-3776AB?logo=python&logoColor=white" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/skills-14-FF6900" alt="Skills">
   <a href="https://pypi.org/project/splunk-assistant-skills-lib/"><img src="https://img.shields.io/pypi/v/splunk-assistant-skills-lib?color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
