@@ -8,10 +8,9 @@ It re-exports the fixtures and configures test markers.
 
 import logging
 import os
-import sys
-from pathlib import Path
 
 import pytest
+import urllib3
 
 # Configure logging
 logging.basicConfig(
@@ -20,15 +19,10 @@ logging.basicConfig(
 )
 
 # Suppress urllib3 warnings about self-signed certs
-import urllib3
-
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Add this directory to path for absolute imports in fixtures.py
-sys.path.insert(0, str(Path(__file__).parent))
-
 # Import and re-export all fixtures
-# Import fixtures - pytest discovers these automatically via conftest.py
+# pytest.ini pythonpath handles module discovery
 from .fixtures import *
 
 
