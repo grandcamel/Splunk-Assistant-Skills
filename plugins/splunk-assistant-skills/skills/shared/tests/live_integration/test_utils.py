@@ -68,6 +68,8 @@ def generate_test_events(
     # Add field assignments
     for field_name, field_value in fields.items():
         if isinstance(field_value, list):
+            if not field_value:
+                raise ValueError(f"Field '{field_name}' has empty value list")
             # Random selection from list using pipe delimiter to avoid comma issues
             values_str = "|".join(str(v) for v in field_value)
             spl_parts.append(
@@ -205,9 +207,13 @@ def wait_for_indexing(
                             f"Index {index} has {event_count} events (>= {min_events})"
                         )
                         return True
-            except Exception:
-                # Fall back to search if metadata check fails
+            except (KeyError, ValueError, TypeError):
+                # Expected errors from missing/malformed metadata responses
+                # Fall back to search-based check
                 pass
+            except Exception as e:
+                # Log unexpected errors but still fall back to search
+                logger.debug(f"Metadata check failed unexpectedly: {e}")
 
             # Fallback: use search to count events
             response = client.post(
@@ -377,6 +383,8 @@ class EventBuilder:
 
         for name, value in self.fields.items():
             if isinstance(value, list):
+                if not value:
+                    raise ValueError(f"Field '{name}' has empty value list")
                 # Use pipe delimiter to avoid issues with values containing commas
                 values_str = "|".join(str(v) for v in value)
                 parts.append(
@@ -468,14 +476,15 @@ def get_splunk_version(
     # Handle malformed versions like "9.0.0-beta" by extracting leading digits
     numeric_parts = []
     for p in parts:
-        # Extract leading digits only (handles "0-beta", "1rc2", etc.)
-        digits = ""
+        # Extract leading numeric portion (handles "0-beta", "1rc2", etc.)
+        numeric_str = ""
         for c in p:
             if c.isdigit():
-                digits += c
+                numeric_str += c
             else:
                 break
-        numeric_parts.append(int(digits) if digits else 0)
+        # Default to 0 for non-numeric parts (e.g., "beta" -> 0)
+        numeric_parts.append(int(numeric_str) if numeric_str else 0)
 
     # Ensure we always return exactly 3 parts
     while len(numeric_parts) < 3:
