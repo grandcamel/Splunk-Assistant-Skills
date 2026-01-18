@@ -30,6 +30,9 @@ class SplunkContainer(DockerContainer):
         SPLUNK_TEST_IMAGE: Docker image (default: splunk/splunk:latest)
         SPLUNK_TEST_PASSWORD: Admin password (default: testpassword123)
         SPLUNK_TEST_HEC_TOKEN: HEC token (default: test-hec-token)
+        SPLUNK_TEST_STARTUP_TIMEOUT: Max startup wait in seconds (default: 300)
+        SPLUNK_TEST_HEALTH_INTERVAL: Health check interval in seconds (default: 5)
+        SPLUNK_TEST_MEM_LIMIT: Container memory limit (default: 4g)
 
     Example:
         with SplunkContainer() as splunk:
@@ -39,15 +42,18 @@ class SplunkContainer(DockerContainer):
 
     # Default configuration
     DEFAULT_IMAGE = "splunk/splunk:latest"
-    DEFAULT_PASSWORD = "testpassword123"
-    DEFAULT_HEC_TOKEN = "test-hec-token-12345"
+    # WARNING: These credentials are for LOCAL TESTING ONLY.
+    # NEVER use these values in production environments.
+    # Override via SPLUNK_TEST_PASSWORD and SPLUNK_TEST_HEC_TOKEN env vars.
+    DEFAULT_PASSWORD = "testpassword123"  # nosec - test credential only
+    DEFAULT_HEC_TOKEN = "test-hec-token-12345"  # nosec - test credential only
     MANAGEMENT_PORT = 8089
     WEB_PORT = 8000
     HEC_PORT = 8088
 
-    # Startup configuration
-    STARTUP_TIMEOUT = 300  # 5 minutes max for Splunk to start
-    HEALTH_CHECK_INTERVAL = 5  # Check every 5 seconds
+    # Startup configuration - configurable via environment variables
+    STARTUP_TIMEOUT = int(os.environ.get("SPLUNK_TEST_STARTUP_TIMEOUT", "300"))
+    HEALTH_CHECK_INTERVAL = int(os.environ.get("SPLUNK_TEST_HEALTH_INTERVAL", "5"))
 
     def __init__(
         self,
@@ -101,8 +107,9 @@ class SplunkContainer(DockerContainer):
         )
 
         # Resource limits (Splunk needs memory)
-        # Note: These are set via Docker, may need adjustment
-        self.with_kwargs(mem_limit="4g")
+        # Configurable via SPLUNK_TEST_MEM_LIMIT env var
+        mem_limit = os.environ.get("SPLUNK_TEST_MEM_LIMIT", "4g")
+        self.with_kwargs(mem_limit=mem_limit)
 
         # Reference counting for shared container support
         self._ref_count = 0
