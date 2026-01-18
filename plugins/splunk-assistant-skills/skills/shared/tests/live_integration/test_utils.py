@@ -12,13 +12,16 @@ Provides utilities for:
 import logging
 import random
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+
+if TYPE_CHECKING:
+    from splunk_container import ExternalSplunkConnection, SplunkContainer
 
 logger = logging.getLogger(__name__)
 
 
 def generate_test_events(
-    connection,
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
     index: str,
     count: int = 100,
     fields: Optional[Dict[str, Any]] = None,
@@ -111,7 +114,7 @@ def generate_test_events(
 
 
 def generate_simple_events(
-    connection,
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
     index: str,
     count: int = 10,
     sourcetype: str = "test_events",
@@ -156,7 +159,7 @@ def generate_simple_events(
 
 
 def wait_for_indexing(
-    connection,
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
     index: str,
     min_events: int = 1,
     timeout: int = 60,
@@ -238,7 +241,7 @@ def wait_for_indexing(
 
 
 def cleanup_test_data(
-    connection,
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
     index: str,
     delete_index: bool = False,
 ) -> bool:
@@ -274,7 +277,10 @@ def cleanup_test_data(
         return False
 
 
-def cancel_all_jobs(connection, user: Optional[str] = None) -> int:
+def cancel_all_jobs(
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
+    user: Optional[str] = None,
+) -> int:
     """
     Cancel all running search jobs.
 
@@ -391,7 +397,7 @@ class EventBuilder:
 
 
 def assert_search_returns_results(
-    connection,
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
     spl: str,
     min_count: int = 1,
     message: str = None,
@@ -422,7 +428,7 @@ def assert_search_returns_results(
 
 
 def assert_search_returns_empty(
-    connection,
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
     spl: str,
     message: str = None,
 ) -> None:
@@ -444,7 +450,9 @@ def assert_search_returns_empty(
         raise AssertionError(msg)
 
 
-def get_splunk_version(connection) -> tuple:
+def get_splunk_version(
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
+) -> tuple:
     """
     Get Splunk version as a tuple.
 
@@ -458,7 +466,11 @@ def get_splunk_version(connection) -> tuple:
     return tuple(int(p) for p in parts)
 
 
-def skip_if_version_below(connection, min_version: tuple, reason: str = None):
+def skip_if_version_below(
+    connection: "Union[SplunkContainer, ExternalSplunkConnection]",
+    min_version: tuple,
+    reason: str = None,
+):
     """
     Skip test if Splunk version is below minimum.
 
