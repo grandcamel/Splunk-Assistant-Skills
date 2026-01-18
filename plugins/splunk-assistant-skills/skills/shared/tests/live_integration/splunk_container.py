@@ -15,6 +15,7 @@ import os
 import threading
 import time
 from typing import Optional
+from urllib.parse import urlparse
 
 import requests
 from testcontainers.core.container import DockerContainer
@@ -234,15 +235,15 @@ class SplunkContainer(DockerContainer):
         """
         from splunk_assistant_skills_lib import SplunkClient
 
-        # Parse host and port from management URL
+        # Parse host and port from management URL using urlparse for IPv6 support
         url = self.get_management_url()
-        # URL format: https://host:port
-        host_port = url.replace("https://", "").replace("http://", "")
-        host, port = host_port.rsplit(":", 1)
+        parsed = urlparse(url)
+        host = parsed.hostname or "localhost"
+        port = parsed.port or 8089
 
         return SplunkClient(
-            base_url=f"https://{host}",
-            port=int(port),
+            base_url=f"{parsed.scheme}://{host}",
+            port=port,
             username="admin",
             password=self.splunk_password,
             verify_ssl=False,
@@ -358,14 +359,11 @@ class ExternalSplunkConnection:
         self.username = username
         self.password = password
 
-        # Parse host and port
-        host_port = self.url.replace("https://", "").replace("http://", "")
-        if ":" in host_port:
-            self.host, port_str = host_port.rsplit(":", 1)
-            self.port = int(port_str)
-        else:
-            self.host = host_port
-            self.port = 8089
+        # Parse host and port using urlparse for IPv6 support
+        parsed = urlparse(self.url)
+        self.host = parsed.hostname or "localhost"
+        self.port = parsed.port or 8089
+        self.scheme = parsed.scheme or "https"
 
     def get_management_url(self) -> str:
         """Get the management API URL."""
@@ -376,7 +374,7 @@ class ExternalSplunkConnection:
         from splunk_assistant_skills_lib import SplunkClient
 
         kwargs = {
-            "base_url": f"https://{self.host}",
+            "base_url": f"{self.scheme}://{self.host}",
             "port": self.port,
             "verify_ssl": False,  # Default to False for testing with self-signed certs
         }
@@ -439,9 +437,10 @@ class ExternalSplunkConnection:
         return response.get("results", [])
 
 
-# Global singleton for container reuse across pytest sessions
+# Global singletons for connection reuse across pytest sessions
 # Lock ensures thread-safe singleton creation for pytest-xdist
 _shared_container = None
+_shared_external = None
 _container_lock = threading.Lock()
 
 
@@ -449,7 +448,7 @@ def get_splunk_connection():
     """
     Get a Splunk connection, preferring external if configured.
 
-    Uses a singleton pattern to ensure only one Docker container is created
+    Uses a singleton pattern to ensure only one connection is created
     across all pytest sessions/conftest files. Thread-safe for parallel
     test execution with pytest-xdist.
 
@@ -462,18 +461,27 @@ def get_splunk_connection():
     Returns:
         SplunkContainer or ExternalSplunkConnection
     """
-    global _shared_container
+    global _shared_container, _shared_external
 
     external_url = os.environ.get("SPLUNK_TEST_URL")
 
     if external_url:
-        logger.info(f"Using external Splunk instance: {external_url}")
-        return ExternalSplunkConnection(
-            url=external_url,
-            token=os.environ.get("SPLUNK_TEST_TOKEN"),
-            username=os.environ.get("SPLUNK_TEST_USERNAME"),
-            password=os.environ.get("SPLUNK_TEST_PASSWORD"),
-        )
+        # Use double-checked locking for thread-safe singleton
+        if _shared_external is None:
+            with _container_lock:
+                if _shared_external is None:
+                    logger.info(f"Creating external Splunk connection: {external_url}")
+                    _shared_external = ExternalSplunkConnection(
+                        url=external_url,
+                        token=os.environ.get("SPLUNK_TEST_TOKEN"),
+                        username=os.environ.get("SPLUNK_TEST_USERNAME"),
+                        password=os.environ.get("SPLUNK_TEST_PASSWORD"),
+                    )
+                else:
+                    logger.info("Reusing existing external Splunk connection")
+        else:
+            logger.info("Reusing existing external Splunk connection")
+        return _shared_external
     else:
         # Use double-checked locking for thread-safe singleton
         if _shared_container is None:
