@@ -451,5 +451,35 @@ risk-level: "read-only|reversible|destructive"
 
 ---
 
+## Completed Work
+
+### Stale File Cleanup (2026-01-18)
+
+All three projects were cleaned of stale files from library migrations:
+
+| Project | Commit | Files Removed | Lines Deleted |
+|---------|--------|---------------|---------------|
+| Jira-Assistant-Skills | `f50d9ad` | 36 | 34,174 |
+| Confluence-Assistant-Skills | `cbf15f7` | 3 | 89 |
+| Splunk-Assistant-Skills | `763009e` | 3 | 1,290 |
+
+**Total: 42 stale files, 35,553 lines removed**
+
+**Jira cleanup:**
+- Removed `src/jira_assistant_skills/` (stale CLI after library migration)
+- Removed `tests/test_cli.py` (broken imports)
+
+**Confluence cleanup:**
+- Removed `REFACTORING_INSTRUCTIONS.md` (obsolete)
+- Fixed `.pre-commit-config.yaml` paths (removed `src/` references)
+- Fixed `pyproject.toml` module references
+
+**Splunk cleanup:**
+- Removed `API_GAP_ANALYSIS.md` (referenced obsolete scripts)
+- Removed `PROPOSAL_FEEDBACK.md` (Phase 1 historical)
+- Removed `REFACTORING_FEEDBACK.md` (Phase 1 historical)
+
+---
+
 *Document created: 2026-01-18*
 *Last updated: 2026-01-18*
