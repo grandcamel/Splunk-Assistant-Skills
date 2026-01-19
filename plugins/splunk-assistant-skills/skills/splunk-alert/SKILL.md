@@ -6,6 +6,18 @@ Alert triggering, monitoring, and notification management for Splunk.
 
 Create and manage alerts, monitor triggered alerts, and configure alert actions.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List alerts | - | Read-only |
+| Get alert details | - | Read-only |
+| List triggered alerts | - | Read-only |
+| Create alert | ⚠️ | May trigger notifications |
+| Update alert | ⚠️ | Previous config lost |
+| Acknowledge alert | ⚠️ | Can be re-triggered |
+| Delete alert | ⚠️⚠️ | May be recoverable from backup |
+
 ## Triggers
 
 - "alert", "trigger", "notification"

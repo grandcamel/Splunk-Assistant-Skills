@@ -6,6 +6,19 @@ Interaction with App Key Value Store for persistent metadata.
 
 Create and manage KV store collections and records for persistent data storage.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List collections | - | Read-only |
+| Get record | - | Read-only |
+| Query collection | - | Read-only |
+| Insert record | ⚠️ | Easily reversible |
+| Create collection | ⚠️ | Easily reversible |
+| Update record | ⚠️ | Previous value lost |
+| Delete record | ⚠️⚠️ | Data loss, may be in backups |
+| Delete collection | ⚠️⚠️⚠️ | **IRREVERSIBLE** - all data lost |
+
 ## Triggers
 
 - "kvstore", "collection", "key-value"

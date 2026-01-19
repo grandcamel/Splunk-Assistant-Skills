@@ -7,6 +7,15 @@ High-volume streaming data extraction for Splunk.
 Export large result sets (>50,000 rows) efficiently using streaming.
 Supports checkpoint-based resume for reliability during long exports.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| Export results | - | Read-only |
+| Export raw events | - | Read-only |
+| Estimate size | - | Read-only |
+| Export with checkpoint | - | Read-only (writes local file) |
+
 ## Triggers
 
 - "export", "download", "extract"

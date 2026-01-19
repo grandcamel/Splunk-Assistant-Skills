@@ -6,6 +6,17 @@ Splunk application management.
 
 Install, uninstall, enable, disable, and manage Splunk applications.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List apps | - | Read-only |
+| Get app details | - | Read-only |
+| Enable app | ⚠️ | Easily reversible |
+| Disable app | ⚠️ | Easily reversible |
+| Install app | ⚠️⚠️ | May affect system behavior |
+| Uninstall app | ⚠️⚠️⚠️ | **IRREVERSIBLE** - app files deleted |
+
 ## Triggers
 
 - "app", "application", "install"

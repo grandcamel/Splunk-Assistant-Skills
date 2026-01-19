@@ -6,6 +6,17 @@ Query index, source, and sourcetype configurations for Splunk.
 
 Discover and explore metadata about indexes, sources, sourcetypes, and fields.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List indexes | - | Read-only |
+| Get index info | - | Read-only |
+| List sources | - | Read-only |
+| List sourcetypes | - | Read-only |
+| Get field summary | - | Read-only |
+| Metadata search | - | Read-only |
+
 ## Triggers
 
 - "metadata", "index", "source", "sourcetype"

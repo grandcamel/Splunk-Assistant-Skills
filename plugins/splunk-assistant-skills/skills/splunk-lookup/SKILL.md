@@ -6,6 +6,17 @@ CSV and lookup file management for Splunk.
 
 Upload, download, and manage CSV lookup files and lookup definitions.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List lookups | - | Read-only |
+| Get lookup info | - | Read-only |
+| Download lookup | - | Read-only |
+| Upload lookup | ⚠️ | Creates new or overwrites |
+| Create lookup definition | ⚠️ | Can be undone |
+| Delete lookup | ⚠️⚠️ | May be recoverable from backup |
+
 ## Triggers
 
 - "lookup", "CSV", "upload"

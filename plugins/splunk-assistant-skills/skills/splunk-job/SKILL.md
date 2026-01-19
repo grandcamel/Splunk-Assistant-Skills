@@ -6,6 +6,18 @@ Search job lifecycle orchestration for Splunk.
 
 Manage the complete lifecycle of Splunk search jobs including creation, monitoring, control actions (pause/cancel/finalize), and cleanup.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| Get job status | - | Read-only |
+| List jobs | - | Read-only |
+| Create job | - | Easily reversible via cancel |
+| Pause/unpause job | ⚠️ | Can be undone |
+| Finalize job | ⚠️ | Returns partial results |
+| Cancel job | ⚠️ | Stops execution |
+| Delete job | ⚠️⚠️ | Removes job and results |
+
 ## Triggers
 
 - "job", "search job", "SID"

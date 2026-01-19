@@ -6,6 +6,15 @@ Knowledge object tags and field/value associations for Splunk.
 
 Add, remove, and manage tags associated with field values for easier searching.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List tags | - | Read-only |
+| Search by tag | - | Read-only |
+| Add tag | ⚠️ | Easily reversible |
+| Remove tag | ⚠️ | Easily reversible |
+
 ## Triggers
 
 - "tag", "label", "classify"

@@ -6,6 +6,18 @@ CRUD for reports and scheduled searches in Splunk.
 
 Create, read, update, delete saved searches, reports, and scheduled searches.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List saved searches | - | Read-only |
+| Get saved search | - | Read-only |
+| Run saved search | - | Read-only execution |
+| Create saved search | ⚠️ | Can be deleted |
+| Update saved search | ⚠️ | Previous version lost |
+| Enable/disable schedule | ⚠️ | Easily reversible |
+| Delete saved search | ⚠️⚠️ | May be recoverable from backup |
+
 ## Triggers
 
 - "saved search", "report", "schedule"

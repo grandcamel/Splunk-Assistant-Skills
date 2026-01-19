@@ -6,6 +6,15 @@ Programmatic access to internal configurations via REST command.
 
 Query and manage Splunk server configurations, users, roles, and system info.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| REST GET request | - | Read-only |
+| Get server info | - | Read-only |
+| List users/roles | - | Read-only |
+| REST POST request | ⚠️⚠️ | May modify server config |
+
 ## Triggers
 
 - "rest", "admin", "config"

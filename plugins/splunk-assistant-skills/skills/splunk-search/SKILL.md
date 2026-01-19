@@ -7,6 +7,15 @@ SPL query execution in multiple modes for Splunk.
 Execute SPL (Search Processing Language) queries using various execution modes:
 oneshot (inline results), normal (async with polling), and blocking (sync wait).
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| Execute search (read) | - | Read-only query |
+| Get results | - | Read-only |
+| Validate SPL | - | Read-only |
+| Execute search (write) | ⚠️⚠️ | SPL with `| outputlookup` or `| collect` modifies data |
+
 ## Triggers
 
 - "search", "SPL", "query", "find"

@@ -6,6 +6,20 @@ Token management, RBAC, and ACL verification for Splunk.
 
 Manage JWT tokens, check permissions, and configure ACLs on knowledge objects.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| Get current user | - | Read-only |
+| List users/roles | - | Read-only |
+| List tokens | - | Read-only |
+| Get capabilities | - | Read-only |
+| Check permission | - | Read-only |
+| Get ACL | - | Read-only |
+| Create token | ⚠️ | Security credential created |
+| Delete token | ⚠️⚠️ | **Breaks dependent integrations** |
+| Modify ACL | ⚠️⚠️ | Changes access permissions |
+
 ## Triggers
 
 - "token", "permission", "ACL"

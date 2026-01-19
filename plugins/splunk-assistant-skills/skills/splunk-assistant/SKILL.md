@@ -6,6 +6,14 @@ Central hub and router for Splunk Assistant Skills. Implements 3-level progressi
 
 Routes natural language requests to specialized Splunk skills based on intent. Provides connection verification, authentication validation, and execution strategy recommendations.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| Get server info | - | Read-only |
+| Verify connection | - | Read-only |
+| Route to skill | - | Navigation only |
+
 ## Triggers
 
 - Any Splunk-related request

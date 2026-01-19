@@ -6,6 +6,15 @@ Real-time metrics and data point analysis for Splunk.
 
 Query and analyze metrics data using mstats and mcatalog commands.
 
+## Risk Levels
+
+| Operation | Risk | Notes |
+|-----------|------|-------|
+| List metrics | - | Read-only |
+| List metric indexes | - | Read-only |
+| Query with mstats | - | Read-only |
+| Discover with mcatalog | - | Read-only |
+
 ## Triggers
 
 - "metrics", "mstats", "mcatalog"
