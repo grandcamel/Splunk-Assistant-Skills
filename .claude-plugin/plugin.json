@@ -1,0 +1,25 @@
+{
+  "name": "splunk-assistant-skills",
+  "version": "2.0.0",
+  "description": "14 specialized skills for natural language Splunk automation - search, job management, exports, and administration via Claude Code",
+  "author": {
+    "name": "grandcamel",
+    "url": "https://github.com/grandcamel"
+  },
+  "homepage": "https://github.com/grandcamel/Splunk-Assistant-Skills",
+  "repository": "https://github.com/grandcamel/Splunk-Assistant-Skills",
+  "license": "MIT",
+  "keywords": [
+    "splunk",
+    "search",
+    "spl",
+    "siem",
+    "automation",
+    "devops",
+    "natural-language",
+    "observability"
+  ],
+  "commands": [
+    "./commands/*.md"
+  ]
+}

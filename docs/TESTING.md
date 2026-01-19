@@ -23,13 +23,13 @@ Tests are configured via `pytest.ini` at the project root:
 pip install -r requirements.txt
 
 # Run all unit tests (live_integration excluded by default via pytest.ini)
-pytest plugins/splunk-assistant-skills/skills/*/tests/ -v
+pytest skills/*/tests/ -v
 
 # Run tests for specific skill
-pytest plugins/splunk-assistant-skills/skills/splunk-search/tests/ -v
+pytest skills/splunk-search/tests/ -v
 
 # Run shared library tests only
-pytest plugins/splunk-assistant-skills/skills/shared/tests/ -v
+pytest skills/shared/tests/ -v
 ```
 
 ## Live Integration Tests
@@ -53,14 +53,14 @@ export SPLUNK_TEST_PASSWORD="your-password"
 pip install testcontainers docker
 
 # Run all integration tests for a skill (must specify path explicitly)
-pytest plugins/splunk-assistant-skills/skills/splunk-search/tests/live_integration/ -v
+pytest skills/splunk-search/tests/live_integration/ -v
 
 # Run with specific markers
-pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -m "live" -v           # All live tests
-pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -m "not destructive" -v # Skip destructive tests
+pytest skills/*/tests/live_integration/ -m "live" -v           # All live tests
+pytest skills/*/tests/live_integration/ -m "not destructive" -v # Skip destructive tests
 
 # Run single test class
-pytest plugins/splunk-assistant-skills/skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
+pytest skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
 ```
 
 ## Docker-Based Testing
@@ -85,7 +85,7 @@ export SPLUNK_TEST_URL="https://localhost:8089"
 export SPLUNK_TEST_USERNAME="admin"
 export SPLUNK_TEST_PASSWORD="Admin123!"
 
-pytest plugins/splunk-assistant-skills/skills/splunk-metadata/tests/live_integration/ -v
+pytest skills/splunk-metadata/tests/live_integration/ -v
 ```
 
 ### Splunk Docker Gotchas
@@ -297,7 +297,7 @@ skip_if_version_below(connection, (9, 0, 0), "Requires Splunk 9.0+")
 `pytest.ini` includes the shared live integration directory in `pythonpath`:
 
 ```ini
-pythonpath = . plugins/splunk-assistant-skills/skills/shared/tests/live_integration
+pythonpath = . skills/shared/tests/live_integration
 ```
 
 This enables importing shared fixtures without relative imports:

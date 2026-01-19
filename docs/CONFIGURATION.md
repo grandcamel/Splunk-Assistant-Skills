@@ -148,7 +148,7 @@ Configuration follows `config.schema.json`. Key sections:
 
 ## Adding New Settings
 
-1. Update `plugins/splunk-assistant-skills/skills/shared/config/config.schema.json`
+1. Update `skills/shared/config/config.schema.json`
 2. Update `.claude/settings.example.json`
 3. Update `config_manager.py` if needed
 4. Document in this file

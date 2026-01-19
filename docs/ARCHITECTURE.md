@@ -6,34 +6,32 @@ This document covers the architecture of Splunk Assistant Skills, including dire
 
 ```
 .claude-plugin/
-├── marketplace.json           # Marketplace manifest (for plugin distribution)
-└── plugin.json                # (moved to plugins/)
+├── plugin.json                # Plugin manifest
+└── marketplace.json           # Marketplace metadata
 
 .claude/
 ├── settings.example.json      # Example config (copy to settings.local.json)
 └── settings.local.json        # Personal credentials (gitignored)
 
-plugins/
-└── splunk-assistant-skills/   # Plugin package
-    ├── plugin.json            # Plugin manifest
-    └── skills/
-        ├── splunk-assistant/  # Hub router
-        ├── splunk-job/        # Job lifecycle
-        ├── splunk-search/     # SPL execution
-        ├── splunk-export/     # Data extraction
-        ├── splunk-metadata/   # Discovery
-        ├── splunk-lookup/     # Lookups
-        ├── splunk-tag/        # Tags
-        ├── splunk-savedsearch/# Saved searches
-        ├── splunk-rest-admin/ # REST admin
-        ├── splunk-security/   # Security
-        ├── splunk-metrics/    # Metrics
-        ├── splunk-alert/      # Alerts
-        ├── splunk-app/        # Apps
-        ├── splunk-kvstore/    # KV Store
-        └── shared/            # Shared config and tests
-            ├── config/
-            └── tests/
+commands/                      # Slash commands (at project root)
+skills/                        # 14 skills (autodiscovered)
+├── splunk-assistant/          # Hub router
+├── splunk-job/                # Job lifecycle
+├── splunk-search/             # SPL execution
+├── splunk-export/             # Data extraction
+├── splunk-metadata/           # Discovery
+├── splunk-lookup/             # Lookups
+├── splunk-tag/                # Tags
+├── splunk-savedsearch/        # Saved searches
+├── splunk-rest-admin/         # REST admin
+├── splunk-security/           # Security
+├── splunk-metrics/            # Metrics
+├── splunk-alert/              # Alerts
+├── splunk-app/                # Apps
+├── splunk-kvstore/            # KV Store
+└── shared/                    # Shared config and tests
+    ├── config/
+    └── tests/
 
 docs/
 ├── ARCHITECTURE.md            # This document
@@ -114,7 +112,7 @@ The `splunk-assistant-skills-lib` inherits from `assistant-skills-lib>=0.3.0`, w
 Each skill follows this structure:
 
 ```
-plugins/splunk-assistant-skills/skills/{skill-name}/
+skills/{skill-name}/
 ├── SKILL.md           # Skill documentation
 ├── scripts/           # Python scripts
 │   └── ...
@@ -129,23 +127,15 @@ plugins/splunk-assistant-skills/skills/{skill-name}/
 
 ### Plugin Manifest
 
-The `plugin.json` defines the plugin structure:
+The `.claude-plugin/plugin.json` defines the plugin structure. Skills are autodiscovered via `skills/*/SKILL.md`:
 
 ```json
 {
   "name": "splunk-assistant-skills",
   "version": "2.0.0",
-  "skill_count": 14,
   "description": "14 specialized skills for natural language Splunk automation",
-  "skills": [
-    "./skills/splunk-assistant/SKILL.md",
-    "./skills/splunk-search/SKILL.md",
-    ...
-  ],
   "commands": [
-    "./commands/assistant-skills-setup.md",
-    "./commands/browse-skills.md",
-    ...
+    "./commands/*.md"
   ]
 }
 ```

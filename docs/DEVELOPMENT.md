@@ -56,7 +56,7 @@ def test_script_function():
 ### Required Files
 
 ```
-plugins/splunk-assistant-skills/skills/new-skill/
+skills/new-skill/
 ├── SKILL.md           # Skill documentation
 ├── scripts/           # Python scripts
 │   └── ...
@@ -103,18 +103,7 @@ python script_name.py --help
 
 ### Register the Skill
 
-Add the skill path to `plugins/splunk-assistant-skills/plugin.json`:
-
-```json
-{
-  "skills": [
-    "./skills/splunk-new-skill/SKILL.md",
-    ...
-  ]
-}
-```
-
-Update the `skill_count` field to reflect the new total.
+Skills are autodiscovered via `skills/*/SKILL.md`. Simply create your skill directory under `skills/` with a `SKILL.md` file and it will be automatically loaded.
 
 ---
 
@@ -203,10 +192,10 @@ def main():
 
 ```bash
 # Unit tests only
-pytest plugins/splunk-assistant-skills/skills/*/tests/ -v
+pytest skills/*/tests/ -v
 
 # Specific skill
-pytest plugins/splunk-assistant-skills/skills/splunk-search/tests/ -v
+pytest skills/splunk-search/tests/ -v
 
 # With coverage
 pytest --cov=splunk_assistant_skills_lib --cov-report=html

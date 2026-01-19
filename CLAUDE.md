@@ -38,11 +38,13 @@ This project provides 14 specialized skills for interacting with Splunk via natu
 ## Directory Structure
 
 ```
-plugins/
-└── splunk-assistant-skills/   # Plugin package
-    ├── plugin.json            # Plugin manifest
-    └── skills/                # 14 skills
-        └── shared/            # Shared config and tests
+.claude-plugin/
+├── plugin.json                # Plugin manifest
+└── marketplace.json           # Marketplace metadata
+
+commands/                      # Slash commands (at project root)
+skills/                        # 14 skills (autodiscovered)
+└── shared/                    # Shared config and tests
 
 docs/                          # Detailed documentation
 ```
@@ -109,10 +111,10 @@ def main():
 
 ```bash
 # Run unit tests
-pytest plugins/splunk-assistant-skills/skills/*/tests/ -v
+pytest skills/*/tests/ -v
 
 # Run live integration tests (requires Splunk)
-pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -v
+pytest skills/*/tests/live_integration/ -v
 ```
 
 See [docs/TESTING.md](docs/TESTING.md) for complete testing guide.
