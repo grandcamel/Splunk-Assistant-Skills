@@ -15,6 +15,9 @@ import time
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 if TYPE_CHECKING:
+    # Import from local module for type hints only.
+    # At runtime, this module is discovered via pytest's importmode=importlib
+    # configured in pytest.ini, which adds the test directory to sys.path.
     from splunk_container import ExternalSplunkConnection, SplunkContainer
 
 logger = logging.getLogger(__name__)

@@ -44,11 +44,16 @@ class SplunkContainer(DockerContainer):
 
     # Default configuration
     DEFAULT_IMAGE = "splunk/splunk:latest"
-    # WARNING: These credentials are for LOCAL TESTING ONLY.
-    # NEVER use these values in production environments.
-    # Override via SPLUNK_TEST_PASSWORD and SPLUNK_TEST_HEC_TOKEN env vars.
-    DEFAULT_PASSWORD = "testpassword123"  # nosec - test credential only
-    DEFAULT_HEC_TOKEN = "test-hec-token-12345"  # nosec - test credential only
+    # ==========================================================================
+    # WARNING: LOCAL TESTING ONLY - DO NOT USE IN PRODUCTION
+    # ==========================================================================
+    # These are intentionally obvious placeholder credentials for local Docker
+    # testing. They MUST be replaced via environment variables for any real use:
+    #   - SPLUNK_TEST_PASSWORD: Override the admin password
+    #   - SPLUNK_TEST_HEC_TOKEN: Override the HEC token
+    # ==========================================================================
+    DEFAULT_PASSWORD = "REPLACE_ME_testpassword123"  # nosec - test credential only
+    DEFAULT_HEC_TOKEN = "REPLACE_ME_test-hec-token"  # nosec - test credential only
     MANAGEMENT_PORT = 8089
     WEB_PORT = 8000
     HEC_PORT = 8088
