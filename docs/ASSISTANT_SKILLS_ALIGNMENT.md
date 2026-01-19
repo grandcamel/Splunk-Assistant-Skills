@@ -467,6 +467,27 @@ The `splunk-assistant-skills-lib` already properly inherits from `assistant-skil
 
 Updated dependency from `>=0.2.1` to `>=0.3.0` to match latest base library version.
 
+### Phase 3: Documentation Restructure - COMPLETE (2026-01-19)
+
+Split CLAUDE.md into focused documentation files in `docs/`:
+
+| File | Lines | Content |
+|------|-------|---------|
+| CLAUDE.md | 149 | Project overview and quick reference (was 1,079) |
+| docs/ARCHITECTURE.md | 223 | Directory structure, library pattern, demo environment |
+| docs/CLI_REFERENCE.md | 210 | CLI commands, search modes, job lifecycle |
+| docs/CONFIGURATION.md | 154 | Config priority, environment variables, auth |
+| docs/DEVELOPMENT.md | 228 | Adding scripts/skills, git guidelines |
+| docs/SPL_PATTERNS.md | 149 | Query patterns, progressive disclosure, error handling |
+| docs/TESTING.md | 370 | Unit tests, integration tests, Docker, fixtures |
+| docs/TROUBLESHOOTING.md | 176 | Common issues and solutions |
+
+**Results:**
+- CLAUDE.md reduced from 1,079 lines to 149 lines (86% reduction)
+- 7 focused documentation files created
+- Total documentation: 2,158 lines across 9 files (includes alignment doc)
+- All docs have cross-references
+
 ### Stale File Cleanup (2026-01-18)
 
 All three projects were cleaned of stale files from library migrations:
@@ -496,4 +517,4 @@ All three projects were cleaned of stale files from library migrations:
 ---
 
 *Document created: 2026-01-18*
-*Last updated: 2026-01-18*
+*Last updated: 2026-01-19*

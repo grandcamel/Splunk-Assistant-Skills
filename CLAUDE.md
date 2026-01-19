@@ -2,6 +2,18 @@
 
 A modular, production-ready Claude Code skills framework for Splunk REST API automation.
 
+## Quick Reference
+
+| Resource | Location |
+|----------|----------|
+| Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| CLI Reference | [docs/CLI_REFERENCE.md](docs/CLI_REFERENCE.md) |
+| Configuration | [docs/CONFIGURATION.md](docs/CONFIGURATION.md) |
+| SPL Patterns | [docs/SPL_PATTERNS.md](docs/SPL_PATTERNS.md) |
+| Testing | [docs/TESTING.md](docs/TESTING.md) |
+| Troubleshooting | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) |
+| Development | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) |
+
 ## Project Overview
 
 This project provides 14 specialized skills for interacting with Splunk via natural language:
@@ -23,909 +35,110 @@ This project provides 14 specialized skills for interacting with Splunk via natu
 | `splunk-app` | Application management |
 | `splunk-kvstore` | App Key Value Store |
 
-## Architecture
-
-### Directory Structure
+## Directory Structure
 
 ```
-.claude-plugin/
-├── marketplace.json           # Marketplace manifest (for plugin distribution)
-└── plugin.json                # (moved to plugins/)
-
-.claude/
-├── settings.example.json      # Example config (copy to settings.local.json)
-└── settings.local.json        # Personal credentials (gitignored)
-
 plugins/
 └── splunk-assistant-skills/   # Plugin package
     ├── plugin.json            # Plugin manifest
-    └── skills/
-        ├── splunk-assistant/  # Hub router
-        ├── splunk-job/        # Job lifecycle
-        ├── splunk-search/     # SPL execution
-        ├── splunk-export/     # Data extraction
-        ├── splunk-metadata/   # Discovery
-        ├── splunk-lookup/     # Lookups
-        ├── splunk-tag/        # Tags
-        ├── splunk-savedsearch/# Saved searches
-        ├── splunk-rest-admin/ # REST admin
-        ├── splunk-security/   # Security
-        ├── splunk-metrics/    # Metrics
-        ├── splunk-alert/      # Alerts
-        ├── splunk-app/        # Apps
-        ├── splunk-kvstore/    # KV Store
+    └── skills/                # 14 skills
         └── shared/            # Shared config and tests
-            ├── config/
-            └── tests/
+
+docs/                          # Detailed documentation
 ```
 
-### Shared Library Pattern
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full structure.
 
-All scripts import from the [splunk-assistant-skills-lib](https://pypi.org/project/splunk-assistant-skills-lib/) PyPI package:
+## Quick Start
+
+### Installation
+
+```bash
+# Via Claude Code plugin system
+/assistant-skills-setup
+
+# Or manual installation
+pip install splunk-assistant-skills-lib
+```
+
+### Configuration
+
+Set environment variables:
+
+```bash
+export SPLUNK_SITE_URL="https://splunk.example.com"
+export SPLUNK_TOKEN="your-jwt-token"
+```
+
+See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
+
+### CLI Usage
+
+```bash
+# Search
+splunk-as search oneshot "index=main | head 10"
+
+# Job management
+splunk-as job list
+splunk-as job status <sid>
+
+# Metadata
+splunk-as metadata indexes
+```
+
+See [docs/CLI_REFERENCE.md](docs/CLI_REFERENCE.md) for all commands.
+
+## Shared Library
+
+All scripts import from [splunk-assistant-skills-lib](https://pypi.org/project/splunk-assistant-skills-lib/):
 
 ```python
 from splunk_assistant_skills_lib import (
     get_splunk_client,
     handle_errors,
-    print_error,
-    validate_spl,
     print_success,
-    format_search_results,
 )
-```
-
-### Shared Library Components
-
-The `splunk-assistant-skills-lib` package provides:
-
-| Module | Purpose |
-|--------|---------|
-| `splunk_client` | HTTP client with retry and dual auth |
-| `config_manager` | Multi-source configuration |
-| `error_handler` | Exception hierarchy |
-| `validators` | Input validation |
-| `formatters` | Output formatting |
-| `spl_helper` | SPL query building/parsing |
-| `job_poller` | Async job polling |
-| `time_utils` | Time modifier handling |
-
-### CLI Entry Point
-
-The project provides a unified CLI via the `splunk-as` command:
-
-```bash
-# Install in development mode
-pip install -e .
-
-# Verify installation
-splunk-as --version
-```
-
-#### CLI Usage
-
-```bash
-# Get help
-splunk-as --help
-splunk-as search --help
-
-# Search commands
-splunk-as search oneshot "index=main | head 10"
-splunk-as search normal "index=main | stats count" --wait
-splunk-as search blocking "index=main | head 10" --timeout 60
-
-# Job management
-splunk-as job list
-splunk-as job status 1703779200.12345
-splunk-as job cancel 1703779200.12345
-
-# Metadata discovery
-splunk-as metadata indexes
-splunk-as metadata sourcetypes --index main
-
-# Export data
-splunk-as export results 1703779200.12345 --output-file results.csv
-
-# Administration
-splunk-as admin info
-splunk-as security whoami
-```
-
-#### Available Command Groups
-
-| Group | Description |
-|-------|-------------|
-| `search` | SPL query execution (oneshot/normal/blocking) |
-| `job` | Search job lifecycle management |
-| `export` | Data export and extraction |
-| `metadata` | Index, source, sourcetype discovery |
-| `lookup` | CSV and lookup file management |
-| `kvstore` | App Key Value Store operations |
-| `savedsearch` | Saved search and report management |
-| `alert` | Alert management and monitoring |
-| `app` | Application management |
-| `security` | Token management and RBAC |
-| `admin` | Server administration and REST API |
-| `tag` | Knowledge object tagging |
-| `metrics` | Real-time metrics operations |
-
-## Configuration System
-
-### Priority Order
-
-1. Environment variables (highest)
-2. `.claude/settings.local.json` (personal, gitignored)
-3. Built-in defaults (lowest)
-
-### Environment Variables
-
-```bash
-# Authentication (choose one method)
-export SPLUNK_TOKEN="your-jwt-token"           # Bearer token (preferred)
-export SPLUNK_USERNAME="admin"                  # Basic Auth
-export SPLUNK_PASSWORD="changeme"               # Basic Auth
-
-# Connection
-export SPLUNK_SITE_URL="https://splunk.example.com"
-export SPLUNK_MANAGEMENT_PORT="8089"
-export SPLUNK_VERIFY_SSL="true"
-
-# Defaults
-export SPLUNK_DEFAULT_APP="search"
-export SPLUNK_DEFAULT_INDEX="main"
-```
-
-### Assistant Skills Setup
-
-If installed via the Claude Code plugin system, use the universal setup wizard:
-
-```bash
-/assistant-skills-setup
-```
-
-This configures:
-- Shared Python venv at `~/.assistant-skills-venv/`
-- Required dependencies from `requirements.txt`
-- Environment variables (prompts for Splunk credentials)
-- `claude-as` shell function for running Claude with dependencies
-
-After setup, use `claude-as` instead of `claude`:
-```bash
-claude-as  # Runs Claude with Assistant Skills venv activated
-```
-
-## Authentication
-
-### JWT Bearer Token (Preferred)
-
-1. Create token in Splunk Web: Settings > Tokens
-2. Set via environment or config:
-   ```bash
-   export SPLUNK_TOKEN="eyJraWQiOi..."
-   ```
-
-### Basic Auth (Legacy)
-
-For on-prem environments:
-```bash
-export SPLUNK_USERNAME="admin"
-export SPLUNK_PASSWORD="changeme"
-```
-
-Auto-detection: Token present = Bearer, otherwise Basic Auth.
-
-## Error Handling Strategy
-
-### 4-Layer Approach
-
-1. **Validation Layer**: Input validation before API calls
-2. **HTTP Layer**: Retry on transient failures (429, 5xx)
-3. **API Layer**: Parse Splunk error responses
-4. **Application Layer**: User-friendly error messages
-
-### Exception Hierarchy
-
-```
-SplunkError (base)
-├── AuthenticationError (401)
-├── AuthorizationError (403)
-├── ValidationError (400)
-├── NotFoundError (404)
-├── RateLimitError (429)
-├── SearchQuotaError (503)
-├── JobFailedError
-└── ServerError (5xx)
-```
-
-### Using the Error Decorator
-
-```python
-from error_handler import handle_errors
 
 @handle_errors
 def main():
     client = get_splunk_client()
-    # Operations that might fail
-    result = client.post('/search/jobs/oneshot', data={'search': spl})
+    # Your code here
 ```
-
-## SPL Query Patterns
-
-### Always Include Time Bounds
-
-```spl
-# Good - explicit time bounds
-index=main earliest=-1h latest=now | head 100
-
-# Bad - scans all time
-index=main | head 100
-```
-
-### Field Extraction Optimization
-
-```spl
-# Good - limit fields early
-index=main | fields host, status, uri | head 1000
-
-# Bad - returns all fields
-index=main | head 1000
-```
-
-### Common Patterns
-
-```spl
-# Statistics and aggregation
-index=main | stats count by status | sort -count
-
-# Time-based analysis
-index=main | timechart span=1h count by sourcetype
-
-# Subsearch
-index=main [search index=alerts | fields src_ip | head 1000]
-
-# Transaction
-index=main | transaction host maxspan=5m | stats avg(duration)
-
-# Metrics (mstats)
-| mstats avg(cpu.percent) WHERE index=metrics BY host span=1h
-
-# Metadata discovery
-| metadata type=sourcetypes index=main | table sourcetype, totalCount
-
-# REST API access
-| rest /services/server/info | table splunk_server, version, build
-
-# Lookup enrichment
-index=main | lookup users.csv username OUTPUT department
-```
-
-## Search Modes
-
-### Oneshot Mode (Ad-hoc)
-
-Best for: Quick queries, results < 50,000 rows
-
-```python
-# Results returned inline, no job created
-response = client.post(
-    '/services/search/jobs/oneshot',
-    data={
-        'search': 'index=main | head 100',
-        'output_mode': 'json',
-        'earliest_time': '-1h',
-        'latest_time': 'now',
-    },
-)
-results = response['results']
-```
-
-### Normal Mode (Async)
-
-Best for: Long-running searches, monitoring progress
-
-```python
-# Create job (returns SID immediately)
-response = client.post(
-    '/services/search/v2/jobs',
-    data={'search': spl, 'exec_mode': 'normal'},
-)
-sid = response['sid']
-
-# Poll for completion
-from job_poller import poll_job_status
-job = poll_job_status(client, sid, timeout=300)
-
-# Get results
-results = client.get(f'/services/search/v2/jobs/{sid}/results')
-```
-
-### Blocking Mode (Sync)
-
-Best for: Simple queries, scripted automation
-
-```python
-# Waits for completion
-response = client.post(
-    '/services/search/v2/jobs',
-    data={'search': spl, 'exec_mode': 'blocking'},
-    timeout=300,
-)
-sid = response['entry'][0]['name']
-results = client.get(f'/services/search/v2/jobs/{sid}/results')
-```
-
-### Export Mode (Streaming)
-
-Best for: Large data extraction, ETL pipelines
-
-```python
-# Stream results to file
-for chunk in client.stream_results(
-    f'/services/search/v2/jobs/{sid}/results',
-    params={'output_mode': 'csv', 'count': 0},
-):
-    output_file.write(chunk)
-```
-
-## Job Lifecycle
-
-### State Flow
-
-```
-QUEUED → PARSING → RUNNING → FINALIZING → DONE
-                                        → FAILED
-                 → PAUSED (on pause)
-```
-
-### Job Control Actions
-
-```python
-from job_poller import cancel_job, pause_job, unpause_job, finalize_job, set_job_ttl
-
-# Cancel running job
-cancel_job(client, sid)
-
-# Pause/resume
-pause_job(client, sid)
-unpause_job(client, sid)
-
-# Finalize (return current results)
-finalize_job(client, sid)
-
-# Extend TTL
-set_job_ttl(client, sid, ttl=3600)
-```
-
-### Polling Best Practices
-
-```python
-from job_poller import poll_job_status
-
-# With progress callback
-def on_progress(progress):
-    print(f"Progress: {progress.progress_percent:.0f}%")
-
-job = poll_job_status(
-    client, sid,
-    timeout=300,
-    poll_interval=1.0,
-    progress_callback=on_progress,
-)
-```
-
-## Progressive Disclosure (3 Levels)
-
-### Level 1: Essential Connection
-
-- Verify Search Head connection on port 8089
-- Validate authentication (Bearer/Basic)
-- Detect deployment type (Cloud vs on-prem)
-- Route to appropriate skill
-
-### Level 2: Execution Mode Strategy
-
-- **Oneshot**: Ad-hoc queries (minimal disk I/O)
-- **Export**: ETL/large transfers (streaming)
-- **Normal + Polling**: Long searches with progress
-- **Blocking**: Simple, fast queries
-
-### Level 3: Advanced Optimization
-
-- **Time Bounds**: Enforce `earliest_time`/`latest_time`
-- **Field Reduction**: Add `fields` command
-- **Resource Cleanup**: Cancel jobs after use
-- **Error Handling**: Use `strict=true` mode
 
 ## Testing
 
-### Test Configuration
-
-Tests are configured via `pytest.ini` at the project root:
-- Uses `--import-mode=importlib` to avoid module name conflicts
-- Excludes `live_integration` directories by default (require extra dependencies)
-- Defines markers: `live`, `destructive`, `slow`, `integration`, `docker_required`
-
-### Test Coverage Summary
-
-| Category | Tests | Status |
-|----------|-------|--------|
-| Unit Tests (shared library) | 73 | ✅ Passing |
-| Live Integration Tests | ~175 | Requires `testcontainers` |
-
-### Unit Tests
-
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run all unit tests (live_integration excluded by default via pytest.ini)
+# Run unit tests
 pytest plugins/splunk-assistant-skills/skills/*/tests/ -v
 
-# Run tests for specific skill
-pytest plugins/splunk-assistant-skills/skills/splunk-search/tests/ -v
-
-# Run shared library tests only
-pytest plugins/splunk-assistant-skills/skills/shared/tests/ -v
+# Run live integration tests (requires Splunk)
+pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -v
 ```
 
-### Live Integration Tests
+See [docs/TESTING.md](docs/TESTING.md) for complete testing guide.
 
-Live integration tests require a running Splunk instance and extra dependencies (`testcontainers`).
-These tests are excluded by default via `pytest.ini` and must be run explicitly.
-
-#### Environment Variables
-
-```bash
-# Required for live tests
-export SPLUNK_TEST_URL="https://localhost:8089"
-export SPLUNK_TEST_USERNAME="admin"
-export SPLUNK_TEST_PASSWORD="your-password"
-```
-
-#### Running Tests
-
-```bash
-# Install extra dependencies for live tests
-pip install testcontainers docker
-
-# Run all integration tests for a skill (must specify path explicitly)
-pytest plugins/splunk-assistant-skills/skills/splunk-search/tests/live_integration/ -v
-
-# Run with specific markers
-pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -m "live" -v           # All live tests
-pytest plugins/splunk-assistant-skills/skills/*/tests/live_integration/ -m "not destructive" -v # Skip destructive tests
-
-# Run single test class
-pytest plugins/splunk-assistant-skills/skills/splunk-job/tests/live_integration/test_job_integration.py::TestJobLifecycle -v
-```
-
-### Docker-Based Testing
-
-Use the Splunk Docker container for local testing:
-
-```bash
-# Start Splunk container (note: both license flags are required as of 2024+)
-docker run -d --name splunk-dev \
-  -p 8089:8089 -p 8000:8000 -p 8088:8088 \
-  -e SPLUNK_START_ARGS="--accept-license" \
-  -e SPLUNK_GENERAL_TERMS="--accept-sgt-current-at-splunk-com" \
-  -e SPLUNK_PASSWORD="Admin123!" \
-  -e SPLUNK_LICENSE_URI="Free" \
-  splunk/splunk:latest
-
-# Wait for Splunk to be ready (about 2-3 minutes)
-docker logs -f splunk-dev
-
-# Set environment and run tests
-export SPLUNK_TEST_URL="https://localhost:8089"
-export SPLUNK_TEST_USERNAME="admin"
-export SPLUNK_TEST_PASSWORD="Admin123!"
-
-pytest plugins/splunk-assistant-skills/skills/splunk-metadata/tests/live_integration/ -v
-```
-
-#### Splunk Docker Gotchas
+## Common Issues
 
 | Issue | Solution |
 |-------|----------|
-| License not accepted error | Add both `SPLUNK_START_ARGS="--accept-license"` AND `SPLUNK_GENERAL_TERMS="--accept-sgt-current-at-splunk-com"` |
-| Image version not found | Use `splunk/splunk:latest` instead of specific versions like `9.1.0` |
-| Volume mount permission errors | Don't use `:ro` flag on app directories - Splunk needs to chown them |
-| Health check failures | Use `http://localhost:8000/en-US/account/login` instead of management API with auth |
-| Port conflicts | Common ports (8080, 6379, 3000, 4317/4318) are often in use - use alternatives like 18080, 16379, etc. |
+| Connection errors | Check `SPLUNK_SITE_URL` and port 8089 access |
+| Auth failures | Verify token/credentials |
+| Search quota | Cancel unused jobs |
+| Timeouts | Use async mode or increase timeout |
 
-### Test Markers
+See [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for detailed solutions.
 
-```python
-import pytest
+## Development
 
-@pytest.mark.live
-def test_requires_connection():
-    """Requires live Splunk connection."""
-    pass
+### Adding Scripts
 
-@pytest.mark.destructive
-def test_modifies_data():
-    """Creates/modifies/deletes Splunk objects."""
-    pass
+1. Create script in `{skill}/scripts/`
+2. Add tests in `{skill}/tests/`
+3. Update `SKILL.md`
 
-@pytest.mark.slow
-def test_takes_long():
-    """Long-running test (>30s)."""
-    pass
-```
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) for templates and guidelines.
 
-### CI/CD Integration
-
-The project includes GitHub Actions workflow (`.github/workflows/ci.yml`):
-
-- Runs unit tests on every push/PR
-- Live integration tests require Splunk credentials in GitHub Secrets
-- Use `-m "not destructive"` for CI environments
-
-### Known Test Limitations
-
-Some tests are marked `xfail` due to known limitations:
-
-| Test | Reason |
-|------|--------|
-| `test_export_endpoint_csv` | Export endpoint returns raw CSV, client expects JSON |
-| `test_export_endpoint_json` | Export returns streaming JSON lines, not single object |
-| `test_upload_and_get_lookup` | Lookup upload requires multipart form handling |
-
-### Test Framework Architecture
-
-The live integration test framework uses several patterns to ensure thread-safe, efficient testing:
-
-#### Singleton Pattern with Double-Checked Locking
-
-Docker containers and external connections use a thread-safe singleton pattern to support parallel test execution with `pytest-xdist`:
-
-```python
-# In splunk_container.py
-_shared_container = None
-_container_lock = threading.Lock()
-
-def get_splunk_connection():
-    global _shared_container
-    if _shared_container is None:
-        with _container_lock:
-            if _shared_container is None:  # Double-check inside lock
-                _shared_container = SplunkContainer()
-    return _shared_container
-```
-
-#### Reference Counting for Container Lifecycle
-
-`SplunkContainer` uses reference counting to share a single container across multiple test sessions:
-
-```python
-class SplunkContainer:
-    def start(self):
-        with self._lock:
-            self._ref_count += 1
-            if self._is_started:
-                return self  # Reuse existing container
-            # ... start container
-
-    def stop(self):
-        with self._lock:
-            self._ref_count -= 1
-            if self._ref_count > 0:
-                return  # Keep running for other sessions
-            # ... stop container
-```
-
-#### Dual-Phase Health Check
-
-Container startup uses a two-phase approach:
-1. Wait for "Ansible playbook complete" log message
-2. Verify management API responds at `/services/server/info`
-
-This handles variations across Splunk versions where log messages may differ.
-
-### Test Fixture Reference
-
-#### Unit Test Fixtures (Root conftest.py)
-
-| Fixture | Scope | Description |
-|---------|-------|-------------|
-| `mock_splunk_client` | function | Mock `SplunkClient` with common methods |
-| `mock_config` | function | Mock configuration dictionary |
-| `sample_job_response` | function | Sample search job API response |
-| `sample_search_results` | function | Sample search results list |
-| `sample_index_list` | function | Sample index metadata |
-| `temp_path` | function | Temporary file path (auto-cleanup) |
-| `temp_dir` | function | Temporary directory (auto-cleanup) |
-| `splunk_profile` | function | Splunk connection profile dict |
-
-#### Live Integration Fixtures (fixtures.py)
-
-| Fixture | Scope | Description |
-|---------|-------|-------------|
-| `splunk_connection` | session | Docker container or external connection |
-| `splunk_client` | session | Configured `SplunkClient` instance |
-| `splunk_info` | session | Server info dictionary |
-| `test_index` | session | Dedicated test index (auto-created/cleaned) |
-| `test_index_name` | session | Test index name string |
-| `test_data` | session | 350 synthetic events across 3 sourcetypes |
-| `fresh_test_data` | function | 10 isolated events per test |
-| `search_helper` | function | Simplified search interface |
-| `job_helper` | function | Job management with auto-cleanup |
-
-#### Fixture Scope Guidelines
-
-- **session**: Shared across all tests (fastest, less isolated)
-- **module**: Fresh per test file (moderate isolation)
-- **function**: Fresh per test (slowest, full isolation)
-
-Use `fresh_test_data` when tests modify data. Use `test_data` for read-only searches.
-
-### Test Data Generation
-
-The `test_utils.py` module provides utilities for generating synthetic test data:
-
-#### Generate Events with SPL
-
-```python
-from test_utils import generate_test_events, wait_for_indexing
-
-# Generate 100 events with random field values
-count = generate_test_events(
-    connection,
-    index="test_index",
-    count=100,
-    fields={
-        "sourcetype": "access_combined",
-        "host": ["web01", "web02", "web03"],  # Random selection
-        "status": [200, 200, 200, 404, 500],  # Weighted random
-    },
-)
-
-# Wait for indexing with exponential backoff
-wait_for_indexing(connection, "test_index", min_events=100, timeout=60)
-```
-
-#### EventBuilder Fluent API
-
-```python
-from test_utils import EventBuilder
-
-spl = (EventBuilder()
-    .with_count(100)
-    .with_index("test")
-    .with_sourcetype("metrics")
-    .with_field("host", ["server01", "server02"])
-    .with_field("metric", ["cpu", "mem", "disk"])
-    .with_timestamp_spread(3600)  # Spread over 1 hour
-    .build())
-```
-
-#### Assertion Helpers
-
-```python
-from test_utils import assert_search_returns_results, assert_search_returns_empty
-
-# Assert minimum results
-results = assert_search_returns_results(
-    connection,
-    "search index=test | head 10",
-    min_count=5,
-)
-
-# Assert no results
-assert_search_returns_empty(connection, "search index=test status=999")
-```
-
-#### Version-Specific Tests
-
-```python
-from test_utils import get_splunk_version, skip_if_version_below
-
-version = get_splunk_version(connection)  # Returns (9, 1, 0)
-skip_if_version_below(connection, (9, 0, 0), "Requires Splunk 9.0+")
-```
-
-### Pytest Configuration Details
-
-#### pythonpath Configuration
-
-`pytest.ini` includes the shared live integration directory in `pythonpath`:
-
-```ini
-pythonpath = . plugins/splunk-assistant-skills/skills/shared/tests/live_integration
-```
-
-This enables importing shared fixtures without relative imports:
-
-```python
-# In any skill's live_integration/conftest.py
-pytest_plugins = ["fixtures"]  # Imports from shared fixtures.py
-```
-
-#### Test Discovery
-
-```ini
-testpaths = plugins/splunk-assistant-skills/skills
-norecursedirs = live_integration .* __pycache__ node_modules
-```
-
-- Unit tests are discovered automatically
-- Live integration tests require explicit paths (excluded by `norecursedirs`)
-
-#### Import Mode
-
-```ini
-addopts = --import-mode=importlib
-```
-
-Uses `importlib` mode to avoid module name conflicts when multiple skills have `tests/` directories.
-
-#### Container Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SPLUNK_TEST_IMAGE` | `splunk/splunk:latest` | Docker image |
-| `SPLUNK_TEST_PASSWORD` | `testpassword123` | Admin password |
-| `SPLUNK_TEST_HEC_TOKEN` | `test-hec-token-12345` | HEC token |
-| `SPLUNK_TEST_STARTUP_TIMEOUT` | `300` | Max startup wait (seconds) |
-| `SPLUNK_TEST_HEALTH_INTERVAL` | `5` | Health check interval (seconds) |
-| `SPLUNK_TEST_MEM_LIMIT` | `4g` | Container memory limit |
-| `SPLUNK_TEST_URL` | (none) | External Splunk URL (skips Docker) |
-| `SPLUNK_TEST_TOKEN` | (none) | Bearer token for external |
-| `SPLUNK_TEST_USERNAME` | (none) | Username for external |
-| `SPLUNK_TEST_INDEX` | `splunk_skills_test` | Test index name |
-
-#### Auto-Skip Fixtures
-
-Tests are automatically skipped based on environment:
-
-```python
-@pytest.mark.docker_required
-def test_container_specific():
-    """Skipped if SPLUNK_TEST_URL is set (external Splunk)."""
-    pass
-
-@pytest.mark.external_splunk
-def test_external_only():
-    """Skipped if using Docker container."""
-    pass
-```
-
-## Adding New Scripts
-
-### Step-by-Step
-
-1. Create script in `{skill}/scripts/`:
-
-```python
-#!/usr/bin/env python3
-"""Brief description."""
-
-import argparse
-
-from splunk_assistant_skills_lib import (
-    get_splunk_client,
-    handle_errors,
-    print_success,
-    validate_spl,
-)
-
-@handle_errors
-def main(argv: list[str] | None = None):
-    parser = argparse.ArgumentParser(description='Script description')
-    args = parser.parse_args(argv)
-
-    client = get_splunk_client()
-    # Implementation
-    print_success("Operation completed")
-
-if __name__ == '__main__':
-    main()
-```
-
-**Note:** The `argv` parameter enables CLI integration and testability. Always use `parser.parse_args(argv)` instead of `parser.parse_args()`.
-
-2. Create test in `{skill}/tests/test_{script}.py`:
-
-```python
-import pytest
-from unittest.mock import Mock, patch
-
-def test_script_function():
-    # Test implementation
-    pass
-```
-
-3. Update `SKILL.md` with usage examples
-
-## Adding New Skills
-
-### Required Files
-
-```
-plugins/splunk-assistant-skills/skills/new-skill/
-├── SKILL.md           # Skill documentation
-├── scripts/           # Python scripts
-│   └── ...
-├── tests/             # Unit tests
-│   ├── conftest.py    # Skill-specific fixtures only (see note below)
-│   └── test_*.py
-├── tests/live_integration/  # Integration tests
-│   ├── conftest.py    # Live test fixtures
-│   └── test_*.py
-└── references/        # API docs, examples
-```
-
-**Note on conftest.py**: Common fixtures (`mock_splunk_client`, `mock_config`, `temp_path`, `temp_dir`, `sample_job_response`, `sample_search_results`) are provided by the root `conftest.py`. Skill-specific conftest files should only define fixtures unique to that skill. Do not add `__init__.py` files to test directories.
-
-### SKILL.md Template
-
-```markdown
-# splunk-new-skill
-
-Brief description.
-
-## Triggers
-
-Keywords that activate this skill.
-
-## Scripts
-
-- `script_name.py` - Description
-
-## Examples
-
-\`\`\`bash
-# CLI usage (recommended)
-splunk-as newskill command --option value
-
-# Direct script (alternative)
-python script_name.py --help
-\`\`\`
-
-## API Endpoints
-
-- `GET /services/endpoint` - Description
-```
-
-## Configuration Changes
-
-### Schema Validation
-
-Configuration follows `config.schema.json`. Key sections:
-
-```json
-{
-  "splunk": {
-    "api": {},           // API behavior
-    "search_defaults": {} // Search parameters
-  }
-}
-```
-
-### Adding New Settings
-
-1. Update `plugins/splunk-assistant-skills/skills/shared/config/config.schema.json`
-2. Update `.claude/settings.example.json`
-3. Update `config_manager.py` if needed
-4. Document in `CLAUDE.md`
-
-## Credentials Security
-
-### DO
-
-- Use environment variables for sensitive data
-- Store tokens in `.claude/settings.local.json` (gitignored)
-- Rotate tokens regularly
-
-### DON'T
-
-- Commit tokens or passwords to git
-- Log sensitive values
-- Share settings.local.json
-- Use Basic Auth in production (prefer Bearer)
-
-## Git Commit Guidelines
+### Git Commits
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -933,147 +146,4 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 feat(skill): add new capability
 fix(client): handle timeout errors
 docs: update configuration guide
-test(search): add integration tests
-refactor(validators): simplify logic
-chore: update dependencies
-```
-
-Types:
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation
-- `test`: Tests
-- `refactor`: Code refactoring
-- `perf`: Performance
-- `chore`: Maintenance
-
-## Common Issues
-
-### Connection Errors
-
-```
-ConnectionError: Failed to connect to splunk.example.com:8089
-```
-
-Solutions:
-- Verify URL and port in configuration
-- Check network/firewall access
-- Ensure Splunk management port is accessible
-
-### Authentication Failures
-
-```
-AuthenticationError: 401 Unauthorized
-```
-
-Solutions:
-- Verify token is valid and not expired
-- Check username/password for Basic Auth
-- Ensure proper permissions/capabilities
-
-### Search Quota Exceeded
-
-```
-SearchQuotaError: No available search slots
-```
-
-Solutions:
-- Cancel unused search jobs
-- Wait for running searches to complete
-- Increase search quota in Splunk
-
-### Timeout Errors
-
-```
-TimeoutError: Request timed out after 30 seconds
-```
-
-Solutions:
-- Increase timeout for long searches
-- Use async mode with polling
-- Optimize SPL query
-
-## E2E Tests
-
-End-to-end tests validate the plugin with the Claude Code CLI.
-
-```bash
-# Requires ANTHROPIC_API_KEY or OAuth authentication
-./scripts/run-e2e-tests.sh           # Docker
-./scripts/run-e2e-tests.sh --local   # Local
-./scripts/run-e2e-tests.sh --verbose # Verbose
-```
-
-See [tests/e2e/README.md](tests/e2e/README.md) for details.
-
-## Splunk Demo Environment
-
-A companion demo project (`splunk-demo`) provides a fully-configured Splunk environment for testing and demonstrations.
-
-### Location
-
-The demo is in a separate repository: `/Users/jasonkrueger/IdeaProjects/splunk-demo/`
-
-### Quick Start
-
-```bash
-cd /path/to/splunk-demo
-make dev   # Start in development mode
-```
-
-### Access Points (Development Mode)
-
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| Splunk Web | http://localhost:8000 | admin / DemoPass123! |
-| Landing Page | http://localhost:18080 | Invite token |
-| Grafana | http://localhost:13000 | admin / admin |
-| Webhooks | http://localhost:8081 | - |
-
-### Demo Data
-
-The demo seeds 7 days of historical data across 5 indexes:
-
-| Index | Purpose | Sourcetypes |
-|-------|---------|-------------|
-| `demo_devops` | CI/CD, containers | cicd:pipeline, container:docker, deploy:events |
-| `demo_sre` | Errors, latency | app:errors, metrics:latency, health:checks |
-| `demo_support` | Sessions, tickets | session:trace, error:user, feature:usage |
-| `demo_business` | KPIs, compliance | kpi:revenue, compliance:audit, capacity:metrics |
-| `demo_main` | General logs | app:logs |
-
-### Sample Queries
-
-```spl
-# DevOps: Failed pipelines
-index=demo_devops sourcetype=cicd:pipeline status=failure
-| stats count by repository | sort -count
-
-# SRE: P99 latency by endpoint
-index=demo_sre sourcetype=metrics:latency
-| stats perc99(duration_ms) as p99 by endpoint
-| where p99 > 500
-
-# Support: Customer session trace
-index=demo_support sourcetype=session:trace user_id="cust_456"
-| sort _time | table _time page action duration_ms
-
-# Business: Daily revenue by region
-index=demo_business sourcetype=kpi:revenue
-| timechart span=1d sum(value) as revenue by region
-```
-
-### Architecture
-
-```
-splunk-demo/
-├── docker-compose.yml      # Main orchestration
-├── docker-compose.dev.yml  # Development overrides (different ports)
-├── Makefile                # Build/run commands
-├── demo-container/         # Interactive Claude terminal
-├── log-generator/          # Real-time event generation
-├── seed-data/              # Historical data seeder
-├── queue-manager/          # Session management
-├── splunk/apps/demo_app/   # Splunk indexes, inputs, saved searches
-└── observability/          # LGTM stack (Grafana, Loki, Tempo, Mimir)
 ```
