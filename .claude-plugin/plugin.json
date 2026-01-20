@@ -18,8 +18,5 @@
     "devops",
     "natural-language",
     "observability"
-  ],
-  "commands": [
-    "./commands/*.md"
   ]
 }
