@@ -242,3 +242,108 @@ index=_internal component=ConfReplicationThread
 5. **Use dry-run** - Preview operations when available
 6. **Off-peak timing** - Schedule destructive operations during low-usage periods
 7. **Have rollback plan** - Know how to recover before you execute
+
+---
+
+<!-- PERMISSIONS
+permissions:
+  cli: splunk-as
+  operations:
+    # Safe - Read-only operations
+    - pattern: "splunk-as search oneshot *"
+      risk: safe
+    - pattern: "splunk-as search validate *"
+      risk: safe
+    - pattern: "splunk-as job list *"
+      risk: safe
+    - pattern: "splunk-as job status *"
+      risk: safe
+    - pattern: "splunk-as job results *"
+      risk: safe
+    - pattern: "splunk-as metadata indexes *"
+      risk: safe
+    - pattern: "splunk-as metadata sources *"
+      risk: safe
+    - pattern: "splunk-as metadata sourcetypes *"
+      risk: safe
+    - pattern: "splunk-as savedsearch list *"
+      risk: safe
+    - pattern: "splunk-as savedsearch get *"
+      risk: safe
+    - pattern: "splunk-as lookup list *"
+      risk: safe
+    - pattern: "splunk-as lookup download *"
+      risk: safe
+    - pattern: "splunk-as app list *"
+      risk: safe
+    - pattern: "splunk-as app info *"
+      risk: safe
+    - pattern: "splunk-as security list *"
+      risk: safe
+    - pattern: "splunk-as metrics *"
+      risk: safe
+    - pattern: "splunk-as alert list *"
+      risk: safe
+    - pattern: "splunk-as kvstore list *"
+      risk: safe
+    - pattern: "splunk-as kvstore get *"
+      risk: safe
+    - pattern: "splunk-as export *"
+      risk: safe
+
+    # Caution - Modifiable but easily reversible
+    - pattern: "splunk-as job create *"
+      risk: caution
+    - pattern: "splunk-as job finalize *"
+      risk: caution
+    - pattern: "splunk-as job cancel *"
+      risk: caution
+    - pattern: "splunk-as job touch *"
+      risk: caution
+    - pattern: "splunk-as savedsearch create *"
+      risk: caution
+    - pattern: "splunk-as savedsearch update *"
+      risk: caution
+    - pattern: "splunk-as savedsearch enable *"
+      risk: caution
+    - pattern: "splunk-as savedsearch disable *"
+      risk: caution
+    - pattern: "splunk-as lookup upload *"
+      risk: caution
+    - pattern: "splunk-as tag *"
+      risk: caution
+    - pattern: "splunk-as app install *"
+      risk: caution
+    - pattern: "splunk-as app enable *"
+      risk: caution
+    - pattern: "splunk-as app disable *"
+      risk: caution
+    - pattern: "splunk-as security create *"
+      risk: caution
+    - pattern: "splunk-as alert acknowledge *"
+      risk: caution
+    - pattern: "splunk-as kvstore insert *"
+      risk: caution
+    - pattern: "splunk-as kvstore update *"
+      risk: caution
+
+    # Warning - Destructive but potentially recoverable
+    - pattern: "splunk-as job delete *"
+      risk: warning
+    - pattern: "splunk-as savedsearch delete *"
+      risk: warning
+    - pattern: "splunk-as lookup delete *"
+      risk: warning
+    - pattern: "splunk-as security delete *"
+      risk: warning
+    - pattern: "splunk-as alert delete *"
+      risk: warning
+    - pattern: "splunk-as kvstore delete *"
+      risk: warning
+
+    # Danger - IRREVERSIBLE operations
+    - pattern: "splunk-as app uninstall *"
+      risk: danger
+    - pattern: "splunk-as kvstore drop *"
+      risk: danger
+-->
