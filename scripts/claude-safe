@@ -1,0 +1,529 @@
+#!/usr/bin/env bash
+#
+# claude-safe - Risk-based permission enforcement wrapper for Claude CLI
+#
+# Wraps the Claude CLI with risk-based permission enforcement by parsing
+# YAML permission blocks from plugin SAFEGUARDS.md files and generating
+# temporary settings.json with allow/deny rules based on risk threshold.
+#
+# Usage: claude-safe [OPTIONS] [-- CLAUDE_ARGS...]
+#
+# Options:
+#   -d, --discover        Auto-discover installed plugins from ~/.claude/plugins/cache/
+#   -l, --level LEVEL     Risk level: safe|caution|warning|danger (default: safe)
+#   -p, --plugins DIRS    Colon-separated plugin directories
+#   -n, --dry-run         Preview permissions without running claude
+#   -v, --verbose         Debug output
+#   -h, --help            Show this help message
+#
+# Environment:
+#   CLAUDE_SAFE_LEVEL     Default risk level (overridden by -l)
+#   CLAUDE_SAFE_PLUGINS   Default plugin directories (overridden by -p)
+#   CLAUDE_HOME           Claude config directory (default: ~/.claude)
+#
+# Permission Block Format (in SAFEGUARDS.md):
+#   <!-- PERMISSIONS
+#   permissions:
+#     cli: <cli-name>
+#     operations:
+#       - pattern: "<cli> <command> *"
+#         risk: safe|caution|warning|danger
+#   -->
+#
+# Dependencies: bash 4.0+, yq, jq
+
+set -euo pipefail
+
+# -----------------------------------------------------------------------------
+# Constants
+# -----------------------------------------------------------------------------
+
+readonly VERSION="1.0.0"
+readonly SCRIPT_NAME="$(basename "$0")"
+
+# Risk levels (cumulative)
+declare -A RISK_VALUES=(
+    [safe]=0
+    [caution]=1
+    [warning]=2
+    [danger]=3
+)
+
+# SAFEGUARDS.md search order
+readonly -a SAFEGUARDS_PATHS=(
+    "skills/shared/docs/SAFEGUARDS.md"
+    "docs/SAFEGUARDS.md"
+    ".claude/SAFEGUARDS.md"
+    "SAFEGUARDS.md"
+)
+
+# -----------------------------------------------------------------------------
+# Global Variables
+# -----------------------------------------------------------------------------
+
+DISCOVER=false
+LEVEL="${CLAUDE_SAFE_LEVEL:-safe}"
+PLUGINS="${CLAUDE_SAFE_PLUGINS:-}"
+DRY_RUN=false
+VERBOSE=false
+CLAUDE_ARGS=()
+
+# Collected permissions
+declare -a ALLOW_PATTERNS=()
+declare -a DENY_PATTERNS=()
+
+# -----------------------------------------------------------------------------
+# Logging Functions
+# -----------------------------------------------------------------------------
+
+log_info() {
+    echo "[INFO] $*" >&2
+}
+
+log_verbose() {
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo "[DEBUG] $*" >&2
+    fi
+}
+
+log_error() {
+    echo "[ERROR] $*" >&2
+}
+
+log_warn() {
+    echo "[WARN] $*" >&2
+}
+
+# -----------------------------------------------------------------------------
+# Help
+# -----------------------------------------------------------------------------
+
+show_help() {
+    cat << EOF
+$SCRIPT_NAME v$VERSION - Risk-based permission enforcement wrapper for Claude CLI
+
+USAGE:
+    $SCRIPT_NAME [OPTIONS] [-- CLAUDE_ARGS...]
+
+OPTIONS:
+    -d, --discover        Auto-discover installed plugins from ~/.claude/plugins/cache/
+    -l, --level LEVEL     Risk level: safe|caution|warning|danger (default: safe)
+    -p, --plugins DIRS    Colon-separated plugin directories
+    -n, --dry-run         Preview permissions without running claude
+    -v, --verbose         Debug output
+    -h, --help            Show this help message
+
+ENVIRONMENT:
+    CLAUDE_SAFE_LEVEL     Default risk level (overridden by -l)
+    CLAUDE_SAFE_PLUGINS   Default plugin directories (overridden by -p)
+    CLAUDE_HOME           Claude config directory (default: ~/.claude)
+
+RISK LEVELS (cumulative):
+    safe     (0)  Read-only operations, no data modification
+    caution  (1)  Modifiable but easily reversible
+    warning  (2)  Destructive but potentially recoverable
+    danger   (3)  IRREVERSIBLE data loss
+
+EXAMPLES:
+    # Auto-discover plugins, use safe level (default)
+    $SCRIPT_NAME -d
+
+    # Use caution level with specific plugins
+    $SCRIPT_NAME -l caution -p "/path/to/plugin1:/path/to/plugin2"
+
+    # Preview permissions without running claude
+    $SCRIPT_NAME -d -n -v
+
+    # Pass arguments to claude
+    $SCRIPT_NAME -d -l warning -- --model sonnet
+
+PERMISSION BLOCK FORMAT (in SAFEGUARDS.md):
+    <!-- PERMISSIONS
+    permissions:
+      cli: splunk-as
+      operations:
+        - pattern: "splunk-as search *"
+          risk: safe
+        - pattern: "splunk-as job cancel *"
+          risk: caution
+    -->
+
+DEPENDENCIES:
+    bash 4.0+, yq, jq
+
+EOF
+}
+
+# -----------------------------------------------------------------------------
+# Dependency Checks
+# -----------------------------------------------------------------------------
+
+check_dependencies() {
+    local missing=()
+
+    if ! command -v yq &>/dev/null; then
+        missing+=("yq")
+    fi
+
+    if ! command -v jq &>/dev/null; then
+        missing+=("jq")
+    fi
+
+    # Check bash version
+    if [[ "${BASH_VERSINFO[0]}" -lt 4 ]]; then
+        log_error "bash 4.0+ required (found: ${BASH_VERSION})"
+        exit 1
+    fi
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        log_error "Missing required dependencies: ${missing[*]}"
+        log_error "Install with: brew install ${missing[*]}"
+        exit 1
+    fi
+
+    log_verbose "All dependencies satisfied"
+}
+
+# -----------------------------------------------------------------------------
+# Plugin Discovery
+# -----------------------------------------------------------------------------
+
+discover_plugins() {
+    local claude_home="${CLAUDE_HOME:-$HOME/.claude}"
+    local cache_dir="$claude_home/plugins/cache"
+    local discovered=()
+
+    if [[ ! -d "$cache_dir" ]]; then
+        log_warn "Plugin cache directory not found: $cache_dir"
+        return
+    fi
+
+    log_verbose "Scanning plugin cache: $cache_dir"
+
+    # Find all directories that might be plugins
+    # Standard: cache/{marketplace}/{plugin}/{version}/
+    # Temp: cache/temp_*/
+
+    while IFS= read -r -d '' dir; do
+        # Check if this directory has any SAFEGUARDS.md in expected locations
+        for safeguard_path in "${SAFEGUARDS_PATHS[@]}"; do
+            if [[ -f "$dir/$safeguard_path" ]]; then
+                discovered+=("$dir")
+                log_verbose "Discovered plugin: $dir (found $safeguard_path)"
+                break
+            fi
+        done
+    done < <(find "$cache_dir" -mindepth 1 -maxdepth 4 -type d -print0 2>/dev/null)
+
+    # Also check temp directories
+    while IFS= read -r -d '' dir; do
+        for safeguard_path in "${SAFEGUARDS_PATHS[@]}"; do
+            if [[ -f "$dir/$safeguard_path" ]]; then
+                # Avoid duplicates
+                local already_found=false
+                for d in "${discovered[@]:-}"; do
+                    if [[ "$d" == "$dir" ]]; then
+                        already_found=true
+                        break
+                    fi
+                done
+                if [[ "$already_found" == "false" ]]; then
+                    discovered+=("$dir")
+                    log_verbose "Discovered temp plugin: $dir"
+                fi
+                break
+            fi
+        done
+    done < <(find "$cache_dir" -maxdepth 1 -type d -name "temp_*" -print0 2>/dev/null)
+
+    if [[ ${#discovered[@]} -eq 0 ]]; then
+        log_warn "No plugins with SAFEGUARDS.md found in $cache_dir"
+        return
+    fi
+
+    # Convert to colon-separated string
+    local IFS=':'
+    echo "${discovered[*]}"
+}
+
+# -----------------------------------------------------------------------------
+# Permission Parsing
+# -----------------------------------------------------------------------------
+
+find_safeguards_file() {
+    local plugin_dir="$1"
+
+    for path in "${SAFEGUARDS_PATHS[@]}"; do
+        local full_path="$plugin_dir/$path"
+        if [[ -f "$full_path" ]]; then
+            echo "$full_path"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+extract_permission_block() {
+    local file="$1"
+
+    # Extract content between <!-- PERMISSIONS and -->
+    # Preserve YAML structure by not stripping indentation
+    sed -n '/<!-- PERMISSIONS/,/-->/p' "$file" 2>/dev/null | \
+        grep -v '<!-- PERMISSIONS' | \
+        grep -v -- '-->'
+}
+
+parse_permissions() {
+    local plugin_dir="$1"
+    local threshold="${RISK_VALUES[$LEVEL]}"
+
+    local safeguards_file
+    if ! safeguards_file=$(find_safeguards_file "$plugin_dir"); then
+        log_verbose "No SAFEGUARDS.md found in: $plugin_dir"
+        return
+    fi
+
+    log_verbose "Parsing permissions from: $safeguards_file"
+
+    local yaml_content
+    yaml_content=$(extract_permission_block "$safeguards_file")
+
+    if [[ -z "$yaml_content" ]]; then
+        log_verbose "No PERMISSIONS block found in: $safeguards_file"
+        return
+    fi
+
+    # Parse YAML using yq
+    local cli_name operations_json
+    cli_name=$(echo "$yaml_content" | yq -r '.permissions.cli // ""')
+    operations_json=$(echo "$yaml_content" | yq -o=json '.permissions.operations // []')
+
+    if [[ -z "$cli_name" || "$operations_json" == "[]" ]]; then
+        log_verbose "No valid permissions found in: $safeguards_file"
+        return
+    fi
+
+    log_verbose "Found CLI: $cli_name"
+
+    # Process each operation
+    local num_ops
+    num_ops=$(echo "$operations_json" | jq 'length')
+
+    for ((i = 0; i < num_ops; i++)); do
+        local pattern risk risk_value
+        pattern=$(echo "$operations_json" | jq -r ".[$i].pattern")
+        risk=$(echo "$operations_json" | jq -r ".[$i].risk")
+
+        # Get risk value, default to danger if unknown
+        risk_value="${RISK_VALUES[$risk]:-3}"
+
+        # Convert pattern to Bash() format
+        # "splunk-as search *" → "Bash(splunk-as search:*)"
+        local bash_pattern
+        bash_pattern=$(convert_pattern_to_bash "$pattern")
+
+        log_verbose "  Pattern: $pattern → $bash_pattern (risk: $risk=$risk_value, threshold: $threshold)"
+
+        if [[ "$risk_value" -le "$threshold" ]]; then
+            ALLOW_PATTERNS+=("$bash_pattern")
+        else
+            DENY_PATTERNS+=("$bash_pattern")
+        fi
+    done
+}
+
+convert_pattern_to_bash() {
+    local pattern="$1"
+
+    # Extract CLI and rest of command
+    # "splunk-as search *" → "Bash(splunk-as search:*)"
+    # "glab mr list *" → "Bash(glab mr list:*)"
+
+    local cli rest
+    cli=$(echo "$pattern" | cut -d' ' -f1)
+    rest=$(echo "$pattern" | cut -d' ' -f2-)
+
+    # Replace first space with colon, keep the rest
+    # If the rest is just "*", use "*"
+    if [[ "$rest" == "*" ]]; then
+        echo "Bash($cli:*)"
+    else
+        # Replace spaces with spaces in the pattern (keep as-is for matching)
+        echo "Bash($cli $rest)"
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Settings Generation
+# -----------------------------------------------------------------------------
+
+generate_settings() {
+    local settings_file="$1"
+
+    # Build permissions object
+    local allow_json deny_json
+
+    if [[ ${#ALLOW_PATTERNS[@]} -gt 0 ]]; then
+        allow_json=$(printf '%s\n' "${ALLOW_PATTERNS[@]}" | jq -R -s 'split("\n") | map(select(length > 0))')
+    else
+        allow_json="[]"
+    fi
+
+    if [[ ${#DENY_PATTERNS[@]} -gt 0 ]]; then
+        deny_json=$(printf '%s\n' "${DENY_PATTERNS[@]}" | jq -R -s 'split("\n") | map(select(length > 0))')
+    else
+        deny_json="[]"
+    fi
+
+    # Create settings.json structure
+    jq -n \
+        --argjson allow "$allow_json" \
+        --argjson deny "$deny_json" \
+        '{
+            "permissions": {
+                "allow": $allow,
+                "deny": $deny
+            }
+        }' > "$settings_file"
+
+    log_verbose "Generated settings at: $settings_file"
+}
+
+# -----------------------------------------------------------------------------
+# Main Logic
+# -----------------------------------------------------------------------------
+
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -d|--discover)
+                DISCOVER=true
+                shift
+                ;;
+            -l|--level)
+                LEVEL="$2"
+                if [[ ! -v "RISK_VALUES[$LEVEL]" ]]; then
+                    log_error "Invalid risk level: $LEVEL"
+                    log_error "Valid levels: safe, caution, warning, danger"
+                    exit 1
+                fi
+                shift 2
+                ;;
+            -p|--plugins)
+                PLUGINS="$2"
+                shift 2
+                ;;
+            -n|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            --)
+                shift
+                CLAUDE_ARGS=("$@")
+                break
+                ;;
+            -*)
+                log_error "Unknown option: $1"
+                show_help
+                exit 1
+                ;;
+            *)
+                # Treat as start of claude args
+                CLAUDE_ARGS=("$@")
+                break
+                ;;
+        esac
+    done
+}
+
+main() {
+    parse_args "$@"
+    check_dependencies
+
+    log_verbose "Risk level: $LEVEL (threshold: ${RISK_VALUES[$LEVEL]})"
+
+    # Discover or use provided plugins
+    if [[ "$DISCOVER" == "true" ]]; then
+        local discovered
+        discovered=$(discover_plugins)
+        if [[ -n "$discovered" ]]; then
+            if [[ -n "$PLUGINS" ]]; then
+                PLUGINS="$PLUGINS:$discovered"
+            else
+                PLUGINS="$discovered"
+            fi
+        fi
+    fi
+
+    if [[ -z "$PLUGINS" ]]; then
+        log_warn "No plugins specified. Use -d to discover or -p to specify plugin directories."
+        log_info "Running claude without permission filtering."
+        if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY-RUN] Would execute: claude ${CLAUDE_ARGS[*]:-}"
+            exit 0
+        fi
+        exec claude "${CLAUDE_ARGS[@]:-}"
+    fi
+
+    # Parse permissions from each plugin
+    log_verbose "Processing plugins..."
+    IFS=':' read -ra plugin_dirs <<< "$PLUGINS"
+    for plugin_dir in "${plugin_dirs[@]}"; do
+        if [[ -d "$plugin_dir" ]]; then
+            parse_permissions "$plugin_dir"
+        else
+            log_warn "Plugin directory not found: $plugin_dir"
+        fi
+    done
+
+    log_info "Collected ${#ALLOW_PATTERNS[@]} allow patterns, ${#DENY_PATTERNS[@]} deny patterns"
+
+    # Generate temporary settings file
+    local temp_settings
+    # Create temp file for settings (no .json extension needed as claude reads it)
+    temp_settings=$(mktemp)
+    trap "rm -f '$temp_settings'" EXIT
+
+    generate_settings "$temp_settings"
+
+    # Display in dry-run or verbose mode
+    if [[ "$DRY_RUN" == "true" || "$VERBOSE" == "true" ]]; then
+        log_info "Generated settings:"
+        cat "$temp_settings" >&2
+        echo "" >&2
+    fi
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[DRY-RUN] Would execute: claude ${CLAUDE_ARGS[*]:-}"
+        log_info "[DRY-RUN] With settings file: $temp_settings"
+
+        log_info ""
+        log_info "=== ALLOW PATTERNS (risk <= $LEVEL) ==="
+        for p in "${ALLOW_PATTERNS[@]:-}"; do
+            echo "  + $p" >&2
+        done
+
+        log_info ""
+        log_info "=== DENY PATTERNS (risk > $LEVEL) ==="
+        for p in "${DENY_PATTERNS[@]:-}"; do
+            echo "  - $p" >&2
+        done
+
+        exit 0
+    fi
+
+    # Execute claude with the generated settings
+    log_info "Executing claude with risk level: $LEVEL"
+    exec claude --settings "$temp_settings" "${CLAUDE_ARGS[@]:-}"
+}
+
+main "$@"
