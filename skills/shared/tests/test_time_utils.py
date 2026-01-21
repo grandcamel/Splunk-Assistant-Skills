@@ -4,7 +4,7 @@
 from datetime import datetime
 
 import pytest
-from splunk_assistant_skills_lib import (
+from splunk_as import (
     format_splunk_time,
     get_relative_time,
     get_time_range_presets,

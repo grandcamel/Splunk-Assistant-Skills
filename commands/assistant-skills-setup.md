@@ -27,7 +27,7 @@ python3 -m venv ~/.assistant-skills-venv
 Activate the venv and install the required packages:
 
 ```bash
-source ~/.assistant-skills-venv/bin/activate && pip install --upgrade pip && pip install splunk-assistant-skills-lib
+source ~/.assistant-skills-venv/bin/activate && pip install --upgrade pip && pip install splunk-as
 ```
 
 ### Step 3: Configure Splunk Credentials
@@ -79,7 +79,7 @@ EOF
 Test that the setup is complete:
 
 ```bash
-source ~/.assistant-skills-venv/bin/activate && python -c "from splunk_assistant_skills_lib import get_splunk_client; print('Library installed successfully')"
+source ~/.assistant-skills-venv/bin/activate && python -c "from splunk_as import get_splunk_client; print('Library installed successfully')"
 ```
 
 ## Important Notes

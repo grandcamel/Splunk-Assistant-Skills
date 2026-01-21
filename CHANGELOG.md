@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `splunk-as` command-line interface using Click framework
 - 13 command groups: search, job, export, metadata, lookup, kvstore, savedsearch, alert, app, security, admin, tag, metrics
 - Global options: `--output`, `--verbose`, `--quiet`
-- Install via `pip install splunk-assistant-skills-lib`
+- Install via `pip install splunk-as`
 
 #### Script Refactoring
 - All 83 scripts now use `main(argv: list[str] | None = None)` pattern

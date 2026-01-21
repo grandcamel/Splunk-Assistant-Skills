@@ -34,7 +34,7 @@ classifiers = [
     "Topic :: System :: Systems Administration",
 ]
 dependencies = [
-    "splunk-assistant-skills-lib>=1.0.0",
+    "splunk-as>=1.0.0",
 ]
 
 [project.optional-dependencies]

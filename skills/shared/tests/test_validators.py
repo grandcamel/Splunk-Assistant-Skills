@@ -2,7 +2,7 @@
 """Unit tests for validators module."""
 
 import pytest
-from splunk_assistant_skills_lib import (
+from splunk_as import (
     validate_app_name,
     validate_index_name,
     validate_output_mode,
@@ -12,7 +12,7 @@ from splunk_assistant_skills_lib import (
     validate_time_modifier,
     validate_url,
 )
-from splunk_assistant_skills_lib.validators import ValidationError
+from splunk_as.validators import ValidationError
 
 
 class TestValidateSid:

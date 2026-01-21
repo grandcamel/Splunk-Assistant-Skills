@@ -9,7 +9,7 @@ This document outlines patterns discovered across three Assistant-Skills project
 |---------|--------|-------|---------|
 | Jira-Assistant-Skills | 14 | 952 unit + live | `jira-assistant-skills-lib` |
 | Confluence-Assistant-Skills | 14 | comprehensive | `confluence-assistant-skills-lib` |
-| Splunk-Assistant-Skills | 14 | 73 unit + live | `splunk-assistant-skills-lib` |
+| Splunk-Assistant-Skills | 14 | 73 unit + live | `splunk-as` |
 
 **Key Insight:** Jira and Confluence projects share a common base library (`assistant-skills-lib>=0.3.0`) that provides core functionality. Splunk does not yet use this base library.
 
@@ -39,7 +39,7 @@ This document outlines patterns discovered across three Assistant-Skills project
 **Current State:**
 - Jira: `jira-assistant-skills-lib` depends on `assistant-skills-lib>=0.3.0`
 - Confluence: `confluence-assistant-skills-lib` depends on `assistant-skills-lib>=0.2.1`
-- Splunk: `splunk-assistant-skills-lib>=0.2.2` (standalone, no base dependency)
+- Splunk: `splunk-as>=0.2.2` (standalone, no base dependency)
 
 **Opportunity:** Splunk should adopt `assistant-skills-lib` as base to gain:
 - Shared validators (email, URL, file path)
@@ -149,7 +149,7 @@ class CacheManager:
 
 ### Phase 1: Base Library Adoption (Splunk)
 
-**Goal:** Integrate `assistant-skills-lib` into `splunk-assistant-skills-lib`
+**Goal:** Integrate `assistant-skills-lib` into `splunk-as`
 
 **Tasks:**
 1. Add `assistant-skills-lib>=0.3.0` to `pyproject.toml` dependencies
@@ -160,9 +160,9 @@ class CacheManager:
 
 **Files to Modify:**
 ```
-splunk-assistant-skills-lib/
+splunk-as/
 ├── pyproject.toml                    # Add dependency
-├── src/splunk_assistant_skills_lib/
+├── src/splunk_as/
 │   ├── __init__.py                   # Update exports
 │   ├── error_handler.py              # Inherit from base
 │   ├── config_manager.py             # Extend BaseConfigManager
@@ -188,8 +188,8 @@ splunk-assistant-skills-lib/
 
 **New Files:**
 ```
-splunk-assistant-skills-lib/
-└── src/splunk_assistant_skills_lib/
+splunk-as/
+└── src/splunk_as/
     └── mock/
         ├── __init__.py
         ├── base.py                   # MockSplunkClientBase
@@ -295,7 +295,7 @@ tests/
 
 **New Files:**
 ```
-src/splunk_assistant_skills_lib/
+src/splunk_as/
 ├── splunk_context.py             # Context caching
 └── cache.py                      # SQLite-based cache (if not in base lib)
 ```
@@ -455,7 +455,7 @@ risk-level: "read-only|reversible|destructive"
 
 ### Phase 1: Base Library Adoption - ALREADY COMPLETE (Verified 2026-01-19)
 
-The `splunk-assistant-skills-lib` already properly inherits from `assistant-skills-lib`:
+The `splunk-as` already properly inherits from `assistant-skills-lib`:
 
 | Component | Status | Implementation |
 |-----------|--------|----------------|
@@ -490,11 +490,11 @@ Split CLAUDE.md into focused documentation files in `docs/`:
 
 ### Phase 2: Mock Client System - COMPLETE (2026-01-19)
 
-Comprehensive mock client system implemented in `splunk-assistant-skills-lib`:
+Comprehensive mock client system implemented in `splunk-as`:
 
 **New Files:**
 ```
-src/splunk_assistant_skills_lib/mock/
+src/splunk_as/mock/
 ├── __init__.py           # Enhanced exports
 ├── base.py               # MockSplunkClientBase (existing)
 ├── client.py             # Composed clients (enhanced)
@@ -536,7 +536,7 @@ src/splunk_assistant_skills_lib/mock/
 
 **Activation:** `SPLUNK_MOCK_MODE=true` environment variable
 
-**Commit:** `6f6d496` in splunk-assistant-skills-lib
+**Commit:** `6f6d496` in splunk-as
 
 ### Phase 4: Test Coverage Expansion - COMPLETE (2026-01-19)
 
@@ -577,7 +577,7 @@ Expanded test coverage from 46% to 73% with 651 tests:
 | `mock/mixins/*` | 0% | 86-97% |
 | `mock/protocols.py` | 0% | 100% |
 
-**Commit:** `132cc8b` in splunk-assistant-skills-lib
+**Commit:** `132cc8b` in splunk-as
 
 ### Stale File Cleanup (2026-01-18)
 

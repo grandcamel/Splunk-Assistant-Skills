@@ -60,7 +60,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for full structure.
 /assistant-skills-setup
 
 # Or manual installation
-pip install splunk-assistant-skills-lib
+pip install splunk-as
 ```
 
 ### Configuration
@@ -92,10 +92,10 @@ See [docs/CLI_REFERENCE.md](docs/CLI_REFERENCE.md) for all commands.
 
 ## Shared Library
 
-All scripts import from [splunk-assistant-skills-lib](https://pypi.org/project/splunk-assistant-skills-lib/):
+All scripts import from [splunk-as](https://pypi.org/project/splunk-as/):
 
 ```python
-from splunk_assistant_skills_lib import (
+from splunk_as import (
     get_splunk_client,
     handle_errors,
     print_success,

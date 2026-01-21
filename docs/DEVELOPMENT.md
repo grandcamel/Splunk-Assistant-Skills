@@ -14,7 +14,7 @@ This document covers how to add new scripts and skills to Splunk Assistant Skill
 
 import argparse
 
-from splunk_assistant_skills_lib import (
+from splunk_as import (
     get_splunk_client,
     handle_errors,
     print_success,
@@ -154,7 +154,7 @@ import json
 import requests
 
 # Local
-from splunk_assistant_skills_lib import get_splunk_client
+from splunk_as import get_splunk_client
 ```
 
 ### Error Handling
@@ -162,7 +162,7 @@ from splunk_assistant_skills_lib import get_splunk_client
 Always use the `@handle_errors` decorator for main functions:
 
 ```python
-from splunk_assistant_skills_lib import handle_errors
+from splunk_as import handle_errors
 
 @handle_errors
 def main():
@@ -198,7 +198,7 @@ pytest skills/*/tests/ -v
 pytest skills/splunk-search/tests/ -v
 
 # With coverage
-pytest --cov=splunk_assistant_skills_lib --cov-report=html
+pytest --cov=splunk_as --cov-report=html
 ```
 
 See [TESTING.md](TESTING.md) for detailed testing documentation.

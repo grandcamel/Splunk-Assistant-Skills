@@ -29,7 +29,7 @@
   <img src="https://img.shields.io/badge/tests-348%20passing%2C%207%20xfail-brightgreen?logo=pytest" alt="Tests">
   <img src="https://img.shields.io/badge/python-3.8+-3776AB?logo=python&logoColor=white" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/skills-14-FF6900" alt="Skills">
-  <a href="https://pypi.org/project/splunk-assistant-skills-lib/"><img src="https://img.shields.io/pypi/v/splunk-assistant-skills-lib?color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
+  <a href="https://pypi.org/project/splunk-as/"><img src="https://img.shields.io/pypi/v/splunk-as?color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
   <img src="https://img.shields.io/github/stars/grandcamel/Splunk-Assistant-Skills?style=social" alt="GitHub Stars">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License">
 </p>
@@ -151,7 +151,7 @@ export SPLUNK_SITE_URL="https://splunk.example.com"
 
 ```bash
 # Install the splunk-as CLI
-pip install splunk-assistant-skills-lib
+pip install splunk-as
 
 # Verify installation
 splunk-as --version

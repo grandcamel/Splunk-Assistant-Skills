@@ -2,7 +2,7 @@
 """Unit tests for spl_helper module."""
 
 import pytest
-from splunk_assistant_skills_lib import (
+from splunk_as import (
     add_field_extraction,
     add_head_limit,
     add_time_bounds,

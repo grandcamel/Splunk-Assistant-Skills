@@ -238,7 +238,7 @@ class SplunkContainer(DockerContainer):
         Returns:
             SplunkClient: Client configured for this container
         """
-        from splunk_assistant_skills_lib import SplunkClient
+        from splunk_as import SplunkClient
 
         # Parse host and port from management URL using urlparse for IPv6 support
         url = self.get_management_url()
@@ -376,7 +376,7 @@ class ExternalSplunkConnection:
 
     def get_client(self):
         """Get a configured SplunkClient instance."""
-        from splunk_assistant_skills_lib import SplunkClient
+        from splunk_as import SplunkClient
 
         kwargs = {
             "base_url": f"{self.scheme}://{self.host}",

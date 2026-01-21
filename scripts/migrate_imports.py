@@ -9,14 +9,14 @@ from pathlib import Path
 
 # Mapping of old imports to new imports
 IMPORT_MAPPING = {
-    'config_manager': 'splunk_assistant_skills_lib',
-    'error_handler': 'splunk_assistant_skills_lib',
-    'formatters': 'splunk_assistant_skills_lib',
-    'validators': 'splunk_assistant_skills_lib',
-    'spl_helper': 'splunk_assistant_skills_lib',
-    'job_poller': 'splunk_assistant_skills_lib',
-    'time_utils': 'splunk_assistant_skills_lib',
-    'splunk_client': 'splunk_assistant_skills_lib',
+    'config_manager': 'splunk_as',
+    'error_handler': 'splunk_as',
+    'formatters': 'splunk_as',
+    'validators': 'splunk_as',
+    'spl_helper': 'splunk_as',
+    'job_poller': 'splunk_as',
+    'time_utils': 'splunk_as',
+    'splunk_client': 'splunk_as',
 }
 
 # Pattern to match sys.path.insert for shared lib
@@ -79,11 +79,11 @@ def process_file(filepath: Path) -> bool:
     )
 
     # Update import statements
-    # from config_manager import X -> from splunk_assistant_skills_lib import X
+    # from config_manager import X -> from splunk_as import X
     for old_module in IMPORT_MAPPING:
         content = re.sub(
             rf'^from {old_module} import (.+)$',
-            r'from splunk_assistant_skills_lib import \1',
+            r'from splunk_as import \1',
             content,
             flags=re.MULTILINE
         )
@@ -91,8 +91,8 @@ def process_file(filepath: Path) -> bool:
     # Handle validators.ValidationError specifically (there's a class in both)
     # The error_handler.ValidationError takes precedence
     content = re.sub(
-        r'from splunk_assistant_skills_lib import \(([^)]*?)ValidationError,([^)]*?)\)',
-        r'from splunk_assistant_skills_lib import (\1ValidationError as ValidatorValidationError,\2)',
+        r'from splunk_as import \(([^)]*?)ValidationError,([^)]*?)\)',
+        r'from splunk_as import (\1ValidationError as ValidatorValidationError,\2)',
         content,
         flags=re.DOTALL
     )

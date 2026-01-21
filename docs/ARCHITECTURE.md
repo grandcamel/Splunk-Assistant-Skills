@@ -67,10 +67,10 @@ docs/
 
 ## Shared Library Pattern
 
-All scripts import from the [splunk-assistant-skills-lib](https://pypi.org/project/splunk-assistant-skills-lib/) PyPI package:
+All scripts import from the [splunk-as](https://pypi.org/project/splunk-as/) PyPI package:
 
 ```python
-from splunk_assistant_skills_lib import (
+from splunk_as import (
     get_splunk_client,
     handle_errors,
     print_error,
@@ -95,7 +95,7 @@ from splunk_assistant_skills_lib import (
 
 ### Base Library Inheritance
 
-The `splunk-assistant-skills-lib` inherits from `assistant-skills-lib>=0.3.0`, which provides:
+The `splunk-as` inherits from `assistant-skills-lib>=0.3.0`, which provides:
 
 - Shared validators (email, URL, file path)
 - Base exception hierarchy
