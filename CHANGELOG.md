@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0](https://github.com/grandcamel/Splunk-Assistant-Skills/compare/v1.1.0...v2.0.0) (2026-01-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* The PyPI package has been renamed from `splunk-assistant-skills-lib` to `splunk-as` for brevity.
+* Restructure plugin to be documentation and slash commands only. CLI functionality (`splunk-skill`) removed and replaced by `splunk-as` from `splunk-assistant-skills-lib>=1.0.0`.
+
+### Features
+
+* add __init__.py to export EventBuilder and test utilities ([f8664d5](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/f8664d55ade501ed1ec0a64dd50f00615c63aa11))
+* add skill_count metadata to plugin.json ([d24bba2](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/d24bba273f0d45d1bde340255780afe4b5307214))
+* implement assistant-skills alignment (phases 1-4) ([b644ea4](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/b644ea4f55a0b1c9c6f50025c8d9771d6b29762b))
+* **plugin:** add setup command and README ([eca6bcc](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/eca6bcc635d6d3163ca7a935f8462c4f72731aca))
+* **safeguards:** add permission block for claude-safe integration ([4473327](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/44733274d20ad7b7bc7bacf078b8d791419d5332))
+* **scripts:** add claude-safe risk-based permission wrapper ([e461e1e](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/e461e1e1fec66e1e30c7196cf0968e93780c5de9))
+
+
+### Bug Fixes
+
+* **cli:** update script paths for new plugin directory structure ([65d2bae](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/65d2baec5634055a92d89f60eb86a98ab46fb8e6))
+* **e2e:** increase OAuth check timeout and add logging ([5c38e9e](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/5c38e9e0c73bac9d3f04e39b504b6bae667f6480))
+* remove duplicate pytest markers and improve test clarity ([403c1ef](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/403c1efd0e40b7d9a72db66c4fa44abc68554e3e))
+* **scripts:** add length check to prompt_with_default masking ([30037cb](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/30037cb09634ca5a789b82f831ae1eee8950d250))
+* **scripts:** prevent password disclosure for short values ([98b25ca](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/98b25caf2580001aefc0740ea4fa4052b92bbc6e))
+* **scripts:** use bash array for curl options in setup-env.sh ([6141ec2](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/6141ec2c5d879c69d3a4c43e31837b8d5de103e7))
+* **tests:** add cleanup() method to SearchHelper for API consistency ([71ffc72](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/71ffc72c9d1dc6fa5ab4db8dd30f070b16010e2d))
+* **tests:** add external connection singleton and improve URL parsing ([9cfee35](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/9cfee35d73c5d6ea70a2e2fe96b922ac82681d9c))
+* **tests:** add security warnings and make container config env-configurable ([69a18d1](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/69a18d1afc41e681a1dc6c838fc6184975bf20dc))
+* **tests:** add thread-safety to Splunk container test infrastructure ([e315cbc](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/e315cbc5d3ed9e920314e0734e1f7c67a496487e))
+* **tests:** add type hints to connection parameters in test_utils ([0cf44ec](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/0cf44ecdb6e437e1835c26ee3a5694e652339604))
+* **tests:** fix EventBuilder delimiter and version parsing bugs ([adc6ab8](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/adc6ab844b726cf6f95633fec5e142db34306a25))
+* **tests:** improve error handling and input validation in test_utils ([08e4d57](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/08e4d5714d71465d055b3b19ca732b00819502c6))
+* **tests:** improve fixtures reliability and remove dead code ([3f2261e](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/3f2261e6ecc4041390927f767e6992658ee89f85))
+* **tests:** improve test_utils reliability and performance ([eec1c48](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/eec1c489746fdc62a5222cb2124740dd3b428149))
+* **tests:** use safe delimiter and validate values in SPL generation ([94694eb](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/94694eb033b224506eb94df7467630acdec52007))
+
+
+### Code Refactoring
+
+* convert plugin to documentation-only, CLI moved to library ([c0edffe](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/c0edffeef56967183669981392bfbde968f437ee))
+* update dependency from splunk-assistant-skills-lib to splunk-as ([6787bae](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/6787bae24ded59957f329b538f61f55b1859f755))
+
 ## [1.1.0] - 2025-01-01
 
 ### Added
