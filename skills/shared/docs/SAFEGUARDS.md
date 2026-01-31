@@ -276,7 +276,7 @@ permissions:
       risk: safe
     - pattern: "splunk-as app list *"
       risk: safe
-    - pattern: "splunk-as app info *"
+    - pattern: "splunk-as app get *"
       risk: safe
     - pattern: "splunk-as security list *"
       risk: safe
