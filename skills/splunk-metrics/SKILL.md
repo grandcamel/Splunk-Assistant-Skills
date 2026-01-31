@@ -20,14 +20,14 @@ Query and analyze metrics data using mstats and mcatalog commands.
 - "metrics", "mstats", "mcatalog"
 - "time series", "data points"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `mstats.py` | Execute mstats command |
-| `mcatalog.py` | Query metrics catalog |
-| `list_metric_indexes.py` | List metric indexes |
-| `list_metrics.py` | List metric names |
+| Command | Description |
+|---------|-------------|
+| `metrics mstats` | Execute mstats command |
+| `metrics mcatalog` | Query metrics catalog |
+| `metrics indexes` | List metric indexes |
+| `metrics list` | List metric names |
 
 ## Examples
 

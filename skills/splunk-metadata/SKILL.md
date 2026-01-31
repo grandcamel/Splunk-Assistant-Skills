@@ -22,16 +22,16 @@ Discover and explore metadata about indexes, sources, sourcetypes, and fields.
 - "metadata", "index", "source", "sourcetype"
 - "fields", "discovery", "catalog"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `list_indexes.py` | List available indexes |
-| `get_index_info.py` | Index size, event count, time range |
-| `list_sources.py` | Unique sources per index |
-| `list_sourcetypes.py` | Sourcetypes in use |
-| `metadata_search.py` | Execute `\| metadata` search |
-| `get_field_summary.py` | Field summary for index/sourcetype |
+| Command | Description |
+|---------|-------------|
+| `metadata indexes` | List available indexes |
+| `metadata index-info` | Index size, event count, time range |
+| `metadata sources` | Unique sources per index |
+| `metadata sourcetypes` | Sourcetypes in use |
+| `metadata search` | Execute `\| metadata` search |
+| `metadata fields` | Field summary for index/sourcetype |
 
 ## Examples
 

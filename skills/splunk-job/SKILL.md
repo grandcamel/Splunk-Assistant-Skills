@@ -43,20 +43,21 @@ QUEUED → PARSING → RUNNING → FINALIZING → DONE
 | FAILED | Error occurred |
 | PAUSED | Paused by user |
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `create_job.py` | Create search job, return SID |
-| `get_job_status.py` | Get dispatchState, progress, stats |
-| `poll_job.py` | Wait for job completion with timeout |
-| `cancel_job.py` | Issue /control/cancel action |
-| `pause_job.py` | Issue /control/pause action |
-| `unpause_job.py` | Issue /control/unpause action |
-| `finalize_job.py` | Issue /control/finalize action |
-| `set_job_ttl.py` | Extend job time-to-live |
-| `list_jobs.py` | List all search jobs for user |
-| `delete_job.py` | Remove job from dispatch directory |
+| Command | Description |
+|---------|-------------|
+| `job create` | Create search job, return SID |
+| `job status` | Get dispatchState, progress, stats |
+| `job poll` | Wait for job completion with timeout |
+| `job cancel` | Issue /control/cancel action |
+| `job pause` | Issue /control/pause action |
+| `job unpause` | Issue /control/unpause action |
+| `job finalize` | Issue /control/finalize action |
+| `job ttl` | Set job time-to-live |
+| `job touch` | Touch a job to extend its TTL |
+| `job list` | List all search jobs for user |
+| `job delete` | Remove job from dispatch directory |
 
 ## Examples
 

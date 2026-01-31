@@ -23,15 +23,15 @@ Create and manage alerts, monitor triggered alerts, and configure alert actions.
 - "alert", "trigger", "notification"
 - "monitor", "alerting"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `create_alert.py` | Create alert from saved search |
-| `get_alert.py` | Get alert configuration |
-| `list_alerts.py` | List configured alerts |
-| `get_triggered_alerts.py` | List triggered instances |
-| `acknowledge_alert.py` | Acknowledge triggered alert |
+| Command | Description |
+|---------|-------------|
+| `alert create` | Create a new alert |
+| `alert get` | Get alert details |
+| `alert list` | List all alerts (scheduled searches with alert actions) |
+| `alert triggered` | List triggered alerts |
+| `alert acknowledge` | Acknowledge a triggered alert |
 
 ## Examples
 
