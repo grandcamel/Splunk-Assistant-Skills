@@ -1,7 +1,8 @@
 # Splunk Assistant Skills - Python Dependencies
 
 # Shared library (from PyPI)
-splunk-as>=1.0.0
+# Pin to major version to prevent breaking changes
+splunk-as>=1.0.0,<2.0.0
 
 # Testing
 pytest>=7.0.0
