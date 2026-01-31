@@ -188,7 +188,9 @@ class SplunkContainer(DockerContainer):
 
         # Calculate remaining timeout for health checks
         elapsed = time.time() - start_time
-        remaining_timeout = max(30, self.STARTUP_TIMEOUT - elapsed)  # At least 30s for health
+        remaining_timeout = max(
+            30, self.STARTUP_TIMEOUT - elapsed
+        )  # At least 30s for health
 
         # Then verify the management port is actually responding
         management_url = self.get_management_url()

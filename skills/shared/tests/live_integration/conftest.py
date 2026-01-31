@@ -25,7 +25,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # pytest.ini pythonpath handles module discovery
 from .fixtures import *
 
-
 # Note: pytest markers (live, destructive, etc.) are defined in root conftest.py
 
 

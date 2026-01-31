@@ -21,9 +21,19 @@ from pathlib import Path
 
 # Known top-level command groups from splunk-as --help
 KNOWN_GROUPS = {
-    'admin', 'alert', 'app', 'export', 'job', 'kvstore',
-    'lookup', 'metadata', 'metrics', 'savedsearch', 'search',
-    'security', 'tag'
+    "admin",
+    "alert",
+    "app",
+    "export",
+    "job",
+    "kvstore",
+    "lookup",
+    "metadata",
+    "metrics",
+    "savedsearch",
+    "search",
+    "security",
+    "tag",
 }
 
 
@@ -39,10 +49,10 @@ def extract_cli_commands(skill_md_path: Path) -> list[tuple[str, int]]:
     for line_num, line in enumerate(content.splitlines(), start=1):
         # Match lines that contain splunk-as commands
         # Look for 'splunk-as' followed by command words
-        match = re.search(r'splunk-as\s+(\S+)(?:\s+(\S+))?', line)
+        match = re.search(r"splunk-as\s+(\S+)(?:\s+(\S+))?", line)
         if match:
-            group = match.group(1).strip('`')
-            subcommand = match.group(2).strip('`') if match.group(2) else None
+            group = match.group(1).strip("`")
+            subcommand = match.group(2).strip("`") if match.group(2) else None
 
             # Only process known command groups
             if group not in KNOWN_GROUPS:
@@ -50,12 +60,12 @@ def extract_cli_commands(skill_md_path: Path) -> list[tuple[str, int]]:
 
             # If there's a subcommand that looks like a valid subcommand name
             if subcommand and not (
-                subcommand.startswith('-') or
-                subcommand.startswith('"') or
-                subcommand.startswith("'") or
-                subcommand.startswith('<') or
-                re.match(r'^\d+\.', subcommand) or  # SID pattern
-                re.match(r'^[A-Z]', subcommand)  # Uppercase (likely placeholder)
+                subcommand.startswith("-")
+                or subcommand.startswith('"')
+                or subcommand.startswith("'")
+                or subcommand.startswith("<")
+                or re.match(r"^\d+\.", subcommand)  # SID pattern
+                or re.match(r"^[A-Z]", subcommand)  # Uppercase (likely placeholder)
             ):
                 command = f"{group} {subcommand}"
             else:
@@ -74,12 +84,7 @@ def validate_command(command: str) -> bool:
     try:
         # Split command into parts for subprocess
         cmd_parts = ["splunk-as"] + command.split() + ["--help"]
-        result = subprocess.run(
-            cmd_parts,
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
+        result = subprocess.run(cmd_parts, capture_output=True, text=True, timeout=10)
         # Check for explicit "No such command" error message
         if "No such command" in result.stderr or "No such command" in result.stdout:
             return False
@@ -99,9 +104,7 @@ def main():
         description="Validate CLI examples in SKILL.md files"
     )
     parser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        help='Show all commands being validated'
+        "-v", "--verbose", action="store_true", help="Show all commands being validated"
     )
     args = parser.parse_args()
 

@@ -208,8 +208,10 @@ def wait_for_indexing(
                     operation="check index metadata",
                 )
                 if "entry" in response and response["entry"]:
-                    event_count = response["entry"][0].get("content", {}).get(
-                        "totalEventCount", 0
+                    event_count = (
+                        response["entry"][0]
+                        .get("content", {})
+                        .get("totalEventCount", 0)
                     )
                     if isinstance(event_count, str):
                         event_count = int(event_count)
