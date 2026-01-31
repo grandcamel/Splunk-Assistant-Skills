@@ -22,16 +22,16 @@ Install, uninstall, enable, disable, and manage Splunk applications.
 - "app", "application", "install"
 - "package", "addon"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `list_apps.py` | List installed apps |
-| `get_app.py` | Get app details |
-| `install_app.py` | Install app from file |
-| `uninstall_app.py` | Remove app |
-| `enable_app.py` | Enable disabled app |
-| `disable_app.py` | Disable app |
+| Command | Description |
+|---------|-------------|
+| `app list` | List installed apps |
+| `app get <name>` | Get app details |
+| `app install <file>` | Install app from file |
+| `app uninstall <name>` | Remove app |
+| `app enable <name>` | Enable disabled app |
+| `app disable <name>` | Disable app |
 
 ## Examples
 

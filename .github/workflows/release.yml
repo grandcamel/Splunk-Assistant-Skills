@@ -43,21 +43,8 @@ jobs:
 
       - name: Run unit tests
         run: |
-          for skill_dir in plugins/splunk-assistant-skills/skills/*/tests/; do
-            if [ -d "$skill_dir" ]; then
-              skill_name=$(basename $(dirname $skill_dir))
-              # Check if there are any test files (not just live_integration)
-              test_files=$(find "$skill_dir" -maxdepth 1 -name "test_*.py" -o -name "*_test.py" 2>/dev/null | head -1)
-              if [ -n "$test_files" ]; then
-                echo "Testing $skill_name..."
-                python -m pytest "$skill_dir" -v \
-                  --ignore="${skill_dir}live_integration" \
-                  || exit 1
-              else
-                echo "Skipping $skill_name (no unit tests)"
-              fi
-            fi
-          done
+          pip install pytest
+          pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration/
 
   publish-release:
     needs: [release-please, test]
@@ -80,21 +67,7 @@ jobs:
       - name: Run tests
         run: |
           pip install pytest pytest-asyncio
-          for skill_dir in plugins/splunk-assistant-skills/skills/*/tests/; do
-            if [ -d "$skill_dir" ]; then
-              skill_name=$(basename $(dirname $skill_dir))
-              # Check if there are any test files (not just live_integration)
-              test_files=$(find "$skill_dir" -maxdepth 1 -name "test_*.py" -o -name "*_test.py" 2>/dev/null | head -1)
-              if [ -n "$test_files" ]; then
-                echo "Testing $skill_name..."
-                python -m pytest "$skill_dir" -v \
-                  --ignore="${skill_dir}live_integration" \
-                  || exit 1
-              else
-                echo "Skipping $skill_name (no unit tests)"
-              fi
-            fi
-          done
+          pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration/
 
       - name: Create release archive
         run: |
@@ -102,11 +75,13 @@ jobs:
           mkdir -p dist
           tar -czvf dist/splunk-assistant-skills-${VERSION}.tar.gz \
             --exclude='*/tests/*' \
-            --exclude='*/docs/*' \
             --exclude='__pycache__' \
             --exclude='*.pyc' \
             .claude-plugin/ \
-            plugins/ \
+            skills/ \
+            scripts/ \
+            commands/ \
+            docs/ \
             CLAUDE.md \
             README.md \
             VERSION
@@ -135,12 +110,10 @@ jobs:
           pip install black isort mypy
 
       - name: Check formatting with Black
-        run: |
-          black --check --diff plugins/splunk-assistant-skills/skills/
+        run: black --check --diff skills/ scripts/
 
       - name: Check imports with isort
-        run: |
-          isort --check-only --diff plugins/splunk-assistant-skills/skills/
+        run: isort --check-only --diff skills/ scripts/
 
   publish-docker:
     needs: [release-please, test]

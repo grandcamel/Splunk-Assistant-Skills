@@ -18,25 +18,24 @@ Create and manage KV store collections and records for persistent data storage.
 | Update record | ⚠️ | Previous value lost |
 | Delete record | ⚠️⚠️ | Data loss, may be in backups |
 | Delete collection | ⚠️⚠️⚠️ | **IRREVERSIBLE** - all data lost |
-| Delete collection | ⚠️⚠️⚠️ | **IRREVERSIBLE** - all data lost |
 
 ## Triggers
 
 - "kvstore", "collection", "key-value"
 - "persist", "store"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `create_collection.py` | Create KV store collection |
-| `delete_collection.py` | Delete collection |
-| `list_collections.py` | List collections in app |
-| `insert_record.py` | Insert record into collection |
-| `get_record.py` | Get record by _key |
-| `update_record.py` | Update existing record |
-| `delete_record.py` | Delete individual record by _key |
-| `query_collection.py` | Query with filters |
+| Command | Description |
+|---------|-------------|
+| `kvstore list` | List collections in app |
+| `kvstore create <name>` | Create KV store collection |
+| `kvstore delete <name>` | Delete collection (**IRREVERSIBLE**) |
+| `kvstore insert <collection>` | Insert record into collection |
+| `kvstore get <collection> <key>` | Get record by _key |
+| `kvstore update <collection> <key>` | Update existing record |
+| `kvstore delete-record <collection> <key>` | Delete individual record by _key |
+| `kvstore query <collection>` | Query with filters |
 
 ## Examples
 
@@ -65,10 +64,7 @@ splunk-as kvstore update my_collection abc123 '{"name": "updated"}' --app search
 # Delete individual record by _key (use delete-record, not delete)
 splunk-as kvstore delete-record my_collection abc123 --app search
 
-# Delete collection (removes collection and all records)
-splunk-as kvstore delete my_collection --app search
-
-# Delete collection (IRREVERSIBLE - all data lost)
+# Delete collection (IRREVERSIBLE - removes collection and all records)
 splunk-as kvstore delete my_collection --app search
 ```
 
