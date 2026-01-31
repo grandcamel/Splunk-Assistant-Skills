@@ -101,7 +101,7 @@ splunk-as job list
 # Output: Table of active jobs with status
 
 # Extend TTL
-splunk-as job set-ttl 1703779200.12345 --ttl 3600
+splunk-as job ttl 1703779200.12345 --ttl 3600
 
 # Delete job
 splunk-as job delete 1703779200.12345

@@ -18,7 +18,7 @@ Create and manage KV store collections and records for persistent data storage.
 | Update record | ⚠️ | Previous value lost |
 | Delete record | ⚠️⚠️ | Data loss, may be in backups |
 | Delete collection | ⚠️⚠️⚠️ | **IRREVERSIBLE** - all data lost |
-| Drop collection | ⚠️⚠️⚠️ | **IRREVERSIBLE** - alias for delete, all data lost |
+| Delete collection | ⚠️⚠️⚠️ | **IRREVERSIBLE** - all data lost |
 
 ## Triggers
 
@@ -37,7 +37,6 @@ Create and manage KV store collections and records for persistent data storage.
 | `update_record.py` | Update existing record |
 | `delete_record.py` | Delete individual record by _key |
 | `query_collection.py` | Query with filters |
-| `drop_collection.py` | Drop (delete) entire collection (**IRREVERSIBLE**) |
 
 ## Examples
 
@@ -69,8 +68,8 @@ splunk-as kvstore delete-record my_collection abc123 --app search
 # Delete collection (removes collection and all records)
 splunk-as kvstore delete my_collection --app search
 
-# Drop collection (IRREVERSIBLE - alias for delete, all data lost)
-splunk-as kvstore drop my_collection --app search
+# Delete collection (IRREVERSIBLE - all data lost)
+splunk-as kvstore delete my_collection --app search
 ```
 
 ## Command Terminology
@@ -78,8 +77,7 @@ splunk-as kvstore drop my_collection --app search
 | Command | Target | Description |
 |---------|--------|-------------|
 | `delete-record` | Single record | Deletes one record by its `_key` |
-| `delete` | Collection | Deletes entire collection and all records |
-| `drop` | Collection | Alias for `delete` - deletes entire collection |
+| `delete` | Collection | Deletes entire collection and all records (**IRREVERSIBLE**) |
 
 ## API Endpoints
 
