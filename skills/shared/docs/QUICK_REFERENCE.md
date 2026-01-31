@@ -93,6 +93,17 @@ splunk-as alert get alert_12345
 splunk-as alert acknowledge alert_12345
 ```
 
+### App
+
+```bash
+splunk-as app list                            # List installed apps
+splunk-as app get search                      # Get app details
+splunk-as app install my_app.tgz              # Install app from file
+splunk-as app uninstall my_app                # Remove app (IRREVERSIBLE)
+splunk-as app enable my_app                   # Enable app
+splunk-as app disable my_app                  # Disable app
+```
+
 ### Security
 
 ```bash

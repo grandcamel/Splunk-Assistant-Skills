@@ -49,6 +49,15 @@ splunk-as search normal "index=main | stats count" --wait
 
 # Blocking search (waits for completion)
 splunk-as search blocking "index=main | head 10" --timeout 60
+
+# Get results from completed job
+splunk-as search results 1703779200.12345
+
+# Get preview results during search
+splunk-as search preview 1703779200.12345
+
+# Validate SPL syntax
+splunk-as search validate "index=main | stats count"
 ```
 
 ## Job Commands
@@ -89,6 +98,26 @@ splunk-as admin info
 
 # Get current user
 splunk-as security whoami
+```
+
+## App Commands
+
+```bash
+# List installed apps
+splunk-as app list
+
+# Get app details
+splunk-as app get search
+
+# Install app
+splunk-as app install my_app.tgz
+
+# Uninstall app
+splunk-as app uninstall my_app
+
+# Enable/disable app
+splunk-as app enable my_app
+splunk-as app disable my_app
 ```
 
 ---
