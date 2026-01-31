@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-31
+
+### Added
+
+#### CI/CD
+- New `validate.yml` workflow for PR validation (tests, lint, docs)
+- CLI documentation validation script (`scripts/validate_cli_docs.py`)
+- Pre-commit hooks configuration (`.pre-commit-config.yaml`)
+- Makefile with common development commands
+
+### Changed
+
+#### Documentation Standardization
+- All 14 SKILL.md files now use "CLI Commands" tables instead of "Scripts"
+- Updated DEVELOPMENT.md template to use CLI Commands pattern
+- Updated ARCHITECTURE.md component descriptions
+- Added App Commands section to CLI_REFERENCE.md
+- Added App section to QUICK_REFERENCE.md
+- Fixed SAFEGUARDS.md: `app info` → `app get`
+
+#### Bug Fixes
+- Fixed splunk-tag: Corrected add/remove command syntax to use `field::value` format
+- Fixed splunk-export: Removed nonexistent `raw` and `checkpoint` subcommands
+- Fixed splunk-security: Corrected `check-permission` to `check`
+- Fixed splunk-lookup: Removed nonexistent `create-definition` command
+- Fixed splunk-job: Corrected `set-ttl` to `ttl`
+- Fixed splunk-kvstore: Removed nonexistent `drop` command
+
 ## [1.1.0] - 2025-01-01
 
 ### Added
@@ -96,5 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[1.2.0]: https://github.com/grandcamel/Splunk-Assistant-Skills/releases/tag/v1.2.0
+[1.1.0]: https://github.com/grandcamel/Splunk-Assistant-Skills/releases/tag/v1.1.0
 [1.0.0]: https://github.com/grandcamel/Splunk-Assistant-Skills/releases/tag/v1.0.0
-[Unreleased]: https://github.com/grandcamel/Splunk-Assistant-Skills/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/grandcamel/Splunk-Assistant-Skills/compare/v1.2.0...HEAD
