@@ -114,7 +114,7 @@ Each skill follows this structure:
 ```
 skills/{skill-name}/
 ├── SKILL.md           # Skill documentation
-├── scripts/           # Python scripts
+├── scripts/           # CLI implementation scripts
 │   └── ...
 ├── tests/             # Unit tests
 │   ├── conftest.py    # Skill-specific fixtures

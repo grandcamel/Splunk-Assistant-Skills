@@ -82,18 +82,20 @@ Brief description.
 
 Keywords that activate this skill.
 
-## Scripts
+## CLI Commands
 
-- `script_name.py` - Description
+| Command | Description |
+|---------|-------------|
+| `newskill command` | Description of command |
 
 ## Examples
 
 \`\`\`bash
-# CLI usage (recommended)
+# CLI usage
 splunk-as newskill command --option value
 
-# Direct script (alternative)
-python script_name.py --help
+# Get help
+splunk-as newskill --help
 \`\`\`
 
 ## API Endpoints
