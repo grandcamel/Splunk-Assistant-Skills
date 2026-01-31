@@ -20,15 +20,23 @@ Query and manage Splunk server configurations, users, roles, and system info.
 - "rest", "admin", "config"
 - "server", "settings", "info"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
+| Command | Description |
+|---------|-------------|
+| `admin info` | Get server information |
+| `admin status` | Get server status |
+| `admin health` | Get server health |
+| `admin list-users` | List all users |
+| `admin list-roles` | List all roles |
+| `admin rest-get` | Make GET request to REST endpoint |
+| `admin rest-post` | Make POST request to REST endpoint |
+
+## REST Options
+
+| Option | Description |
 |--------|-------------|
-| `rest_get.py` | GET any REST endpoint |
-| `rest_post.py` | POST to REST endpoint |
-| `get_server_info.py` | Server version, build, features |
-| `list_users.py` | List Splunk users |
-| `list_roles.py` | List Splunk roles |
+| `-d`, `--data` | JSON data payload for POST requests |
 
 ## Examples
 
@@ -48,8 +56,14 @@ splunk-as admin list-users
 # List roles
 splunk-as admin list-roles
 
-# REST GET request
+# REST GET request - users
 splunk-as admin rest-get /services/authentication/users
+
+# REST GET request - server info
+splunk-as admin rest-get /services/server/info
+
+# REST GET request - apps
+splunk-as admin rest-get /services/apps/local
 
 # REST POST request
 splunk-as admin rest-post /services/saved/searches -d '{"name": "test"}'

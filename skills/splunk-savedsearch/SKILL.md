@@ -23,18 +23,20 @@ Create, read, update, delete saved searches, reports, and scheduled searches.
 - "saved search", "report", "schedule"
 - "scheduled search", "alert"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `create_savedsearch.py` | Create saved search/report |
-| `get_savedsearch.py` | Get saved search details |
-| `update_savedsearch.py` | Modify saved search |
-| `delete_savedsearch.py` | Delete saved search |
-| `list_savedsearches.py` | List saved searches in app |
-| `run_savedsearch.py` | Execute saved search on-demand |
-| `enable_schedule.py` | Enable scheduled execution |
-| `disable_schedule.py` | Disable scheduling |
+Commands provided by the `splunk-as` package (`pip install splunk-as`):
+
+| Command | Description |
+|---------|-------------|
+| `savedsearch list` | List saved searches in app |
+| `savedsearch get` | Get saved search details |
+| `savedsearch create` | Create saved search/report |
+| `savedsearch update` | Modify saved search |
+| `savedsearch run` | Execute saved search on-demand |
+| `savedsearch enable` | Enable scheduled execution |
+| `savedsearch disable` | Disable scheduling |
+| `savedsearch delete` | Delete saved search |
 
 ## Examples
 

@@ -30,16 +30,16 @@ oneshot (inline results), normal (async with polling), and blocking (sync wait).
 | Normal | Long-running searches | Yes | Async (poll) |
 | Blocking | Simple queries | Yes | Sync (waits) |
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `search_oneshot.py` | Execute oneshot search (results inline) |
-| `search_normal.py` | Execute normal search (returns SID) |
-| `search_blocking.py` | Execute blocking search (waits) |
-| `get_results.py` | Get results from completed job |
-| `get_preview.py` | Get partial results during search |
-| `validate_spl.py` | Validate SPL syntax |
+| Command | Description |
+|---------|-------------|
+| `search oneshot` | Execute oneshot search (results inline) |
+| `search normal` | Execute normal search (returns SID) |
+| `search blocking` | Execute blocking search (waits) |
+| `search results` | Get results from completed job |
+| `search preview` | Get partial results during search |
+| `search validate` | Validate SPL syntax |
 
 ## Examples
 

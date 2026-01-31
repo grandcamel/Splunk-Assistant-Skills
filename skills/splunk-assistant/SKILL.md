@@ -1,6 +1,6 @@
 # splunk-assistant
 
-Central hub and router for Splunk Assistant Skills. Implements 3-level progressive disclosure for optimal Splunk interaction.
+Central hub and router for Splunk Assistant Skills. Routes requests to 13 specialized skills using 3-level progressive disclosure.
 
 ## Purpose
 
@@ -48,21 +48,21 @@ Routes natural language requests to specialized Splunk skills based on intent. P
 
 ## Skill Routing
 
-| Intent | Route To |
-|--------|----------|
-| Execute SPL query | `splunk-search` |
-| Job lifecycle management | `splunk-job` |
-| Large data export | `splunk-export` |
-| Index/source discovery | `splunk-metadata` |
-| Lookup management | `splunk-lookup` |
-| Tag operations | `splunk-tag` |
-| Saved searches/reports | `splunk-savedsearch` |
-| Alert management | `splunk-alert` |
-| REST configuration | `splunk-rest-admin` |
-| Token/RBAC/ACL | `splunk-security` |
-| Metrics (mstats) | `splunk-metrics` |
-| App management | `splunk-app` |
-| KV Store | `splunk-kvstore` |
+| Intent | Skill | CLI Command |
+|--------|-------|-------------|
+| Execute SPL query | `splunk-search` | `search` |
+| Job lifecycle management | `splunk-job` | `job` |
+| Large data export | `splunk-export` | `export` |
+| Index/source discovery | `splunk-metadata` | `metadata` |
+| Lookup management | `splunk-lookup` | `lookup` |
+| Tag operations | `splunk-tag` | `tag` |
+| Saved searches/reports | `splunk-savedsearch` | `savedsearch` |
+| Alert management | `splunk-alert` | `alert` |
+| REST/Server administration | `splunk-rest-admin` | `admin` |
+| Token/RBAC/ACL | `splunk-security` | `security` |
+| Metrics (mstats) | `splunk-metrics` | `metrics` |
+| App management | `splunk-app` | `app` |
+| KV Store | `splunk-kvstore` | `kvstore` |
 
 ## Connection Verification
 
