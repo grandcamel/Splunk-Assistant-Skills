@@ -20,9 +20,9 @@ Export large result sets (>50,000 rows) efficiently using streaming.
 - "stream", "large results", "ETL"
 - "backup", "archive"
 
-## Scripts
+## CLI Commands
 
-| Script | CLI Command | Description |
+| Command | CLI Command | Description |
 |--------|-------------|-------------|
 | `estimate_export_size.py` | `splunk-as export estimate` | Estimate export size |
 | `export_from_job.py` | `splunk-as export job` | Export from existing job |
