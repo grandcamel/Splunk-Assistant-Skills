@@ -26,16 +26,19 @@ Manage JWT tokens, check permissions, and configure ACLs on knowledge objects.
 - "security", "RBAC", "role"
 - "access", "capabilities"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `create_token.py` | Create new JWT token |
-| `list_tokens.py` | List tokens for user |
-| `delete_token.py` | Revoke token |
-| `get_capabilities.py` | Get user capabilities |
-| `check_permission.py` | Verify access to resource |
-| `get_acl.py` | Get ACL for knowledge object |
+| Command | Description |
+|---------|-------------|
+| `security whoami` | Get current user info |
+| `security list-users` | List all users |
+| `security list-roles` | List all roles |
+| `security list-tokens` | List auth tokens |
+| `security create-token` | Create auth token |
+| `security delete-token` | Delete auth token |
+| `security capabilities` | Get user capabilities |
+| `security check` | Check if user has capability |
+| `security acl` | Get ACL for resource |
 
 ## Examples
 
@@ -62,7 +65,7 @@ splunk-as security delete-token token_123
 splunk-as security capabilities --user admin
 
 # Check permission
-splunk-as security check-permission --object saved/searches/MySearch
+splunk-as security check --object saved/searches/MySearch
 
 # Get ACL
 splunk-as security acl saved/searches/MySearch

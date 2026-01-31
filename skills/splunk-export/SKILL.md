@@ -5,16 +5,14 @@ High-volume streaming data extraction for Splunk.
 ## Purpose
 
 Export large result sets (>50,000 rows) efficiently using streaming.
-Supports checkpoint-based resume for reliability during long exports.
 
 ## Risk Levels
 
 | Operation | Risk | Notes |
 |-----------|------|-------|
 | Export results | - | Read-only |
-| Export raw events | - | Read-only |
+| Export from job | - | Read-only |
 | Estimate size | - | Read-only |
-| Export with checkpoint | - | Read-only (writes local file) |
 
 ## Triggers
 
@@ -24,16 +22,15 @@ Supports checkpoint-based resume for reliability during long exports.
 
 ## Scripts
 
-| Script | Description |
-|--------|-------------|
-| `export_results.py` | Stream results to file (CSV/JSON/XML) |
-| `export_raw.py` | Export raw events |
-| `export_with_checkpoint.py` | Resume-capable export |
-| `estimate_export_size.py` | Preview result count |
+| Script | CLI Command | Description |
+|--------|-------------|-------------|
+| `estimate_export_size.py` | `splunk-as export estimate` | Estimate export size |
+| `export_from_job.py` | `splunk-as export job` | Export from existing job |
+| `export_results.py` | `splunk-as export results` | Export results to file |
 
 ## Examples
 
-### Basic Export
+### Export Results
 
 ```bash
 # Export to CSV
@@ -41,19 +38,13 @@ splunk-as export results 1703779200.12345 --output-file results.csv
 
 # Export to JSON
 splunk-as export results 1703779200.12345 --format json --output-file data.json
-
-# Export raw events
-splunk-as export raw 1703779200.12345 --output-file events.json
 ```
 
-### Large Export with Checkpoints
+### Export from Existing Job
 
 ```bash
-# Start export with checkpoint file
-splunk-as export checkpoint "index=main" --output large_export.csv --checkpoint export.ckpt
-
-# Resume interrupted export
-splunk-as export checkpoint --resume export.ckpt
+# Export results from a completed search job
+splunk-as export job 1703779200.12345 --output-file job_results.csv
 ```
 
 ### Estimate Size
@@ -82,7 +73,7 @@ splunk-as export estimate "index=main | stats count by host" --earliest -7d
 ## Best Practices
 
 1. **Use streaming** for >50K results
-2. **Enable checkpoints** for large exports
+2. **Estimate size first** before large exports
 3. **Limit fields** to reduce data transfer
 4. **Monitor progress** for long-running exports
 5. **Compress output** for storage efficiency

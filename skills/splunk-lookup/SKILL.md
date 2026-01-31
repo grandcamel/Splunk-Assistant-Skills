@@ -14,7 +14,6 @@ Upload, download, and manage CSV lookup files and lookup definitions.
 | Get lookup info | - | Read-only |
 | Download lookup | - | Read-only |
 | Upload lookup | ⚠️ | Creates new or overwrites |
-| Create lookup definition | ⚠️ | Can be undone |
 | Delete lookup | ⚠️⚠️ | May be recoverable from backup |
 
 ## Triggers
@@ -22,15 +21,32 @@ Upload, download, and manage CSV lookup files and lookup definitions.
 - "lookup", "CSV", "upload"
 - "lookup table", "enrichment"
 
-## Scripts
+## CLI Commands
 
-| Script | Description |
-|--------|-------------|
-| `upload_lookup.py` | Upload CSV lookup file |
-| `download_lookup.py` | Download lookup file |
-| `list_lookups.py` | List lookup files in app |
-| `delete_lookup.py` | Remove lookup file |
-| `create_lookup_definition.py` | Create lookup-table stanza |
+| Command | Description |
+|---------|-------------|
+| `lookup list` | List lookup files |
+| `lookup get` | Get contents of a lookup file |
+| `lookup upload` | Upload CSV lookup file |
+| `lookup download` | Download lookup file |
+| `lookup delete` | Remove lookup file |
+
+## Help Reference
+
+```bash
+splunk-as lookup --help
+splunk-as lookup upload --help
+```
+
+## App Context
+
+The `--app` option specifies the Splunk app context:
+
+- **Optional for listing**: Filter results to a specific app
+- **Required for upload**: Specifies where to store the lookup
+- **Recommended for get/download/delete**: Ensures you target the correct lookup file
+
+Default behavior varies by command. When multiple apps have lookups with the same name, always specify `--app`.
 
 ## Examples
 
