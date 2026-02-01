@@ -63,15 +63,23 @@ Routes natural language requests to specialized Splunk skills based on intent. P
 | Metrics (mstats) | `splunk-metrics` | `metrics` |
 | App management | `splunk-app` | `app` |
 | KV Store | `splunk-kvstore` | `kvstore` |
+| Dashboard management | - | `dashboard` |
+| Data input management | - | `input` |
+| User management | - | `user` |
+| Configuration management | - | `config` |
+| Shell completion | - | `completion` |
 
 ## Connection Verification
 
 ```bash
 # Get server information (verify connection)
-splunk-as admin info --profile production
+splunk-as admin info
+
+# Get server status
+splunk-as admin status
 
 # Get server health status
-splunk-as admin health --profile production
+splunk-as admin health
 ```
 
 ## Examples

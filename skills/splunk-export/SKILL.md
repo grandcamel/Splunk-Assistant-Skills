@@ -27,6 +27,7 @@ Export large result sets (>50,000 rows) efficiently using streaming.
 | `estimate_export_size.py` | `splunk-as export estimate` | Estimate export size |
 | `export_from_job.py` | `splunk-as export job` | Export from existing job |
 | `export_results.py` | `splunk-as export results` | Export results to file |
+| `stream_export.py` | `splunk-as export stream` | Stream large exports efficiently |
 
 ## Examples
 
@@ -45,6 +46,13 @@ splunk-as export results 1703779200.12345 --format json --output-file data.json
 ```bash
 # Export results from a completed search job
 splunk-as export job 1703779200.12345 --output-file job_results.csv
+```
+
+### Stream Export
+
+```bash
+# Stream large export efficiently
+splunk-as export stream "index=main | head 1000000" --output-file large_results.csv
 ```
 
 ### Estimate Size

@@ -55,20 +55,20 @@ splunk-as security list-roles
 # List tokens
 splunk-as security list-tokens
 
-# Create token
-splunk-as security create-token --audience "my-app" --expires 30d
+# Create token (--name required, --expires in seconds)
+splunk-as security create-token --name "my-app-token" --audience "my-app" --expires 2592000
 
 # Delete token
 splunk-as security delete-token token_123
 
-# Get capabilities
-splunk-as security capabilities --user admin
+# Get capabilities (current user)
+splunk-as security capabilities
 
-# Check permission
-splunk-as security check --object saved/searches/MySearch
+# Check if user has a specific capability (positional argument)
+splunk-as security check search
 
-# Get ACL
-splunk-as security acl saved/searches/MySearch
+# Get ACL (full REST path starting with /)
+splunk-as security acl /servicesNS/nobody/search/saved/searches/MySearch
 ```
 
 ## API Endpoints

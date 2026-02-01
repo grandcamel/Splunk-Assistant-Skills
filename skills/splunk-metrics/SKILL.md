@@ -26,6 +26,7 @@ Query and analyze metrics data using mstats and mcatalog commands.
 |---------|-------------|
 | `metrics mstats` | Execute mstats command |
 | `metrics mcatalog` | Query metrics catalog |
+| `metrics mpreview` | Preview metrics data |
 | `metrics indexes` | List metric indexes |
 | `metrics list` | List metric names |
 
@@ -39,10 +40,13 @@ splunk-as metrics list --index metrics
 splunk-as metrics indexes
 
 # Query with mstats
-splunk-as metrics mstats cpu.percent --agg avg --by host --span 1h
+splunk-as metrics mstats cpu.percent --agg avg --split-by host --span 1h
 
 # Discover metrics with mcatalog
 splunk-as metrics mcatalog --index metrics --filter "cpu.*"
+
+# Preview metrics data
+splunk-as metrics mpreview --index metrics
 ```
 
 ## SPL Patterns

@@ -31,7 +31,9 @@ Create and manage KV store collections and records for persistent data storage.
 | `kvstore list` | List collections in app |
 | `kvstore create <name>` | Create KV store collection |
 | `kvstore delete <name>` | Delete collection (**IRREVERSIBLE**) |
+| `kvstore truncate <collection>` | Delete all records in collection |
 | `kvstore insert <collection>` | Insert record into collection |
+| `kvstore batch-insert <collection>` | Insert multiple records at once |
 | `kvstore get <collection> <key>` | Get record by _key |
 | `kvstore update <collection> <key>` | Update existing record |
 | `kvstore delete-record <collection> <key>` | Delete individual record by _key |
@@ -56,7 +58,7 @@ splunk-as kvstore insert my_collection '{"name": "test", "value": 123}' --app se
 splunk-as kvstore get my_collection abc123 --app search
 
 # Query collection with filters
-splunk-as kvstore query my_collection --filter '{"name": "test"}' --app search
+splunk-as kvstore query my_collection --query '{"name": "test"}' --app search
 
 # Update record by _key
 splunk-as kvstore update my_collection abc123 '{"name": "updated"}' --app search
@@ -64,8 +66,14 @@ splunk-as kvstore update my_collection abc123 '{"name": "updated"}' --app search
 # Delete individual record by _key (use delete-record, not delete)
 splunk-as kvstore delete-record my_collection abc123 --app search
 
+# Truncate collection (delete all records, keep collection)
+splunk-as kvstore truncate my_collection --app search
+
+# Batch insert multiple records
+splunk-as kvstore batch-insert my_collection '[{"name": "a"}, {"name": "b"}]' --app search
+
 # Delete collection (IRREVERSIBLE - removes collection and all records)
-splunk-as kvstore delete my_collection --app search
+splunk-as kvstore delete my_collection --app search --force
 ```
 
 ## Command Terminology

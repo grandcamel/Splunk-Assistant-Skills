@@ -54,6 +54,15 @@ splunk-as search oneshot "index=main | head 100" --earliest -1h --latest now
 
 # Output as JSON
 splunk-as search oneshot "index=main | top host" --output json
+
+# With count limit and specific fields
+splunk-as search oneshot "index=main" --count 100 --fields host,status
+
+# Output to file
+splunk-as search oneshot "index=main | head 1000" --output-file results.csv
+
+# Using short flags (-e earliest, -l latest, -c count, -f fields, -o output-file)
+splunk-as search oneshot "index=main" -e -1h -l now -c 100 -f host,status -o results.csv
 ```
 
 ### Normal Search (Async)
@@ -92,6 +101,9 @@ splunk-as search results 1703779200.12345 --fields host,status,uri
 ```bash
 # Validate SPL syntax
 splunk-as search validate "index=main | stats count"
+
+# Validate with suggestions for fixes
+splunk-as search validate "index=main | stats count" --suggestions
 ```
 
 ## API Endpoints

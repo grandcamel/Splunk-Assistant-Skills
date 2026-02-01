@@ -37,6 +37,7 @@ splunk-as tag list
 splunk-as tag list --output json
 
 # Add tag to field value (format: "field::value" tag_name)
+# --app defaults to "search"
 splunk-as tag add "host::webserver01" production
 splunk-as tag add "host::webserver01" production --app my_app
 
@@ -45,7 +46,9 @@ splunk-as tag remove "host::webserver01" production
 splunk-as tag remove "host::webserver01" production --app my_app
 
 # Search by tag
-splunk-as tag search production --earliest -1h
+# --earliest defaults to "-24h", --index filters to specific index
+splunk-as tag search production
+splunk-as tag search production --earliest -1h --index main
 splunk-as tag search production --earliest -1h --output json
 ```
 

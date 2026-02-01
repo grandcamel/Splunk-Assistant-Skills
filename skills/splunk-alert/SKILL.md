@@ -37,12 +37,11 @@ Create and manage alerts, monitor triggered alerts, and configure alert actions.
 
 ```bash
 # Create an alert
-splunk-as alert create "High Error Rate" \
-  "index=main sourcetype=app_logs error | stats count" \
-  --alert-type "number of events" \
-  --alert-comparator "greater than" \
-  --alert-threshold 100 \
-  --severity 4 \
+splunk-as alert create --name "High Error Rate" \
+  --search "index=main sourcetype=app_logs error | stats count" \
+  --condition "number of events" \
+  --comparator "greater than" \
+  --threshold 100 \
   --cron "*/5 * * * *" \
   --actions email \
   --email-to ops@example.com
@@ -51,15 +50,13 @@ splunk-as alert create "High Error Rate" \
 splunk-as alert list --app search --count 100
 
 # Get specific alert details
-splunk-as alert get alert_12345
+splunk-as alert get "High Error Rate"
 
 # List triggered alert instances with filters
-splunk-as alert triggered --severity 4
-splunk-as alert triggered --savedsearch "High Error Rate"
 splunk-as alert triggered --app search --count 20
 
 # Acknowledge/delete a triggered alert
-splunk-as alert acknowledge alert_12345 --force
+splunk-as alert acknowledge alert_12345
 ```
 
 ## Alert Configuration

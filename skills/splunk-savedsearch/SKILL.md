@@ -34,6 +34,7 @@ Commands provided by the `splunk-as` package (`pip install splunk-as`):
 | `savedsearch create` | Create saved search/report |
 | `savedsearch update` | Modify saved search |
 | `savedsearch run` | Execute saved search on-demand |
+| `savedsearch history` | Get saved search execution history |
 | `savedsearch enable` | Enable scheduled execution |
 | `savedsearch disable` | Disable scheduling |
 | `savedsearch delete` | Delete saved search |
@@ -47,14 +48,18 @@ splunk-as savedsearch list --app search
 # Get saved search details
 splunk-as savedsearch get "My Report"
 
-# Create saved search
-splunk-as savedsearch create "My Report" "index=main | stats count" --app search
+# Create saved search (use --name and --search options)
+splunk-as savedsearch create --name "My Report" --search "index=main | stats count" --app search
 
 # Update saved search
 splunk-as savedsearch update "My Report" --search "index=main | stats count by host"
 
-# Run saved search
+# Run saved search (--wait/--no-wait controls blocking)
 splunk-as savedsearch run "My Report" --wait
+splunk-as savedsearch run "My Report" --no-wait
+
+# Get execution history
+splunk-as savedsearch history "My Report"
 
 # Enable scheduling
 splunk-as savedsearch enable "My Report"

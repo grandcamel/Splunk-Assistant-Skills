@@ -37,18 +37,24 @@ Query and manage Splunk server configurations, users, roles, and system info.
 | Option | Description |
 |--------|-------------|
 | `-d`, `--data` | JSON data payload for POST requests |
+| `--app` | App context for REST requests |
+| `--owner` | Owner context for REST requests |
+| `--output` | Output format (json, table, csv) |
 
 ## Examples
 
 ```bash
 # Get server info
 splunk-as admin info
+splunk-as admin info --output json
 
 # Get server status
 splunk-as admin status
+splunk-as admin status --output json
 
 # Get server health
 splunk-as admin health
+splunk-as admin health --output json
 
 # List users
 splunk-as admin list-users
@@ -62,11 +68,11 @@ splunk-as admin rest-get /services/authentication/users
 # REST GET request - server info
 splunk-as admin rest-get /services/server/info
 
-# REST GET request - apps
-splunk-as admin rest-get /services/apps/local
+# REST GET request - apps with app/owner context
+splunk-as admin rest-get /services/apps/local --app search --owner admin
 
-# REST POST request
-splunk-as admin rest-post /services/saved/searches -d '{"name": "test"}'
+# REST POST request with app/owner context
+splunk-as admin rest-post /services/saved/searches -d '{"name": "test"}' --app search --owner admin
 ```
 
 ## SPL Patterns

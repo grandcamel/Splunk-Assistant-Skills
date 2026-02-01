@@ -30,6 +30,7 @@ Upload, download, and manage CSV lookup files and lookup definitions.
 | `lookup upload` | Upload CSV lookup file |
 | `lookup download` | Download lookup file |
 | `lookup delete` | Remove lookup file |
+| `lookup transforms` | List lookup transforms/definitions |
 
 ## Help Reference
 
@@ -65,6 +66,9 @@ splunk-as lookup download users.csv --output-file ./users.csv
 
 # Delete lookup
 splunk-as lookup delete users.csv --app search
+
+# List lookup transforms/definitions
+splunk-as lookup transforms --app search
 ```
 
 ## API Endpoints

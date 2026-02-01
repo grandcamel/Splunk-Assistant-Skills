@@ -30,7 +30,7 @@ Discover and explore metadata about indexes, sources, sourcetypes, and fields.
 | `metadata index-info` | Index size, event count, time range |
 | `metadata sources` | Unique sources per index |
 | `metadata sourcetypes` | Sourcetypes in use |
-| `metadata search` | Execute `\| metadata` search |
+| `metadata search` | Execute `\| metadata` search (supports hosts, sources, sourcetypes) |
 | `metadata fields` | Field summary for index/sourcetype |
 
 ## Examples
@@ -48,11 +48,13 @@ splunk-as metadata sourcetypes --index main
 # List sources
 splunk-as metadata sources --index main
 
-# Field summary
-splunk-as metadata fields --index main --sourcetype access_combined
+# Field summary (positional argument for index)
+splunk-as metadata fields main --sourcetype access_combined
 
-# Metadata search
-splunk-as metadata search --type sourcetypes --index main
+# Metadata search (positional argument for type: hosts, sources, sourcetypes)
+splunk-as metadata search sourcetypes --index main
+splunk-as metadata search hosts --index main
+splunk-as metadata search sources --index main
 ```
 
 ## SPL Patterns
