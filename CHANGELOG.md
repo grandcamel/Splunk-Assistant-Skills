@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1](https://github.com/grandcamel/Splunk-Assistant-Skills/compare/v1.2.0...v1.2.1) (2026-02-01)
+
+
+### Bug Fixes
+
+* **ci:** correct paths in release workflow and standardize SKILL.md format ([8f88f9a](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/8f88f9a2b42c0ac9224eba375d3f09b8bf1d5bc1))
+* **docs:** correct additional CLI documentation discrepancies ([b6202d5](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/b6202d5fd9bb1fb83b9ad9cd2e46121f7ac4d813))
+* **docs:** correct CLI documentation to match splunk-as implementation ([10864fb](https://github.com/grandcamel/Splunk-Assistant-Skills/commit/10864fba20c3fd656928bb7a06f95a5c9816610a))
+
 ## [1.2.0] - 2026-01-31
 
 ### Added
