@@ -1,6 +1,6 @@
 # splunk-assistant
 
-Central hub and router for Splunk Assistant Skills. Routes requests to 13 specialized skills using 3-level progressive disclosure.
+Central hub and router for Splunk Assistant Skills. Routes requests to 17 CLI command groups using 3-level progressive disclosure.
 
 ## Purpose
 
@@ -46,28 +46,28 @@ Routes natural language requests to specialized Splunk skills based on intent. P
 - **Resource Cleanup**: Issue `/control/cancel` after results consumed
 - **Error Handling**: Use `strict=true` for clear errors vs incomplete data
 
-## Skill Routing
+## CLI Command Groups
 
-| Intent | Skill | CLI Command |
-|--------|-------|-------------|
-| Execute SPL query | `splunk-search` | `search` |
-| Job lifecycle management | `splunk-job` | `job` |
-| Large data export | `splunk-export` | `export` |
-| Index/source discovery | `splunk-metadata` | `metadata` |
-| Lookup management | `splunk-lookup` | `lookup` |
-| Tag operations | `splunk-tag` | `tag` |
-| Saved searches/reports | `splunk-savedsearch` | `savedsearch` |
-| Alert management | `splunk-alert` | `alert` |
-| REST/Server administration | `splunk-rest-admin` | `admin` |
-| Token/RBAC/ACL | `splunk-security` | `security` |
-| Metrics (mstats) | `splunk-metrics` | `metrics` |
-| App management | `splunk-app` | `app` |
-| KV Store | `splunk-kvstore` | `kvstore` |
-| Dashboard management | - | `dashboard` |
-| Data input management | - | `input` |
-| User management | - | `user` |
-| Configuration management | - | `config` |
-| Shell completion | - | `completion` |
+| CLI Command | Skill | Description |
+|-------------|-------|-------------|
+| `search` | `splunk-search` | Execute SPL query |
+| `job` | `splunk-job` | Job lifecycle management |
+| `export` | `splunk-export` | Large data export |
+| `metadata` | `splunk-metadata` | Index/source discovery |
+| `lookup` | `splunk-lookup` | Lookup management |
+| `tag` | `splunk-tag` | Tag operations |
+| `savedsearch` | `splunk-savedsearch` | Saved searches/reports |
+| `alert` | `splunk-alert` | Alert management |
+| `admin` | `splunk-rest-admin` | REST/Server administration |
+| `security` | `splunk-security` | Token/RBAC/ACL |
+| `metrics` | `splunk-metrics` | Metrics (mstats) |
+| `app` | `splunk-app` | App management |
+| `kvstore` | `splunk-kvstore` | KV Store |
+| `dashboard` | - | Dashboard management |
+| `input` | - | Data input management |
+| `user` | - | User management |
+| `config` | - | Configuration management |
+| `completion` | - | Shell completion (utility) |
 
 ## Connection Verification
 

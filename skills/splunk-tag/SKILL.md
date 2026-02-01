@@ -24,32 +24,39 @@ Add, remove, and manage tags associated with field values for easier searching.
 
 | Command | Description |
 |---------|-------------|
-| `splunk-as tag add` | Add tag to field value |
-| `splunk-as tag remove` | Remove tag from field value |
-| `splunk-as tag list` | List all tags |
-| `splunk-as tag search` | Search using tag= syntax |
+| `tag add` | Add tag to field value |
+| `tag remove` | Remove tag from field value |
+| `tag list` | List all tags |
+| `tag search` | Search using tag= syntax |
+
+## Options
+
+| Option | Commands | Description |
+|--------|----------|-------------|
+| `-a`, `--app` | list, add, remove | App context (defaults to "search") |
+| `-o`, `--output` | list, search | Output format (text, json) |
+| `-i`, `--index` | search | Filter by index |
+| `-e`, `--earliest` | search | Earliest time (defaults to -24h) |
 
 ## Examples
 
 ```bash
-# List all tags
+# List all tags (with short flags)
 splunk-as tag list
-splunk-as tag list --output json
+splunk-as tag list -a search -o json
 
-# Add tag to field value (format: "field::value" tag_name)
-# --app defaults to "search"
-splunk-as tag add "host::webserver01" production
-splunk-as tag add "host::webserver01" production --app my_app
+# Add tag to field value (format: field::value tag_name)
+splunk-as tag add host::webserver01 production
+splunk-as tag add host::webserver01 production -a my_app
 
 # Remove tag from field value
-splunk-as tag remove "host::webserver01" production
-splunk-as tag remove "host::webserver01" production --app my_app
+splunk-as tag remove host::webserver01 production
+splunk-as tag remove host::webserver01 production -a my_app
 
-# Search by tag
-# --earliest defaults to "-24h", --index filters to specific index
+# Search by tag (with short flags)
 splunk-as tag search production
-splunk-as tag search production --earliest -1h --index main
-splunk-as tag search production --earliest -1h --output json
+splunk-as tag search production -e -1h -i main
+splunk-as tag search production -e -1h -o json
 ```
 
 ## SPL Patterns

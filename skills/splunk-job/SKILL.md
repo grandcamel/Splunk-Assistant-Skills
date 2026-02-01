@@ -100,8 +100,8 @@ splunk-as job finalize 1703779200.12345
 splunk-as job list
 # Output: Table of active jobs with status
 
-# Extend TTL
-splunk-as job ttl 1703779200.12345 --ttl 3600
+# Extend TTL (positional arg: SID TTL_VALUE)
+splunk-as job ttl 1703779200.12345 3600
 
 # Delete job
 splunk-as job delete 1703779200.12345

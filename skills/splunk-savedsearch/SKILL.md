@@ -58,8 +58,9 @@ splunk-as savedsearch update "My Report" --search "index=main | stats count by h
 splunk-as savedsearch run "My Report" --wait
 splunk-as savedsearch run "My Report" --no-wait
 
-# Get execution history
+# Get execution history (default shows 10 entries)
 splunk-as savedsearch history "My Report"
+splunk-as savedsearch history "My Report" -c 20
 
 # Enable scheduling
 splunk-as savedsearch enable "My Report"

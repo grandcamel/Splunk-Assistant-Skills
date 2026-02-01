@@ -37,9 +37,9 @@ Query and manage Splunk server configurations, users, roles, and system info.
 | Option | Description |
 |--------|-------------|
 | `-d`, `--data` | JSON data payload for POST requests |
-| `--app` | App context for REST requests |
+| `-a`, `--app` | App context for REST requests |
 | `--owner` | Owner context for REST requests |
-| `--output` | Output format (json, table, csv) |
+| `-o`, `--output` | Output format (text, json) |
 
 ## Examples
 

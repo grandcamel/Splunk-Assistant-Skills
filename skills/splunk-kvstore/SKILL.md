@@ -69,8 +69,8 @@ splunk-as kvstore delete-record my_collection abc123 --app search
 # Truncate collection (delete all records, keep collection)
 splunk-as kvstore truncate my_collection --app search
 
-# Batch insert multiple records
-splunk-as kvstore batch-insert my_collection '[{"name": "a"}, {"name": "b"}]' --app search
+# Batch insert multiple records from JSON file
+splunk-as kvstore batch-insert my_collection records.json --app search
 
 # Delete collection (IRREVERSIBLE - removes collection and all records)
 splunk-as kvstore delete my_collection --app search --force

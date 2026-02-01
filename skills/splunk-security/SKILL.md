@@ -40,35 +40,51 @@ Manage JWT tokens, check permissions, and configure ACLs on knowledge objects.
 | `security check` | Check if user has capability |
 | `security acl` | Get ACL for resource |
 
+## Options
+
+| Option | Commands | Description |
+|--------|----------|-------------|
+| `-o`, `--output` | whoami, list-users, list-roles, list-tokens, capabilities, acl | Output format (text, json) |
+| `-n`, `--name` | create-token | Token name (required) |
+| `--audience` | create-token | Token audience (optional) |
+| `--expires` | create-token | Expiration time in seconds (optional) |
+
 ## Examples
 
 ```bash
-# Get current user info
+# Get current user info (with output format)
 splunk-as security whoami
+splunk-as security whoami -o json
 
 # List users
 splunk-as security list-users
+splunk-as security list-users -o json
 
 # List roles
 splunk-as security list-roles
+splunk-as security list-roles -o json
 
 # List tokens
 splunk-as security list-tokens
+splunk-as security list-tokens -o json
 
-# Create token (--name required, --expires in seconds)
-splunk-as security create-token --name "my-app-token" --audience "my-app" --expires 2592000
+# Create token (--name required, --audience and --expires optional)
+splunk-as security create-token -n "my-app-token"
+splunk-as security create-token -n "my-app-token" --audience "my-app" --expires 2592000
 
 # Delete token
 splunk-as security delete-token token_123
 
 # Get capabilities (current user)
 splunk-as security capabilities
+splunk-as security capabilities -o json
 
 # Check if user has a specific capability (positional argument)
 splunk-as security check search
 
 # Get ACL (full REST path starting with /)
 splunk-as security acl /servicesNS/nobody/search/saved/searches/MySearch
+splunk-as security acl /servicesNS/nobody/search/saved/searches/MySearch -o json
 ```
 
 ## API Endpoints

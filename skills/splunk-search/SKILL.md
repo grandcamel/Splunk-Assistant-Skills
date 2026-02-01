@@ -61,8 +61,11 @@ splunk-as search oneshot "index=main" --count 100 --fields host,status
 # Output to file
 splunk-as search oneshot "index=main | head 1000" --output-file results.csv
 
-# Using short flags (-e earliest, -l latest, -c count, -f fields, -o output-file)
-splunk-as search oneshot "index=main" -e -1h -l now -c 100 -f host,status -o results.csv
+# Using short flags (-e earliest, -l latest, -c count, -f fields, -o output format)
+splunk-as search oneshot "index=main" -e -1h -l now -c 100 -f host,status -o json
+
+# Save to file with --output-file
+splunk-as search oneshot "index=main" -e -1h -c 100 --output-file results.csv
 ```
 
 ### Normal Search (Async)
@@ -89,11 +92,15 @@ splunk-as search blocking "index=main | head 10" --timeout 60
 # From completed job
 splunk-as search results 1703779200.12345
 
-# With pagination
-splunk-as search results 1703779200.12345 --count 100 --offset 0
+# With pagination (using short flags)
+splunk-as search results 1703779200.12345 -c 100 --offset 0
 
 # Specific fields only
-splunk-as search results 1703779200.12345 --fields host,status,uri
+splunk-as search results 1703779200.12345 -f host,status,uri
+
+# Output format and save to file
+splunk-as search results 1703779200.12345 -o json
+splunk-as search results 1703779200.12345 --output-file results.csv
 ```
 
 ### Validate SPL
@@ -102,8 +109,8 @@ splunk-as search results 1703779200.12345 --fields host,status,uri
 # Validate SPL syntax
 splunk-as search validate "index=main | stats count"
 
-# Validate with suggestions for fixes
-splunk-as search validate "index=main | stats count" --suggestions
+# Validate with suggestions for fixes (-s/--suggestions)
+splunk-as search validate "index=main | stats count" -s
 ```
 
 ## API Endpoints
