@@ -1,4 +1,4 @@
-.PHONY: help install test lint validate-docs validate clean
+.PHONY: help install lint validate-docs validate clean
 
 help:
 	@echo "Splunk Assistant Skills - Development Commands"
@@ -7,20 +7,16 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "  install        Install dependencies"
-	@echo "  test           Run unit tests"
 	@echo "  lint           Run linting (black, isort)"
 	@echo "  lint-fix       Fix linting issues automatically"
 	@echo "  validate-docs  Validate CLI documentation matches splunk-as"
-	@echo "  validate       Run all validation (test + lint + validate-docs)"
+	@echo "  validate       Run all validation (lint + validate-docs)"
 	@echo "  pre-commit     Install pre-commit hooks"
 	@echo "  clean          Remove cache and build artifacts"
 
 install:
 	pip install -r requirements.txt
-	pip install pytest black isort pre-commit
-
-test:
-	pytest skills/*/tests/ -v
+	pip install black isort pre-commit
 
 lint:
 	black --check --diff skills/ scripts/
@@ -33,7 +29,7 @@ lint-fix:
 validate-docs:
 	python scripts/validate_cli_docs.py
 
-validate: test lint validate-docs
+validate: lint validate-docs
 	@echo "All validations passed!"
 
 pre-commit:

@@ -25,29 +25,8 @@ jobs:
           release-type: simple
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run unit tests
-        run: |
-          pip install pytest
-          pytest skills/*/tests/ -v
-
   publish-release:
-    needs: [release-please, test]
+    needs: [release-please, lint]
     if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:
@@ -58,16 +37,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run tests
-        run: |
-          pip install pytest pytest-asyncio
-          pytest skills/*/tests/ -v
 
       - name: Create release archive
         run: |
@@ -116,7 +85,7 @@ jobs:
         run: isort --check-only --diff skills/ scripts/
 
   publish-docker:
-    needs: [release-please, test]
+    needs: [release-please, lint]
     if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
     steps:

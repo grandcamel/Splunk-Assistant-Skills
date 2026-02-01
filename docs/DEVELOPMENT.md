@@ -1,55 +1,10 @@
 # Development Guide
 
-This document covers how to add new scripts and skills to Splunk Assistant Skills.
+This document covers how to add and modify skills in Splunk Assistant Skills.
 
-## Adding New Scripts
+## Overview
 
-### Step-by-Step
-
-1. Create script in `{skill}/scripts/`:
-
-```python
-#!/usr/bin/env python3
-"""Brief description."""
-
-import argparse
-
-from splunk_as import (
-    get_splunk_client,
-    handle_errors,
-    print_success,
-    validate_spl,
-)
-
-@handle_errors
-def main(argv: list[str] | None = None):
-    parser = argparse.ArgumentParser(description='Script description')
-    args = parser.parse_args(argv)
-
-    client = get_splunk_client()
-    # Implementation
-    print_success("Operation completed")
-
-if __name__ == '__main__':
-    main()
-```
-
-**Note:** The `argv` parameter enables CLI integration and testability. Always use `parser.parse_args(argv)` instead of `parser.parse_args()`.
-
-2. Create test in `{skill}/tests/test_{script}.py`:
-
-```python
-import pytest
-from unittest.mock import Mock, patch
-
-def test_script_function():
-    # Test implementation
-    pass
-```
-
-3. Update `SKILL.md` with usage examples
-
----
+Splunk Assistant Skills is a Claude Code plugin consisting of markdown skill files. Skills document how to use the `splunk-as` CLI commands for various Splunk operations.
 
 ## Adding New Skills
 
@@ -57,16 +12,9 @@ def test_script_function():
 
 ```
 skills/new-skill/
-├── SKILL.md           # Skill documentation
-├── scripts/           # Python scripts
-│   └── ...
-├── tests/             # Unit tests
-│   ├── conftest.py    # Skill-specific fixtures only (see note below)
-│   └── test_*.py
-└── references/        # API docs, examples
+├── SKILL.md           # Skill documentation (required)
+└── references/        # API docs, examples (optional)
 ```
-
-**Note on conftest.py**: Common fixtures (`mock_splunk_client`, `mock_config`, `temp_path`, `temp_dir`, `sample_job_response`, `sample_search_results`) are provided by the root `conftest.py`. Skill-specific conftest files should only define fixtures unique to that skill. Do not add `__init__.py` files to test directories.
 
 ### SKILL.md Template
 
@@ -112,10 +60,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 feat(skill): add new capability
-fix(client): handle timeout errors
+fix(docs): correct command syntax
 docs: update configuration guide
-test(search): add integration tests
-refactor(validators): simplify logic
 chore: update dependencies
 ```
 
@@ -126,77 +72,45 @@ chore: update dependencies
 | `feat` | New feature |
 | `fix` | Bug fix |
 | `docs` | Documentation |
-| `test` | Tests |
 | `refactor` | Code refactoring |
-| `perf` | Performance |
 | `chore` | Maintenance |
 
 ---
 
 ## Code Style
 
-### Python Guidelines
+### Markdown Guidelines
 
-- Use type hints for function signatures
-- Follow PEP 8 style (enforced by Black)
-- Keep functions focused and small
-- Add docstrings for public functions
+- Use consistent heading levels
+- Include code examples with proper syntax highlighting
+- Keep CLI examples accurate and tested
+- Document all command flags and options
 
-### Import Order
+### Linting
 
-```python
-# Standard library
-import argparse
-import json
+```bash
+# Check formatting
+make lint
 
-# Third-party
-import requests
-
-# Local
-from splunk_as import get_splunk_client
-```
-
-### Error Handling
-
-Always use the `@handle_errors` decorator for main functions:
-
-```python
-from splunk_as import handle_errors
-
-@handle_errors
-def main():
-    # Your code here
-    pass
+# Fix formatting issues
+make lint-fix
 ```
 
 ---
 
-## Testing Guidelines
+## Testing
 
-### Unit Tests
+### E2E Tests
 
-- Test one thing per test
-- Use descriptive test names
-- Mock external dependencies
-- Use fixtures for common setup
-
-### Live Integration Tests
-
-Live integration tests are now in the [splunk-as](https://github.com/grandcamel/splunk-as) package.
-See `splunk-as/tests/live/` for integration test examples.
-
-### Running Tests
+E2E tests validate the plugin works with Claude Code CLI:
 
 ```bash
-# Unit tests only
-pytest skills/*/tests/ -v
-
-# Specific skill
-pytest skills/splunk-search/tests/ -v
-
-# With coverage
-pytest --cov=splunk_as --cov-report=html
+./scripts/run-e2e-tests.sh
 ```
+
+### Library Development
+
+If you need to modify the `splunk-as` library itself, see the [splunk-as repository](https://github.com/grandcamel/splunk-as).
 
 See [TESTING.md](TESTING.md) for detailed testing documentation.
 
@@ -206,9 +120,8 @@ See [TESTING.md](TESTING.md) for detailed testing documentation.
 
 Before submitting a PR:
 
-- [ ] Tests pass locally
-- [ ] New code has tests
-- [ ] Documentation updated
+- [ ] Linting passes (`make lint`)
+- [ ] Documentation is accurate
+- [ ] CLI examples are tested
 - [ ] Commit messages follow conventions
-- [ ] No sensitive data committed
 - [ ] SKILL.md updated (if adding features)
