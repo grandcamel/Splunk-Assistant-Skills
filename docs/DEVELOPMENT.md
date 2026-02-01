@@ -63,9 +63,6 @@ skills/new-skill/
 ├── tests/             # Unit tests
 │   ├── conftest.py    # Skill-specific fixtures only (see note below)
 │   └── test_*.py
-├── tests/live_integration/  # Integration tests
-│   ├── conftest.py    # Live test fixtures
-│   └── test_*.py
 └── references/        # API docs, examples
 ```
 
@@ -183,12 +180,10 @@ def main():
 - Mock external dependencies
 - Use fixtures for common setup
 
-### Integration Tests
+### Live Integration Tests
 
-- Mark with `@pytest.mark.live`
-- Use `@pytest.mark.destructive` for tests that modify data
-- Clean up after tests
-- Use `fresh_test_data` fixture for isolation
+Live integration tests are now in the [splunk-as](https://github.com/grandcamel/splunk-as) package.
+See `splunk-as/tests/live/` for integration test examples.
 
 ### Running Tests
 

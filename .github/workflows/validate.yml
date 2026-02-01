@@ -27,7 +27,7 @@ jobs:
           pip install pytest
 
       - name: Run unit tests
-        run: pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration/
+        run: pytest skills/*/tests/ -v
 
   validate-docs:
     runs-on: ubuntu-latest

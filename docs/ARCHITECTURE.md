@@ -119,11 +119,10 @@ skills/{skill-name}/
 ├── tests/             # Unit tests
 │   ├── conftest.py    # Skill-specific fixtures
 │   └── test_*.py
-├── tests/live_integration/  # Integration tests
-│   ├── conftest.py    # Live test fixtures
-│   └── test_*.py
 └── references/        # API docs, examples
 ```
+
+**Note:** Live integration tests are in the [splunk-as](https://github.com/grandcamel/splunk-as) package at `tests/live/`.
 
 ### Plugin Manifest
 

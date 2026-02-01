@@ -44,7 +44,7 @@ jobs:
       - name: Run unit tests
         run: |
           pip install pytest
-          pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration/
+          pytest skills/*/tests/ -v
 
   publish-release:
     needs: [release-please, test]
@@ -67,7 +67,7 @@ jobs:
       - name: Run tests
         run: |
           pip install pytest pytest-asyncio
-          pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration/
+          pytest skills/*/tests/ -v
 
       - name: Create release archive
         run: |

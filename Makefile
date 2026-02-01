@@ -8,7 +8,6 @@ help:
 	@echo "Targets:"
 	@echo "  install        Install dependencies"
 	@echo "  test           Run unit tests"
-	@echo "  test-live      Run live integration tests (requires Splunk)"
 	@echo "  lint           Run linting (black, isort)"
 	@echo "  lint-fix       Fix linting issues automatically"
 	@echo "  validate-docs  Validate CLI documentation matches splunk-as"
@@ -21,10 +20,7 @@ install:
 	pip install pytest black isort pre-commit
 
 test:
-	pytest skills/*/tests/ -v --ignore=skills/*/tests/live_integration/
-
-test-live:
-	pytest skills/*/tests/live_integration/ -v -m "live"
+	pytest skills/*/tests/ -v
 
 lint:
 	black --check --diff skills/ scripts/
