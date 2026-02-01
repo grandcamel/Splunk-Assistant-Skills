@@ -60,10 +60,6 @@ include = [
 [tool.hatch.build.targets.wheel]
 packages = ["plugins/splunk-assistant-skills"]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "-v --tb=short"
-
 [tool.black]
 line-length = 88
 target-version = ["py39", "py310", "py311", "py312"]

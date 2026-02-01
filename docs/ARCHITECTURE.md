@@ -29,9 +29,8 @@ skills/                        # 14 skills (autodiscovered)
 ├── splunk-alert/              # Alerts
 ├── splunk-app/                # Apps
 ├── splunk-kvstore/            # KV Store
-└── shared/                    # Shared config and tests
-    ├── config/
-    └── tests/
+└── shared/                    # Shared config
+    └── config/
 
 docs/
 ├── ARCHITECTURE.md            # This document
@@ -116,13 +115,10 @@ skills/{skill-name}/
 ├── SKILL.md           # Skill documentation
 ├── scripts/           # CLI implementation scripts
 │   └── ...
-├── tests/             # Unit tests
-│   ├── conftest.py    # Skill-specific fixtures
-│   └── test_*.py
-└── references/        # API docs, examples
+└── references/        # API docs, examples (optional)
 ```
 
-**Note:** Live integration tests are in the [splunk-as](https://github.com/grandcamel/splunk-as) package at `tests/live/`.
+**Note:** All tests (unit and live integration) are in the [splunk-as](https://github.com/grandcamel/splunk-as) package.
 
 ### Plugin Manifest
 
